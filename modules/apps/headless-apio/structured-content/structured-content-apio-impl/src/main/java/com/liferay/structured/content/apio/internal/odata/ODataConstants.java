@@ -19,6 +19,16 @@ package com.liferay.structured.content.apio.internal.odata;
  */
 public class ODataConstants {
 
+	public static final String DATE_CREATED_FIELD_EXTERNAL_NAME = "dateCreated";
+
+	public static final String DATE_MODIFIED_FIELD_EXTERNAL_NAME =
+		"dateModified";
+
+	public static final String DATE_PUBLISHED_FIELD_EXTERNAL_NAME =
+		"datePublished";
+
 	public static final String ENTITY_NAME = "StructuredContent";
+
+	public static final String TITLE_FIELD_EXTERNAL_NAME = "title";
 
 }

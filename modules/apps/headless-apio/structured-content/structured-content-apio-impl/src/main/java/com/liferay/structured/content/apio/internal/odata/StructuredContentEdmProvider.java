@@ -59,13 +59,34 @@ public class StructuredContentEdmProvider extends SchemaBasedEdmProvider {
 	}
 
 	private CsdlEntityType _buildEntityType() {
+		CsdlProperty dateCreated = _buildProperty(
+			ODataConstants.DATE_CREATED_FIELD_EXTERNAL_NAME,
+			EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName());
+
+		CsdlProperty dateModified = _buildProperty(
+			ODataConstants.DATE_MODIFIED_FIELD_EXTERNAL_NAME,
+			EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName());
+
+		CsdlProperty datePublished = _buildProperty(
+			ODataConstants.DATE_PUBLISHED_FIELD_EXTERNAL_NAME,
+			EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName());
+
 		CsdlProperty title = _buildProperty(
-			"title", EdmPrimitiveTypeKind.String.getFullQualifiedName());
+			ODataConstants.TITLE_FIELD_EXTERNAL_NAME,
+			EdmPrimitiveTypeKind.String.getFullQualifiedName());
 
 		CsdlEntityType csdlEntityType = new CsdlEntityType();
 
 		csdlEntityType.setName(ODataConstants.ENTITY_NAME);
-		csdlEntityType.setProperties(Arrays.asList(title));
+
+		List<CsdlProperty> csdlPropertyList = new ArrayList<>();
+
+		csdlPropertyList.add(dateCreated);
+		csdlPropertyList.add(dateModified);
+		csdlPropertyList.add(datePublished);
+		csdlPropertyList.add(title);
+
+		csdlEntityType.setProperties(csdlPropertyList);
 
 		return csdlEntityType;
 	}

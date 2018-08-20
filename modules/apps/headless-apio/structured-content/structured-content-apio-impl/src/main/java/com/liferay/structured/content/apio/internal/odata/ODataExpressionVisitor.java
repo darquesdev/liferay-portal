@@ -20,8 +20,15 @@ import com.liferay.portal.kernel.search.ParseException;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmType;
@@ -101,7 +108,19 @@ public class ODataExpressionVisitor implements ExpressionVisitor<Object> {
 
 		List<UriResource> uriResourceParts = resourcePath.getUriResourceParts();
 
-		return String.valueOf(uriResourceParts.get(0));
+		String externalFieldName = String.valueOf(uriResourceParts.get(0));
+
+		Optional<String> internalFieldName =
+			FilterFieldMapper.getInternalFieldName(externalFieldName);
+
+		if (!internalFieldName.isPresent()) {
+			throw new RuntimeException(
+				String.format(
+					"No internal fieldName was found for external fieldName %s",
+					externalFieldName));
+		}
+
+		return internalFieldName.get();
 	}
 
 	@Override
@@ -121,24 +140,75 @@ public class ODataExpressionVisitor implements ExpressionVisitor<Object> {
 		throw new RuntimeException("visitUnaryOperator not implemented");
 	}
 
-	private Query _eq(String fieldName, Object getValue) {
+	private Query _eq(String internalFieldName, Object getValue) {
 		String valueString = getValue.toString();
 
 		if (valueString.equals("null")) {
 			throw new RuntimeException("eq null not implemented");
 		}
 
-		String localizedFieldName = Field.getLocalizedName(_locale, fieldName);
+		String fieldName;
+
+		String internalValue;
+
+		if (_isFieldOfTypeDate(internalFieldName)) {
+			fieldName = internalFieldName;
+
+			internalValue = _odataDateTimeOffsetToDateInElasticSearch(
+				valueString);
+		}
+		else {
+			fieldName = Field.getLocalizedName(_locale, internalFieldName);
+
+			internalValue = valueString;
+		}
 
 		try {
 			BooleanQuery localizedQuery = new BooleanQueryImpl();
 
-			return localizedQuery.addTerm(
-				localizedFieldName, valueString, false);
+			return localizedQuery.addTerm(fieldName, internalValue, false);
 		}
 		catch (ParseException pe) {
 			throw new RuntimeException(pe);
 		}
+	}
+
+	private boolean _isFieldOfTypeDate(String internalFieldName) {
+		if (internalFieldName.equals(Field.CREATE_DATE) ||
+			internalFieldName.equals(Field.MODIFIED_DATE) ||
+			internalFieldName.equals(Field.PUBLISH_DATE)) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private String _odataDateTimeOffsetToDateInElasticSearch(
+		String odataDateTimeOffset) {
+
+		DateTimeFormatterBuilder dateTimeFormatterBuilder =
+			new DateTimeFormatterBuilder();
+
+		DateTimeFormatter odataDateTimeFormatter =
+			dateTimeFormatterBuilder.appendPattern(
+				"yyyy-MM-dd'T'HH:mm:ss'Z'"
+			).toFormatter(
+			).withZone(
+				ZoneOffset.UTC
+			);
+
+		Instant instant = odataDateTimeFormatter.parse(
+			odataDateTimeOffset, Instant::from);
+
+		DateTimeFormatter internalDateTimeFormatter =
+			DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+
+		internalDateTimeFormatter.withZone(ZoneOffset.UTC);
+
+		ZonedDateTime zonedDateTime = instant.atZone(ZoneOffset.UTC);
+
+		return zonedDateTime.format(internalDateTimeFormatter);
 	}
 
 	private String _removeQuotes(String input) {
