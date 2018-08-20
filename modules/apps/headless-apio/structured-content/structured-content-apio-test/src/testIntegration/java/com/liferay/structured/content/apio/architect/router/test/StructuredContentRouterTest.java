@@ -46,9 +46,15 @@ import com.liferay.structured.content.apio.architect.model.JournalArticleWrapper
 import com.liferay.structured.content.apio.architect.router.StructuredContentRouter;
 import com.liferay.structured.content.apio.architect.util.test.PaginationTestUtil;
 
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -76,6 +82,127 @@ public class StructuredContentRouterTest {
 	@Before
 	public void setUp() throws Exception {
 		_group = GroupTestUtil.addGroup();
+	}
+
+	@Test
+	public void testGetExistingJournalArticleWithFilterWithDateCreated()
+		throws Exception {
+
+		//Given: A Journal article has been created
+
+		JournalArticle journalArticle = _addJournalArticle(
+			"titleTestGetJournalArticleWithFilterWithDateCreated");
+
+		Date createdDate = journalArticle.getCreateDate();
+
+		Instant instant = createdDate.toInstant();
+
+		ZonedDateTime zonedDateTime = instant.atZone(ZoneOffset.UTC);
+
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(
+			"yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+		dateTimeFormatter.withZone(ZoneOffset.UTC);
+
+		String createdDateFormatted = zonedDateTime.format(dateTimeFormatter);
+
+		String filterValue = String.format(
+			"(dateCreated eq %s)", createdDateFormatted);
+
+		//When: The Journal Articles are requested
+		PageItems<JournalArticleWrapper> pageItems =
+			_structuredContentRouter.getPageItems(
+				PaginationTestUtil.of(10, 1), _group.getGroupId(),
+				new Filter(filterValue), _getThemeDisplay(_group));
+
+		//Then: The Article is returned
+
+		Assert.assertEquals(1, pageItems.getTotalCount());
+
+		Collection<JournalArticleWrapper> items = pageItems.getItems();
+
+		Assert.assertTrue("Items " + items, items.contains(journalArticle));
+	}
+
+	@Test
+	public void testGetExistingJournalArticleWithFilterWithDateModified()
+		throws Exception {
+
+		//Given: A Journal article has been created
+
+		JournalArticle journalArticle = _addJournalArticle(
+			"testGetExistingJournalArticleWithFilterWithDateModified");
+
+		Date modifiedDate = journalArticle.getModifiedDate();
+
+		Instant instant = modifiedDate.toInstant();
+
+		ZonedDateTime zonedDateTime = instant.atZone(ZoneOffset.UTC);
+
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(
+			"yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+		dateTimeFormatter.withZone(ZoneOffset.UTC);
+
+		String modifiedDateFormatted = zonedDateTime.format(dateTimeFormatter);
+
+		String filterValue = String.format(
+			"(dateModified eq %s)", modifiedDateFormatted);
+
+		//When: The Journal Articles are requested
+		PageItems<JournalArticleWrapper> pageItems =
+			_structuredContentRouter.getPageItems(
+				PaginationTestUtil.of(10, 1), _group.getGroupId(),
+				new Filter(filterValue), _getThemeDisplay(_group));
+
+		//Then: The Article is returned
+
+		Assert.assertEquals(1, pageItems.getTotalCount());
+
+		Collection<JournalArticleWrapper> items = pageItems.getItems();
+
+		Assert.assertTrue("Items " + items, items.contains(journalArticle));
+	}
+
+	@Test
+	public void testGetExistingJournalArticleWithFilterWithDatePublished()
+		throws Exception {
+
+		//Given: A Journal article has been created
+
+		JournalArticle journalArticle = _addJournalArticle(
+			"testGetExistingJournalArticleWithFilterWithDatePublished");
+
+		Date displayDate = journalArticle.getDisplayDate();
+
+		Instant instant = displayDate.toInstant();
+
+		ZonedDateTime zonedDateTime = instant.atZone(ZoneOffset.UTC);
+
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(
+			"yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+		dateTimeFormatter.withZone(ZoneOffset.UTC);
+
+		String lastPublishDateFormatted = zonedDateTime.format(
+			dateTimeFormatter);
+
+		String filterValue = String.format(
+			"(datePublished eq %s)", lastPublishDateFormatted);
+
+		//When: The Journal Articles are requested
+		PageItems<JournalArticleWrapper> pageItems =
+			_structuredContentRouter.getPageItems(
+				PaginationTestUtil.of(10, 1), _group.getGroupId(),
+				new Filter(filterValue), _getThemeDisplay(_group));
+
+		//Then: The Article is returned
+
+		Assert.assertEquals(1, pageItems.getTotalCount());
+
+		Collection<JournalArticleWrapper> items = pageItems.getItems();
+
+		Assert.assertTrue("Items " + items, items.contains(journalArticle));
 	}
 
 	@Test
