@@ -30,9 +30,9 @@ public class Filter {
 	}
 
 	/**
-	 * Returns the filter _optionalValue.
+	 * Returns the filter optionalValue.
 	 *
-	 * @return the filter _optionalValue
+	 * @return the filter optionalValue
 	 */
 	public Optional<String> getValue() {
 		return _optionalValue;
