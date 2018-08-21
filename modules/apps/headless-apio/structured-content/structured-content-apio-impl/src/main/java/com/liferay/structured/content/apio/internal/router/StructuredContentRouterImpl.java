@@ -42,7 +42,7 @@ import com.liferay.structured.content.apio.architect.form.StructuredContentCreat
 import com.liferay.structured.content.apio.architect.form.StructuredContentUpdaterForm;
 import com.liferay.structured.content.apio.architect.model.JournalArticleWrapper;
 import com.liferay.structured.content.apio.architect.router.StructuredContentRouter;
-import com.liferay.structured.content.apio.internal.odata.ODataQueryMapper;
+import com.liferay.structured.content.apio.internal.search.QueryMapper;
 
 import java.io.Serializable;
 
@@ -50,6 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -114,9 +115,15 @@ public class StructuredContentRouterImpl implements StructuredContentRouter {
 		Indexer<JournalArticle> indexer = _indexerRegistry.nullSafeGetIndexer(
 			JournalArticle.class);
 
+		Optional<String> filterValueOptional = filter.getValue();
+
+		String filterValue = filterValueOptional.get();
+
+		Query query = _queryMapper.map(filterValue, themeDisplay.getLocale());
+
 		Hits hits = indexer.search(
 			buildSearchContext(
-				themeDisplay.getCompanyId(), contentSpaceId, filter,
+				themeDisplay.getCompanyId(), contentSpaceId, query,
 				pagination.getStartPosition(), pagination.getEndPosition()));
 
 		List<JournalArticleWrapper> journalArticleWrappers = Stream.of(
@@ -160,7 +167,7 @@ public class StructuredContentRouterImpl implements StructuredContentRouter {
 	}
 
 	protected SearchContext buildSearchContext(
-		long companyId, long groupId, Filter filter, int start, int end) {
+		long companyId, long groupId, Query query, int start, int end) {
 
 		SearchContext searchContext = new SearchContext();
 
@@ -175,8 +182,6 @@ public class StructuredContentRouterImpl implements StructuredContentRouter {
 		searchContext.setCompanyId(companyId);
 		searchContext.setEnd(end);
 		searchContext.setGroupIds(new long[] {groupId});
-
-		Query query = _oDataQueryMapper.map(filter, searchContext.getLocale());
 
 		if (query != null) {
 			BooleanClause booleanClause = BooleanClauseFactoryUtil.create(
@@ -227,6 +232,6 @@ public class StructuredContentRouterImpl implements StructuredContentRouter {
 	private JournalArticleService _journalArticleService;
 
 	@Reference
-	private ODataQueryMapper _oDataQueryMapper;
+	private QueryMapper _queryMapper;
 
 }

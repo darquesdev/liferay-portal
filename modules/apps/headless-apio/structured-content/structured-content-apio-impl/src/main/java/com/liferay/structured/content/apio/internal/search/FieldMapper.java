@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.structured.content.apio.internal.odata;
+package com.liferay.structured.content.apio.internal.search;
 
 import com.liferay.portal.kernel.search.Field;
 
@@ -26,7 +26,7 @@ import java.util.Optional;
  *
  * @author Ruben Pulido
  */
-public class FilterFieldMapper {
+public class FieldMapper {
 
 	public static Map<String, String> getExternalToInternalFieldMappingsMap() {
 		return _externalToInternalFieldMappingsMap;
@@ -46,17 +46,17 @@ public class FilterFieldMapper {
 		_externalToInternalFieldMappingsMap = new HashMap();
 
 		_externalToInternalFieldMappingsMap.put(
-			ODataConstants.TITLE_FIELD_EXTERNAL_NAME, Field.TITLE);
+			FieldConstants.TITLE_FIELD_EXTERNAL_NAME, Field.TITLE);
 
 		_externalToInternalFieldMappingsMap.put(
-			ODataConstants.DATE_CREATED_FIELD_EXTERNAL_NAME, Field.CREATE_DATE);
+			FieldConstants.DATE_CREATED_FIELD_EXTERNAL_NAME, Field.CREATE_DATE);
 
 		_externalToInternalFieldMappingsMap.put(
-			ODataConstants.DATE_MODIFIED_FIELD_EXTERNAL_NAME,
+			FieldConstants.DATE_MODIFIED_FIELD_EXTERNAL_NAME,
 			Field.MODIFIED_DATE);
 
 		_externalToInternalFieldMappingsMap.put(
-			ODataConstants.DATE_PUBLISHED_FIELD_EXTERNAL_NAME,
+			FieldConstants.DATE_PUBLISHED_FIELD_EXTERNAL_NAME,
 			Field.PUBLISH_DATE);
 	}
 

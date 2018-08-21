@@ -20,6 +20,8 @@ import com.liferay.portal.kernel.search.ParseException;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 
+import com.liferay.structured.content.apio.internal.search.FieldMapper;
+
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -111,7 +113,7 @@ public class ODataExpressionVisitor implements ExpressionVisitor<Object> {
 		String externalFieldName = String.valueOf(uriResourceParts.get(0));
 
 		Optional<String> internalFieldName =
-			FilterFieldMapper.getInternalFieldName(externalFieldName);
+			FieldMapper.getInternalFieldName(externalFieldName);
 
 		if (!internalFieldName.isPresent()) {
 			throw new RuntimeException(

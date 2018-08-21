@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.liferay.structured.content.apio.internal.search.FieldConstants;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainer;
@@ -52,7 +53,7 @@ public class StructuredContentEdmProvider extends SchemaBasedEdmProvider {
 		csdlEntitySet.setName(entityType.getName());
 		csdlEntitySet.setType(entityTypeFqn);
 
-		csdlEntityContainer.setName(ODataConstants.ENTITY_NAME);
+		csdlEntityContainer.setName(FieldConstants.ENTITY_NAME);
 		csdlEntityContainer.setEntitySets(Arrays.asList(csdlEntitySet));
 
 		return csdlEntityContainer;
@@ -60,24 +61,24 @@ public class StructuredContentEdmProvider extends SchemaBasedEdmProvider {
 
 	private CsdlEntityType _buildEntityType() {
 		CsdlProperty dateCreated = _buildProperty(
-			ODataConstants.DATE_CREATED_FIELD_EXTERNAL_NAME,
+			FieldConstants.DATE_CREATED_FIELD_EXTERNAL_NAME,
 			EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName());
 
 		CsdlProperty dateModified = _buildProperty(
-			ODataConstants.DATE_MODIFIED_FIELD_EXTERNAL_NAME,
+			FieldConstants.DATE_MODIFIED_FIELD_EXTERNAL_NAME,
 			EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName());
 
 		CsdlProperty datePublished = _buildProperty(
-			ODataConstants.DATE_PUBLISHED_FIELD_EXTERNAL_NAME,
+			FieldConstants.DATE_PUBLISHED_FIELD_EXTERNAL_NAME,
 			EdmPrimitiveTypeKind.DateTimeOffset.getFullQualifiedName());
 
 		CsdlProperty title = _buildProperty(
-			ODataConstants.TITLE_FIELD_EXTERNAL_NAME,
+			FieldConstants.TITLE_FIELD_EXTERNAL_NAME,
 			EdmPrimitiveTypeKind.String.getFullQualifiedName());
 
 		CsdlEntityType csdlEntityType = new CsdlEntityType();
 
-		csdlEntityType.setName(ODataConstants.ENTITY_NAME);
+		csdlEntityType.setName(FieldConstants.ENTITY_NAME);
 
 		List<CsdlProperty> csdlPropertyList = new ArrayList<>();
 
@@ -103,21 +104,15 @@ public class StructuredContentEdmProvider extends SchemaBasedEdmProvider {
 
 	private CsdlSchema _buildSchema() {
 
-		// create Schema
-
 		CsdlSchema schema = new CsdlSchema();
 
 		schema.setNamespace(_NAMESPACE);
-
-		// add EntityTypes
 
 		List<CsdlEntityType> entityTypes = new ArrayList<>();
 
 		entityTypes.add(_buildEntityType());
 
 		schema.setEntityTypes(entityTypes);
-
-		// add EntityContainer
 
 		schema.setEntityContainer(_buildEntityContainer());
 

@@ -14,21 +14,19 @@
 
 package com.liferay.structured.content.apio.internal.odata;
 
+import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
+import org.apache.olingo.commons.api.ex.ODataException;
+import org.apache.olingo.server.api.uri.UriInfo;
+
 /**
- * @author Julio Camarero
+ * Parses OData queries.
+ *
+ * @author Ruben Pulido
  */
-public class ODataConstants {
+public interface ODataQueryParser {
 
-	public static final String DATE_CREATED_FIELD_EXTERNAL_NAME = "dateCreated";
+	public CsdlEdmProvider getCsdlEdmProvider();
 
-	public static final String DATE_MODIFIED_FIELD_EXTERNAL_NAME =
-		"dateModified";
-
-	public static final String DATE_PUBLISHED_FIELD_EXTERNAL_NAME =
-		"datePublished";
-
-	public static final String ENTITY_NAME = "StructuredContent";
-
-	public static final String TITLE_FIELD_EXTERNAL_NAME = "title";
+	public UriInfo parse(String query) throws ODataException;
 
 }

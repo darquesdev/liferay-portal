@@ -14,14 +14,14 @@
 
 package com.liferay.structured.content.apio.internal.odata;
 
+import com.liferay.structured.content.apio.internal.search.FieldConstants;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
+import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.core.uri.parser.Parser;
-import org.apache.olingo.server.core.uri.parser.UriParserException;
-import org.apache.olingo.server.core.uri.validator.UriValidationException;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -33,18 +33,22 @@ import org.osgi.service.component.annotations.Component;
  * @author Julio Camarero
  * @review
  */
-@Component(immediate = true, service = ODataParser.class)
-public class ODataParser {
+@Component(immediate = true, service = ODataQueryParser.class)
+public class ODataQueryParserImpl implements ODataQueryParser {
 
-	public UriInfo parse(String query)
-		throws UriParserException, UriValidationException {
+	@Override
+	public CsdlEdmProvider getCsdlEdmProvider() {
+		return new StructuredContentEdmProvider();
+	}
 
-		return _parser.parseUri(ODataConstants.ENTITY_NAME, query, null, null);
+	@Override
+	public UriInfo parse(String query) throws ODataException {
+		return _parser.parseUri(FieldConstants.ENTITY_NAME, query, null, null);
 	}
 
 	@Activate
 	protected void activate() {
-		CsdlEdmProvider csdlEdmProvider = new StructuredContentEdmProvider();
+		CsdlEdmProvider csdlEdmProvider = getCsdlEdmProvider();
 
 		Edm edm = new EdmProviderImpl(csdlEdmProvider);
 

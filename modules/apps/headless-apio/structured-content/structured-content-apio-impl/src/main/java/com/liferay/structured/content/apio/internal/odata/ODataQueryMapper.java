@@ -19,9 +19,9 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.structured.content.apio.architect.filter.Filter;
+import com.liferay.structured.content.apio.internal.search.QueryMapper;
 
 import java.util.Locale;
-import java.util.Optional;
 
 import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.core.Encoder;
@@ -39,23 +39,16 @@ import org.osgi.service.component.annotations.Reference;
  * @author Julio Camarero
  * @review
  */
-@Component(immediate = true, service = ODataQueryMapper.class)
-public class ODataQueryMapper {
+@Component(immediate = true, service = QueryMapper.class)
+public class ODataQueryMapper implements QueryMapper {
 
-	public Query map(Filter filter, Locale locale) {
-		if ((filter == null) || !filter.hasValue()) {
+	@Override
+	public Query map(String filter, Locale locale) {
+		if (Validator.isNull(filter)) {
 			return null;
 		}
 
-		Optional<String> optionalValue = filter.getValue();
-
-		String filterValue = optionalValue.get();
-
-		if (Validator.isNull(filterValue)) {
-			return null;
-		}
-
-		UriInfo uriInfo = _getUriInfo(filterValue);
+		UriInfo uriInfo = _getUriInfo(filter);
 
 		FilterOption filterOption = uriInfo.getFilterOption();
 
@@ -77,7 +70,7 @@ public class ODataQueryMapper {
 		String odataQueryFilterEncoded = "$filter=" + _encodeODataQuery(filter);
 
 		try {
-			return _oDataParser.parse(odataQueryFilterEncoded);
+			return _oDataQueryParser.parse(odataQueryFilterEncoded);
 		}
 		catch (ODataException ode) {
 			String errorMessage = String.format(
@@ -111,6 +104,6 @@ public class ODataQueryMapper {
 		ODataQueryMapper.class);
 
 	@Reference
-	private ODataParser _oDataParser;
+	private ODataQueryParser _oDataQueryParser;
 
 }
