@@ -17,26 +17,17 @@ package com.liferay.structured.content.apio.internal.router;
 import com.liferay.apio.architect.pagination.PageItems;
 import com.liferay.apio.architect.pagination.Pagination;
 import com.liferay.journal.model.JournalArticle;
-import com.liferay.journal.model.JournalArticleConstants;
 import com.liferay.journal.service.JournalArticleService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.search.BooleanClause;
-import com.liferay.portal.kernel.search.BooleanClauseFactoryUtil;
-import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
-import com.liferay.portal.kernel.search.Indexer;
-import com.liferay.portal.kernel.search.IndexerRegistry;
 import com.liferay.portal.kernel.search.Query;
-import com.liferay.portal.kernel.search.QueryConfig;
-import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.structured.content.apio.architect.filter.Filter;
 import com.liferay.structured.content.apio.architect.form.StructuredContentCreatorForm;
 import com.liferay.structured.content.apio.architect.form.StructuredContentUpdaterForm;
@@ -44,16 +35,13 @@ import com.liferay.structured.content.apio.architect.model.JournalArticleWrapper
 import com.liferay.structured.content.apio.architect.router.StructuredContentRouter;
 import com.liferay.structured.content.apio.internal.search.QueryMapper;
 
-import java.io.Serializable;
-
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.liferay.structured.content.apio.internal.search.JournalArticleSearchHelper;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -91,7 +79,7 @@ public class StructuredContentRouterImpl implements StructuredContentRouter {
 			structuredContentCreatorForm.getDisplayDateMinute(), 0, 0, 0, 0, 0,
 			true, 0, 0, 0, 0, 0, true, true, null, serviceContext);
 
-		return new JournalArticleWrapper(journalArticle, themeDisplay);
+		return _toJournalArticleWrapper(journalArticle, themeDisplay);
 	}
 
 	@Override
@@ -106,39 +94,65 @@ public class StructuredContentRouterImpl implements StructuredContentRouter {
 			journalArticle.getArticleResourceUuid(), new ServiceContext());
 	}
 
+	public PageItems<JournalArticle> getJournalArticles(
+		long companyId, Pagination pagination,
+		long contentSpaceId, String filter, Locale locale)
+		throws PortalException {
+
+		Query query = _queryMapper.map(filter, locale);
+
+		Hits hits = _journalArticleSearchHelper.getHits(
+			companyId, contentSpaceId, query,
+			pagination.getStartPosition(), pagination.getEndPosition()
+		);
+
+		return new PageItems<>(hitsToJournalArticles(hits), hits.getLength());
+	}
+
 	@Override
 	public PageItems<JournalArticleWrapper> getPageItems(
 			Pagination pagination, long contentSpaceId, Filter filter,
 			ThemeDisplay themeDisplay)
 		throws PortalException {
 
-		Indexer<JournalArticle> indexer = _indexerRegistry.nullSafeGetIndexer(
-			JournalArticle.class);
+		Optional<String> filterOptional = filter.getValue();
 
-		Optional<String> filterValueOptional = filter.getValue();
+		Query query = _queryMapper.map(
+			filterOptional.get(), themeDisplay.getLocale());
 
-		String filterValue = filterValueOptional.get();
+		Hits hits = _journalArticleSearchHelper.getHits(
+			themeDisplay.getCompanyId(), contentSpaceId, query,
+			pagination.getStartPosition(), pagination.getEndPosition()
+		);
 
-		Query query = _queryMapper.map(filterValue, themeDisplay.getLocale());
+		List<JournalArticle> journalArticles = hitsToJournalArticles(hits);
 
-		Hits hits = indexer.search(
-			buildSearchContext(
-				themeDisplay.getCompanyId(), contentSpaceId, query,
-				pagination.getStartPosition(), pagination.getEndPosition()));
+		Stream<JournalArticle> journalArticleStream = journalArticles.stream();
 
-		List<JournalArticleWrapper> journalArticleWrappers = Stream.of(
+		List<JournalArticleWrapper> journalArticleWrappers =
+			journalArticleStream.map(
+				journalArticle -> _toJournalArticleWrapper(
+					journalArticle, themeDisplay
+				)
+			).filter(
+				journalArticleWrapper -> journalArticleWrapper != null
+			).collect(
+				Collectors.toList()
+			);
+
+		return new PageItems<>(journalArticleWrappers, hits.getLength());
+	}
+
+	private List<JournalArticle> hitsToJournalArticles(Hits hits) {
+		return Stream.of(
 			hits.toList()
 		).flatMap(
 			List::stream
 		).map(
-			document -> convert(document, themeDisplay)
-		).filter(
-			journalArticleWrapper -> journalArticleWrapper != null
+			document -> _fetchArticle(document)
 		).collect(
 			Collectors.toList()
 		);
-
-		return new PageItems<>(journalArticleWrappers, hits.getLength());
 	}
 
 	@Override
@@ -163,57 +177,16 @@ public class StructuredContentRouterImpl implements StructuredContentRouter {
 			structuredContentUpdaterForm.getDescriptionMap(),
 			structuredContentUpdaterForm.getText(), null, serviceContext);
 
-		return new JournalArticleWrapper(journalArticle, themeDisplay);
+		return _toJournalArticleWrapper(journalArticle, themeDisplay);
 	}
 
-	protected SearchContext buildSearchContext(
-		long companyId, long groupId, Query query, int start, int end) {
-
-		SearchContext searchContext = new SearchContext();
-
-		Map<String, Serializable> attributes = new HashMap<>();
-
-		attributes.put(
-			Field.CLASS_NAME_ID, JournalArticleConstants.CLASSNAME_ID_DEFAULT);
-		attributes.put(Field.STATUS, WorkflowConstants.STATUS_APPROVED);
-
-		searchContext.setAttributes(attributes);
-
-		searchContext.setCompanyId(companyId);
-		searchContext.setEnd(end);
-		searchContext.setGroupIds(new long[] {groupId});
-
-		if (query != null) {
-			BooleanClause booleanClause = BooleanClauseFactoryUtil.create(
-				query, BooleanClauseOccur.MUST.getName());
-
-			searchContext.setBooleanClauses(
-				new BooleanClause[] {booleanClause});
-		}
-
-		QueryConfig queryConfig = searchContext.getQueryConfig();
-
-		queryConfig.setHighlightEnabled(false);
-		queryConfig.setScoreEnabled(false);
-		queryConfig.setSelectedFieldNames(
-			Field.ARTICLE_ID, Field.SCOPE_GROUP_ID);
-
-		searchContext.setStart(start);
-
-		return searchContext;
-	}
-
-	protected JournalArticleWrapper convert(
-		Document document, ThemeDisplay themeDisplay) {
-
-		String articleId = document.get(Field.ARTICLE_ID);
-		long groupId = GetterUtil.getLong(document.get(Field.SCOPE_GROUP_ID));
+	private JournalArticle _fetchArticle(String articleId, long groupId) {
 
 		try {
 			JournalArticle journalArticle = _journalArticleService.fetchArticle(
 				groupId, articleId);
 
-			return new JournalArticleWrapper(journalArticle, themeDisplay);
+			return journalArticle;
 		}
 		catch (PortalException pe) {
 			_log.error("Unable to obtain Journal Article", pe);
@@ -222,11 +195,31 @@ public class StructuredContentRouterImpl implements StructuredContentRouter {
 		return null;
 	}
 
+	private JournalArticle _fetchArticle(Document document) {
+
+		String articleId = document.get(Field.ARTICLE_ID);
+		long groupId = GetterUtil.getLong(document.get(Field.SCOPE_GROUP_ID));
+
+		return _fetchArticle(articleId, groupId);
+
+	}
+
+	protected JournalArticleWrapper _fetchArticle(
+		JournalArticle journalArticle, ThemeDisplay themeDisplay) {
+
+		return _toJournalArticleWrapper(journalArticle, themeDisplay);
+	}
+
+	private JournalArticleWrapper _toJournalArticleWrapper(
+		JournalArticle journalArticle, ThemeDisplay themeDisplay) {
+		return new JournalArticleWrapper(journalArticle, themeDisplay);
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		StructuredContentRouterImpl.class);
 
 	@Reference
-	private IndexerRegistry _indexerRegistry;
+	private JournalArticleSearchHelper _journalArticleSearchHelper;
 
 	@Reference
 	private JournalArticleService _journalArticleService;
