@@ -3,7 +3,7 @@
 
 <resource-action-mapping>
 	<model-resource>
-		<model-name>com.liferay.asset.list</model-name>
+		<model-name>com.liferay.segments</model-name>
 		<portlet-ref>
 			<portlet-name>com_liferay_segments_web_internal_portlet_SegmentsPortlet</portlet-name>
 		</portlet-ref>
