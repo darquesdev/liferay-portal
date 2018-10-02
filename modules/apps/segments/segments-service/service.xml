@@ -51,7 +51,7 @@
 			<finder-column name="key" />
 		</finder>
 	</entity>
-	<entity local-service="true" name="SegmentsEntryRel" remote-service="false">
+	<entity local-service="true" name="SegmentsEntryRel" remote-service="true">
 
 		<!-- PK fields -->
 
