@@ -7,4 +7,5 @@ Export-Package:\
 	com.liferay.segments.model,\
 	com.liferay.segments.odata.retriever,\
 	com.liferay.segments.service,\
-	com.liferay.segments.service.persistence
+	com.liferay.segments.service.persistence,\
+	com.liferay.segments.util
