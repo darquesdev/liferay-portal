@@ -15,6 +15,7 @@
 package com.liferay.segments.internal.odata.entity;
 
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.odata.entity.DateEntityField;
 import com.liferay.portal.odata.entity.EntityField;
 import com.liferay.portal.odata.entity.EntityModel;
@@ -58,8 +59,13 @@ public class UserEntityModel implements EntityModel {
 			locale -> Field.MODIFIED_DATE),
 		new StringEntityField(
 			"ancestorOrganizationIds", locale -> "ancestorOrganizationIds"),
+		new StringEntityField(
+			"assetTagNames",
+			locale -> "assetTagNames_".concat(LocaleUtil.toLanguageId(locale))),
+		new StringEntityField("city", locale -> "city"),
 		new StringEntityField("classPK", locale -> Field.USER_ID),
 		new StringEntityField("companyId", locale -> Field.COMPANY_ID),
+		new StringEntityField("country", locale -> "country"),
 		new StringEntityField("emailAddress", locale -> "emailAddress"),
 		new StringEntityField(
 			"firstName", locale -> Field.getSortableFieldName("firstName")),
@@ -69,17 +75,21 @@ public class UserEntityModel implements EntityModel {
 			"jobTitle", locale -> Field.getSortableFieldName("jobTitle")),
 		new StringEntityField(
 			"lastName", locale -> Field.getSortableFieldName("lastName")),
+		new StringEntityField("middleName", locale -> "middleName"),
 		new StringEntityField(
 			"organizationCount", locale -> "organizationCount"),
 		new StringEntityField("organizationIds", locale -> "organizationIds"),
+		new StringEntityField("region", locale -> "region"),
 		new StringEntityField("roleIds", locale -> "roleIds"),
 		new StringEntityField("scopeGroupId", locale -> Field.SCOPE_GROUP_ID),
 		new StringEntityField(
 			"screenName", locale -> Field.getSortableFieldName("screenName")),
+		new StringEntityField("street", locale -> "street"),
 		new StringEntityField("teamIds", locale -> "teamIds"),
 		new StringEntityField("userGroupIds", locale -> "userGroupIds"),
 		new StringEntityField("userId", locale -> Field.USER_ID),
-		new StringEntityField("userName", locale -> Field.USER_NAME)
+		new StringEntityField("userName", locale -> Field.USER_NAME),
+		new StringEntityField("zip", locale -> "zip")
 	).collect(
 		Collectors.toMap(EntityField::getName, Function.identity())
 	);

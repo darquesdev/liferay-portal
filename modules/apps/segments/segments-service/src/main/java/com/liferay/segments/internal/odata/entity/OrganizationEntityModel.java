@@ -57,8 +57,10 @@ public class OrganizationEntityModel implements EntityModel {
 			"dateModified",
 			locale -> Field.getSortableFieldName(Field.MODIFIED_DATE),
 			locale -> Field.MODIFIED_DATE),
+		new StringEntityField("city", locale -> "city"),
 		new StringEntityField("classPK", locale -> Field.ORGANIZATION_ID),
 		new StringEntityField("companyId", locale -> Field.COMPANY_ID),
+		new StringEntityField("country", locale -> "country"),
 		new StringEntityField(
 			"name", locale -> Field.getSortableFieldName(Field.NAME)),
 		new StringEntityField(
@@ -68,8 +70,11 @@ public class OrganizationEntityModel implements EntityModel {
 			"organizationId", locale -> Field.ORGANIZATION_ID),
 		new StringEntityField(
 			"parentOrganizationId", locale -> "parentOrganizationId"),
+		new StringEntityField("region", locale -> "region"),
+		new StringEntityField("street", locale -> "street"),
 		new StringEntityField("treePath", locale -> Field.TREE_PATH),
-		new StringEntityField("type", locale -> Field.TYPE)
+		new StringEntityField("type", locale -> Field.TYPE),
+		new StringEntityField("zip", locale -> "zip")
 	).collect(
 		Collectors.toMap(EntityField::getName, Function.identity())
 	);
