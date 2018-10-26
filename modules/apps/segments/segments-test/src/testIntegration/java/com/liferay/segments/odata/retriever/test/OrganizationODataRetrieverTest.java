@@ -17,7 +17,11 @@ package com.liferay.segments.odata.retriever.test;
 import com.fasterxml.jackson.databind.util.ISO8601Utils;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.model.Organization;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.service.AddressLocalService;
 import com.liferay.portal.kernel.service.OrganizationLocalService;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
@@ -25,6 +29,7 @@ import com.liferay.portal.kernel.test.util.OrganizationTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerTestRule;
@@ -54,6 +59,38 @@ public class OrganizationODataRetrieverTest {
 		new AggregateTestRule(
 			new LiferayIntegrationTestRule(),
 			PermissionCheckerTestRule.INSTANCE);
+
+	@Test
+	public void testGetOrganizationsFilterByAddress() throws Exception {
+		Organization organization = OrganizationTestUtil.addOrganization();
+
+		_organizations.add(organization);
+
+		Address address = OrganizationTestUtil.addAddress(organization);
+
+		Indexer<Organization> indexer = IndexerRegistryUtil.getIndexer(
+			Organization.class);
+
+		indexer.reindex(organization);
+
+		String filterString = String.format(
+			"(city eq '%s') or (street eq '%s') or (zip eq '%s')",
+			StringUtil.toLowerCase(address.getCity()),
+			StringUtil.toLowerCase(address.getStreet1()),
+			StringUtil.toLowerCase(address.getZip()));
+
+		int count = _oDataRetriever.getResultsCount(
+			TestPropsValues.getCompanyId(), filterString,
+			LocaleUtil.getDefault());
+
+		Assert.assertEquals(1, count);
+
+		List<Organization> organizations = _oDataRetriever.getResults(
+			TestPropsValues.getCompanyId(), filterString,
+			LocaleUtil.getDefault(), 0, 2);
+
+		Assert.assertEquals(organization, organizations.get(0));
+	}
 
 	@Test
 	public void testGetOrganizationsFilterByCompanyId() throws Exception {
@@ -507,6 +544,9 @@ public class OrganizationODataRetrieverTest {
 
 		Assert.assertEquals(organization, organizations.get(0));
 	}
+
+	@Inject
+	private AddressLocalService _addressLocalService;
 
 	@Inject(
 		filter = "model.class.name=com.liferay.portal.kernel.model.Organization"

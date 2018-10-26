@@ -17,7 +17,9 @@ package com.liferay.segments.odata.retriever.test;
 import com.fasterxml.jackson.databind.util.ISO8601Utils;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.model.Role;
@@ -25,6 +27,10 @@ import com.liferay.portal.kernel.model.RoleConstants;
 import com.liferay.portal.kernel.model.Team;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.UserGroup;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.service.AddressLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.TeamLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -42,6 +48,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerTestRule;
+import com.liferay.portlet.asset.util.test.AssetTestUtil;
 import com.liferay.segments.odata.retriever.ODataRetriever;
 
 import java.time.Instant;
@@ -77,6 +84,41 @@ public class UserODataRetrieverTest {
 	}
 
 	@Test
+	public void testGetUsersFilterByAddress() throws Exception {
+		_user1 = UserTestUtil.addUser(_group1.getGroupId());
+		_user2 = UserTestUtil.addUser(_group1.getGroupId());
+
+		Address address = _addressLocalService.addAddress(
+			TestPropsValues.getUserId(), _user1.getModelClassName(),
+			_user1.getUserId(), RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+			RandomTestUtil.randomLong(), RandomTestUtil.randomLong(),
+			RandomTestUtil.randomLong(), false, true, new ServiceContext());
+
+		Indexer<User> indexer = IndexerRegistryUtil.getIndexer(User.class);
+
+		indexer.reindex(_user1);
+
+		String filterString = String.format(
+			"(city eq '%s') or (street eq '%s') or (zip eq '%s')",
+			StringUtil.toLowerCase(address.getCity()),
+			StringUtil.toLowerCase(address.getStreet1()),
+			StringUtil.toLowerCase(address.getZip()));
+
+		int count = _oDataRetriever.getResultsCount(
+			_group1.getCompanyId(), filterString, LocaleUtil.getDefault());
+
+		Assert.assertEquals(1, count);
+
+		List<User> users = _oDataRetriever.getResults(
+			_group1.getCompanyId(), filterString, LocaleUtil.getDefault(), 0,
+			2);
+
+		Assert.assertEquals(_user1, users.get(0));
+	}
+
+	@Test
 	public void testGetUsersFilterByAncestorOrganizationIds() throws Exception {
 		String firstName = RandomTestUtil.randomString();
 
@@ -104,6 +146,32 @@ public class UserODataRetrieverTest {
 		String filterString = String.format(
 			"(firstName eq '%s') and (ancestorOrganizationIds eq '%s')",
 			firstName, parentOrganization.getOrganizationId());
+
+		int count = _oDataRetriever.getResultsCount(
+			_group1.getCompanyId(), filterString, LocaleUtil.getDefault());
+
+		Assert.assertEquals(1, count);
+
+		List<User> users = _oDataRetriever.getResults(
+			_group1.getCompanyId(), filterString, LocaleUtil.getDefault(), 0,
+			2);
+
+		Assert.assertEquals(_user1, users.get(0));
+	}
+
+	@Test
+	public void testGetUsersFilterByAssetTagNames() throws Exception {
+		_user1 = UserTestUtil.addUser(_group1.getGroupId());
+		_user2 = UserTestUtil.addUser(_group1.getGroupId());
+
+		AssetTag assetTag = AssetTestUtil.addTag(_group1.getGroupId());
+
+		_userLocalService.updateAsset(
+			TestPropsValues.getUserId(), _user1, new long[0],
+			new String[] {assetTag.getName()});
+
+		String filterString = String.format(
+			"contains(assetTagNames, '%s')", assetTag.getName());
 
 		int count = _oDataRetriever.getResultsCount(
 			_group1.getCompanyId(), filterString, LocaleUtil.getDefault());
@@ -911,6 +979,9 @@ public class UserODataRetrieverTest {
 			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
 			ServiceContextTestUtil.getServiceContext());
 	}
+
+	@Inject
+	private AddressLocalService _addressLocalService;
 
 	@DeleteAfterTestRun
 	private Group _group1;
