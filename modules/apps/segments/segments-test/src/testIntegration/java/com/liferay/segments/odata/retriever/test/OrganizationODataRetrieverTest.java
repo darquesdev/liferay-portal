@@ -454,6 +454,43 @@ public class OrganizationODataRetrieverTest {
 	}
 
 	@Test
+	public void testGetOrganizationsFilterByParentOrganizationIdAndNotOrganizationId()
+		throws Exception {
+
+		Organization parentOrganization =
+			OrganizationTestUtil.addOrganization();
+
+		Organization organization1 = OrganizationTestUtil.addOrganization(
+			parentOrganization.getOrganizationId(),
+			RandomTestUtil.randomString(), false);
+
+		Organization organization2 = OrganizationTestUtil.addOrganization(
+			parentOrganization.getOrganizationId(),
+			RandomTestUtil.randomString(), false);
+
+		_organizations.add(organization1);
+
+		_organizations.add(parentOrganization);
+
+		String filterString = String.format(
+			"(parentOrganizationId eq '%s') and not(organizationId eq '%s')",
+			parentOrganization.getOrganizationId(),
+			organization2.getOrganizationId());
+
+		int count = _oDataRetriever.getResultsCount(
+			TestPropsValues.getCompanyId(), filterString,
+			LocaleUtil.getDefault());
+
+		Assert.assertEquals(1, count);
+
+		List<Organization> organizations = _oDataRetriever.getResults(
+			TestPropsValues.getCompanyId(), filterString,
+			LocaleUtil.getDefault(), 0, 1);
+
+		Assert.assertEquals(organization1, organizations.get(0));
+	}
+
+	@Test
 	public void testGetOrganizationsFilterByTreePath() throws Exception {
 		Organization organization1 = OrganizationTestUtil.addOrganization();
 		Organization organization2 = OrganizationTestUtil.addOrganization();
