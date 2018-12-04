@@ -26,9 +26,31 @@ import java.util.List;
  */
 public interface AsahClient {
 
+	/**
+	 * Returns active individual segments with members
+	 *
+	 * @param cur
+	 * @param delta
+	 * @param orderByFields
+	 * @return
+	 */
 	public Results<IndividualSegment> getIndividualSegments(
-		String weDeployKey, String query, List<String> fields, String name,
-		String segmentType, String status, int cur, int delta,
+		int cur, int delta, List<OrderByField> orderByFields);
+
+	/**
+	 * Returns individuals belonging to the current company that are associated
+	 * to the given segment
+	 *
+	 * @param individualSegmentId
+	 * @param cur
+	 * @param delta
+	 * @param orderByFields
+	 * @return
+	 */
+	public Results<Individual> getIndividualSegmentIndividuals(
+		String individualSegmentId, int cur, int delta,
 		List<OrderByField> orderByFields);
+
+	// Filters individuals by dataSourcePK, if available
 
 }
