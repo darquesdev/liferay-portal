@@ -41,6 +41,7 @@ import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryServiceUtil;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalServiceUtil;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.editor.configuration.EditorConfiguration;
 import com.liferay.portal.kernel.editor.configuration.EditorConfigurationFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -52,6 +53,7 @@ import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
@@ -60,9 +62,12 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.template.soy.util.SoyContext;
 import com.liferay.portal.template.soy.util.SoyContextFactoryUtil;
+import com.liferay.segments.model.SegmentsEntry;
+import com.liferay.segments.service.SegmentsEntryServiceUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -133,6 +138,8 @@ public class FragmentsEditorDisplayContext {
 		}
 
 		soyContext.put("availableLanguages", availableLanguagesSoyContext);
+
+		soyContext.put("availableSegments", _getSoyContextAvailableSegments());
 
 		soyContext.put("classNameId", _classNameId);
 		soyContext.put("classPK", _classPK);
@@ -411,6 +418,43 @@ public class FragmentsEditorDisplayContext {
 		}
 
 		return soyContext;
+	}
+
+	private SoyContext _getSoyContextAvailableSegments()
+		throws PortalException {
+
+		List<SegmentsEntry> segmentsEntries =
+			SegmentsEntryServiceUtil.getSegmentsEntries(
+				_getGroupId(), QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+				new OrderByComparator<SegmentsEntry>() {
+
+					@Override
+					public int compare(SegmentsEntry o1, SegmentsEntry o2) {
+						Date modifiedDate = o1.getModifiedDate();
+
+						return modifiedDate.compareTo(o2.getModifiedDate());
+					}
+
+				});
+
+		SoyContext availableSegmentsSoyContext =
+			SoyContextFactoryUtil.createSoyContext();
+
+		for (SegmentsEntry segmentsEntry : segmentsEntries) {
+			SoyContext segmentsSoyContext =
+				SoyContextFactoryUtil.createSoyContext();
+
+			segmentsSoyContext.put(
+				"segmentLabel",
+				segmentsEntry.getName(_themeDisplay.getLocale()));
+
+			segmentsSoyContext.put("segmentId", segmentsEntry.getKey());
+
+			availableSegmentsSoyContext.put(
+				segmentsEntry.getKey(), segmentsSoyContext);
+		}
+
+		return availableSegmentsSoyContext;
 	}
 
 	private List<SoyContext> _getSoyContextFragmentCollections(int type) {
