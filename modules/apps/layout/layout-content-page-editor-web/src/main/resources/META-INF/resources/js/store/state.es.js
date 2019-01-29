@@ -77,8 +77,8 @@ const INITIAL_STATE = {
 		.objectOf(
 			Config.shapeOf(
 				{
-					id: Config.string().required(),
-					label: Config.string().required()
+					segmentId: Config.string().required(),
+					segmentLabel: Config.string().required()
 				}
 			)
 		)
@@ -648,18 +648,19 @@ const INITIAL_STATE = {
 
 const DEFAULT_INITIAL_STATE = Object.keys(INITIAL_STATE)
 	.reduce(
-		(accumulatedState = {}, key) => {
+		(accumulatedState, key) => {
 			let newAccumulatgedState = accumulatedState;
-			if (INITIAL_STATE[key]) {
+			if (INITIAL_STATE[key].config) {
 				newAccumulatgedState = Object.assign(
 					accumulatedState,
 					{
-						[key]: INITIAL_STATE[key]
+						[key]: INITIAL_STATE[key].config.value
 					}
 				);
 			}
 			return newAccumulatgedState;
-		}
+		},
+		{}
 	);
 
 export {INITIAL_STATE, DEFAULT_INITIAL_STATE};

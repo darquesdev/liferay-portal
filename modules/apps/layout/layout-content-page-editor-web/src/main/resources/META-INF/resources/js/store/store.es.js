@@ -94,7 +94,6 @@ class Store extends State {
 	 */
 	constructor(initialState = {}, reducers = []) {
 		super();
-
 		this._setInitialState(initialState);
 		this.registerReducers(reducers);
 	}
