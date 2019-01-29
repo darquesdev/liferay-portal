@@ -13,8 +13,8 @@ class SegmentSelector extends Component {
 		const {availableSegments} = state;
 		const segments = Object.keys(availableSegments).map(
 			key => ({
-				id: key,
-				label: availableSegments[key]
+				id: availableSegments[key].segmentId,
+				label: availableSegments[key].segmentLabel
 			})
 		);
 
