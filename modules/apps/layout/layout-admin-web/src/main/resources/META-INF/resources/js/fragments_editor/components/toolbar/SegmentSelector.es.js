@@ -10,11 +10,13 @@ import {CHANGE_SEGMENT_ID} from '../../actions/actions.es';
 class SegmentSelector extends Component {
 
 	prepareStateForRender(state) {
-		const { availableSegments } = state;
-		const segments = Object.keys(availableSegments).map(key => ({
-			label: availableSegments[key],
-			id: key
-		}));
+		const {availableSegments} = state;
+		const segments = Object.keys(availableSegments).map(
+			key => ({
+				id: key,
+				label: availableSegments[key]
+			})
+		);
 
 		return Object.assign({}, state, {segments});
 	}
