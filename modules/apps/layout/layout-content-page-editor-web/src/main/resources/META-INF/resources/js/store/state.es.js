@@ -647,10 +647,20 @@ const INITIAL_STATE = {
 };
 
 const DEFAULT_INITIAL_STATE = Object.keys(INITIAL_STATE)
-	.reduce((accumulatedState = {}, key) => {
-		if(INITIAL_STATE[key]) return Object.assign(accumulatedState, { [key]: INITIAL_STATE[key] });
-		return accumulatedState;
-	});
+	.reduce(
+		(accumulatedState = {}, key) => {
+			let newAccumulatgedState = accumulatedState;
+			if (INITIAL_STATE[key]) {
+				newAccumulatgedState = Object.assign(
+					accumulatedState,
+					{
+						[key]: INITIAL_STATE[key]
+					}
+				);
+			}
+			return newAccumulatgedState;
+		}
+	);
 
 export {INITIAL_STATE, DEFAULT_INITIAL_STATE};
 export default INITIAL_STATE;
