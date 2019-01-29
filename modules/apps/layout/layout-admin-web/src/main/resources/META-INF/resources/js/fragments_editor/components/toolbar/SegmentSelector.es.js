@@ -9,6 +9,16 @@ import {CHANGE_SEGMENT_ID} from '../../actions/actions.es';
  */
 class SegmentSelector extends Component {
 
+	prepareStateForRender(state) {
+		const { availableSegments } = state;
+		const segments = Object.keys(availableSegments).map(key => ({
+			label: availableSegments[key],
+			id: key
+		}));
+
+		return Object.assign({}, state, {segments});
+	}
+
 	/**
 	 * @param {object} event
 	 * @private
@@ -33,7 +43,7 @@ const ConnectedSegmentSelector = getConnectedComponent(
 		'classPK',
 		'portletNamespace',
 		'segmentId',
-		'segments'
+		'availableSegments'
 	]
 );
 

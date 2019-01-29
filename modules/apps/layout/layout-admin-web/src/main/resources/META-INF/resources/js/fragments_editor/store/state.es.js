@@ -68,6 +68,23 @@ const INITIAL_STATE = {
 		.value({}),
 
 	/**
+	 * List of available segments
+	 * @default []
+	 * @review
+	 * @type {object[]}
+	 */
+	availableSegments: Config
+		.objectOf(
+			Config.shapeOf(
+				{
+					id: Config.string().required(),
+					label: Config.string().required()
+				}
+			)
+		)
+		.value({}),
+
+	/**
 	 * Class name id used for storing changes.
 	 * @default ''
 	 * @review
@@ -379,23 +396,6 @@ const INITIAL_STATE = {
 		.value(''),
 
 	/**
-	 * List of available segments
-	 * @default []
-	 * @review
-	 * @type {object[]}
-	 */
-	segments: Config
-		.arrayOf(
-			Config.shapeOf(
-				{
-					id: Config.string().required(),
-					label: Config.string().required()
-				}
-			)
-		)
-		.value([]),
-
-	/**
 	 * Editable type of the field that is being mapped
 	 * @default ''
 	 * @review
@@ -646,5 +646,11 @@ const INITIAL_STATE = {
 
 };
 
-export {INITIAL_STATE};
+const DEFAULT_INITIAL_STATE = Object.keys(INITIAL_STATE)
+	.reduce((accumulatedState = {}, key) => {
+		if(INITIAL_STATE[key]) return Object.assign(accumulatedState, { [key]: INITIAL_STATE[key] });
+		return accumulatedState;
+	});
+
+export {INITIAL_STATE, DEFAULT_INITIAL_STATE};
 export default INITIAL_STATE;
