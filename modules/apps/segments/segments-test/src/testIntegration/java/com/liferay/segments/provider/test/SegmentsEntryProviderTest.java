@@ -66,10 +66,8 @@ public class SegmentsEntryProviderTest {
 	public void setUp() throws Exception {
 		_group = GroupTestUtil.addGroup();
 
-		_defaultSegment =
-			_segmentsEntryLocalService.fetchSegmentsEntry(
-				_group.getGroupId(), SegmentsConstants.KEY_DEFAULT, true);
-
+		_defaultSegment = _segmentsEntryLocalService.fetchSegmentsEntry(
+			_group.getGroupId(), SegmentsConstants.KEY_DEFAULT, true);
 	}
 
 	@Test
@@ -308,7 +306,6 @@ public class SegmentsEntryProviderTest {
 			_group.getGroupId(), CriteriaSerializer.serialize(criteria1),
 			User.class.getName());
 
-
 		Criteria criteria2 = new Criteria();
 
 		_contextSegmentsCriteriaContributor.contribute(
@@ -392,6 +389,8 @@ public class SegmentsEntryProviderTest {
 	)
 	private SegmentsCriteriaContributor _contextSegmentsCriteriaContributor;
 
+	private SegmentsEntry _defaultSegment;
+
 	@DeleteAfterTestRun
 	private Group _group;
 
@@ -415,8 +414,6 @@ public class SegmentsEntryProviderTest {
 
 	@DeleteAfterTestRun
 	private User _user2;
-
-	private SegmentsEntry _defaultSegment;
 
 	@Inject(
 		filter = "segments.criteria.contributor.key=user-organization",
