@@ -71,6 +71,7 @@ class FragmentEntryLinkContent extends Component {
 			[
 				'content',
 				'languageId',
+				'segmentId',
 				'selectedMappingTypes',
 				'showMapping'
 			]
@@ -114,9 +115,13 @@ class FragmentEntryLinkContent extends Component {
 		}
 
 		this._update(
-			this.languageId,
-			this.defaultLanguageId,
-			[this._updateEditableStatus]
+			{
+				defaultLanguageId: this.defaultLanguageId,
+				defaultSegmentId: this.defaultSegmentId,
+				languageId: this.languageId,
+				segmentId: this.segmentId,
+				updateFunctions: [this._updateEditableStatus]
+			}
 		);
 	}
 
@@ -127,6 +132,17 @@ class FragmentEntryLinkContent extends Component {
 	 */
 	syncLanguageId(newLanguageId) {
 		if (this.content && (newLanguageId !== this.languageId)) {
+			this._renderContent(this.content);
+		}
+	}
+
+	/**
+	 * Callback executed when languageId property has changed
+	 * @inheritDoc
+	 * @review
+	 */
+	syncSegmentId(newSegmentId) {
+		if (this.content && (newSegmentId !== this.segmentId)) {
 			this._renderContent(this.content);
 		}
 	}
@@ -219,6 +235,7 @@ class FragmentEntryLinkContent extends Component {
 					{
 						content: editable.innerHTML,
 						defaultLanguageId: this.defaultLanguageId,
+						defaultSegmentId: this.defaultSegmentId,
 						editableId: editable.id,
 						editableValues,
 						element: editable,
@@ -230,12 +247,14 @@ class FragmentEntryLinkContent extends Component {
 						fragmentEntryLinkId: this.fragmentEntryLinkId,
 						languageId: this.languageId,
 						portletNamespace: this.portletNamespace,
+						segmentId: this.segmentId,
 
 						processorsOptions: {
 							defaultEditorConfiguration,
 							imageSelectorURL: this.imageSelectorURL
 						},
 
+						segmentId: this.segmentId,
 						showMapping: this.showMapping,
 						store: this.store,
 						type: editable.getAttribute('type')
@@ -312,6 +331,7 @@ class FragmentEntryLinkContent extends Component {
 				editableId: event.name,
 				editableValue: event.value,
 				editableValueId: this.languageId,
+				editableValueSegmentId: this.segmentId || this.defaultSegmentId,
 				fragmentEntryLinkId: this.fragmentEntryLinkId
 			}
 		);
@@ -339,9 +359,13 @@ class FragmentEntryLinkContent extends Component {
 					this._createBackgroundImageStyleEditors();
 
 					this._update(
-						this.languageId,
-						this.defaultLanguageId,
-						[this._updateEditableStatus]
+						{
+							defaultLanguageId: this.defaultLanguageId,
+							defaultSegmentId: this.defaultSegmentId,
+							languageId: this.languageId,
+							segmentId: this.segmentId,
+							updateFunctions: [this._updateEditableStatus]
+						}
 					);
 				}
 			);
@@ -358,16 +382,30 @@ class FragmentEntryLinkContent extends Component {
 	 * @private
 	 * @review
 	 */
-	_update(languageId, defaultLanguageId, updateFunctions) {
+	_update(
+		{
+			defaultLanguageId,
+			defaultSegmentId,
+			languageId,
+			segmentId,
+			updateFunctions
+		}
+	) {
 		const editableValues = this.editableValues[EDITABLE_FRAGMENT_ENTRY_PROCESSOR];
 
 		Object.keys(editableValues).forEach(
 			editableId => {
 				const editableValue = editableValues[editableId];
 
-				const defaultValue = editableValue[defaultLanguageId] || editableValue.defaultValue;
+				const defaultSegmentedEditableValue = editableValue[defaultSegmentId];
+
+				const segmentedEditableValue = segmentId && editableValue[segmentId] || editableValue[defaultSegmentId];
+
+				const defaultValue = (defaultSegmentedEditableValue && segmentedEditableValue[defaultLanguageId]) ||
+					defaultSegmentedEditableValue && defaultSegmentedEditableValue[defaultLanguageId] ||
+					editableValue.defaultValue;
 				const mappedField = editableValue.mappedField || '';
-				const value = editableValue[languageId];
+				const value = segmentedEditableValue && segmentedEditableValue[languageId];
 
 				updateFunctions.forEach(
 					updateFunction => updateFunction(
@@ -458,6 +496,16 @@ FragmentEntryLinkContent.STATE = {
 	defaultLanguageId: Config.string().required(),
 
 	/**
+	 * Default segment id.
+	 * @default undefined
+	 * @instance
+	 * @memberOf FragmentsEditor
+	 * @review
+	 * @type {!string}
+	 */
+	defaultSegmentId: Config.string().required(),
+
+	/**
 	 * Editable values that should be used instead of the default ones
 	 * inside editable fields.
 	 * @default undefined
@@ -497,6 +545,16 @@ FragmentEntryLinkContent.STATE = {
 	 * @type {!string}
 	 */
 	languageId: Config.string().required(),
+
+	/**
+	 * Currently selected segment id.
+	 * @default undefined
+	 * @instance
+	 * @memberOf FragmentsEditor
+	 * @review
+	 * @type {!string}
+	 */
+	segmentId: Config.string(),
 
 	/**
 	 * Selected mapping type label
