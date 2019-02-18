@@ -116,16 +116,6 @@ const INITIAL_STATE = {
 		.value(''),
 
 	/**
-	 * Default selected segmented id
-	 * @default undefined
-	 * @review
-	 * @type {string}
-	 */
-	defaultSegmentId: Config
-		.string()
-		.required(),
-
-	/**
 	 * URL for removing fragment entries of the underlying model.
 	 * @default ''
 	 * @review
@@ -169,6 +159,42 @@ const INITIAL_STATE = {
 			)
 		)
 		.value([]),
+
+	/**
+	 * List of available segments
+	 * @default []
+	 * @review
+	 * @type {object[]}
+	 */
+	availableExperiences: Config
+		.objectOf(
+			Config.shapeOf(
+				{
+					experienceId: Config.string(),
+					experienceLabel: Config.string(),
+					segmentId: Config.string()
+				}
+			)
+		)
+		.value({}),
+	
+	experienceCreation: Config
+		.shapeOf(
+			{
+				creatingExperience:Config.bool().required(),
+				error: Config.string(),
+			}
+		)
+		.value(
+			{
+				creatingExperience: false,
+				error: null,
+			}
+		),
+
+	experienceId: Config
+		.string()
+		.value(),
 
 	/**
 	 * List of fragment instances being used.

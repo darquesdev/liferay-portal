@@ -26,3 +26,8 @@ export const UPDATE_LAST_SAVE_DATE = 'updateLastSaveDate';
 export const UPDATE_SAVING_CHANGES_STATUS = 'updateSavingChangesStatus';
 export const UPDATE_SECTION_CONFIG = 'updateSectionConfig';
 export const UPDATE_TRANSLATION_STATUS = 'updateTranslationStatus';
+
+export const CREATE_EXPERIENCE = 'CREATE_EXPERIENCE';
+export const REMOVE_EXPERIENCE = 'REMOVE_EXPERIENCE';
+export const SELECT_EXPERIENCE = 'SELECT_EXPERIENCE';
+export const START_CREATE_EXPERIENCE = 'START_CREATE_EXPERIENCE';
