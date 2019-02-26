@@ -201,7 +201,7 @@ public class EditableFragmentEntryProcessor implements FragmentEntryProcessor {
 	@Override
 	public String processFragmentEntryLinkHTML(
 			FragmentEntryLink fragmentEntryLink, String html, String mode,
-			Locale locale, long[] segmentsIds)
+			Locale locale, long[] experiencesIds)
 		throws PortalException {
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
@@ -244,7 +244,7 @@ public class EditableFragmentEntryProcessor implements FragmentEntryProcessor {
 
 			if (Validator.isNull(value)) {
 				value = _getEditableValue(
-					editableValueJSONObject, locale, segmentsIds);
+					editableValueJSONObject, locale, experiencesIds);
 			}
 
 			JSONObject configJSONObject = editableValueJSONObject.getJSONObject(
@@ -311,11 +311,11 @@ public class EditableFragmentEntryProcessor implements FragmentEntryProcessor {
 	}
 
 	private String _getEditableValue(
-		JSONObject jsonObject, Locale locale, long[] segmentsIds) {
+		JSONObject jsonObject, Locale locale, long[] experiencesIds) {
 
 		if (_isPersonalizationSupported(jsonObject)) {
 			return _getEditableValueBySegmentsAndLocale(
-				jsonObject, locale, segmentsIds);
+				jsonObject, locale, experiencesIds);
 		}
 
 		return _getEditableValueByLocale(jsonObject, locale);
@@ -341,9 +341,9 @@ public class EditableFragmentEntryProcessor implements FragmentEntryProcessor {
 	}
 
 	private String _getEditableValueBySegmentsAndLocale(
-		JSONObject jsonObject, Locale locale, long[] segmentsIds) {
+		JSONObject jsonObject, Locale locale, long[] experiencesIds) {
 
-		for (long segmentId : segmentsIds) {
+		for (long segmentId : experiencesIds) {
 			String value = _getSegmentValue(jsonObject, locale, segmentId);
 
 			if (Validator.isNotNull(value)) {
@@ -564,7 +564,7 @@ public class EditableFragmentEntryProcessor implements FragmentEntryProcessor {
 	}
 
 	private static final String _EDITABLE_VALUES_SEGMENTS_PREFIX =
-		"segment-id-";
+		"experience-id-";
 
 	private static final String[] _REQUIRED_ATTRIBUTE_NAMES = {"id", "type"};
 
