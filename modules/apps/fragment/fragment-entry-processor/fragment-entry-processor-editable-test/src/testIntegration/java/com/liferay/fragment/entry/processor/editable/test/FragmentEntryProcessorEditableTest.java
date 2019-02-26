@@ -151,7 +151,7 @@ public class FragmentEntryProcessorEditableTest {
 	}
 
 	@Test
-	public void testFragmentEntryProcessorEditableWithMatchedDefaultSegmentAndDefaultLanguage()
+	public void testFragmentEntryProcessorEditableWithMatchedDefaultExperienceAndDefaultLanguage()
 		throws Exception {
 
 		FragmentEntryLink fragmentEntryLink =
@@ -163,8 +163,7 @@ public class FragmentEntryProcessorEditableTest {
 
 		fragmentEntryLink.setEditableValues(
 			_getJsonFileAsString(
-				"fragment_entry_link_editable_values_matching_default_" +
-					"segment_and_default_language.json"));
+				"fragment_entry_link_editable_values_matching_default_experience_and_default_language.json"));
 
 		Assert.assertEquals(
 			_processedHTML,
@@ -208,8 +207,7 @@ public class FragmentEntryProcessorEditableTest {
 
 		fragmentEntryLink.setEditableValues(
 			_getJsonFileAsString(
-				"fragment_entry_link_editable_values_matching_language_" +
-					"compatibility.json"));
+				"fragment_entry_link_editable_values_matching_language_compatibility.json"));
 
 		Assert.assertEquals(
 			_processedHTML,
@@ -219,7 +217,7 @@ public class FragmentEntryProcessorEditableTest {
 	}
 
 	@Test
-	public void testFragmentEntryProcessorEditableWithMatchedSegmentAndDefaultLanguage()
+	public void testFragmentEntryProcessorEditableWithMatchedExperienceAndDefaultLanguage()
 		throws Exception {
 
 		FragmentEntryLink fragmentEntryLink =
@@ -231,8 +229,7 @@ public class FragmentEntryProcessorEditableTest {
 
 		fragmentEntryLink.setEditableValues(
 			_getJsonFileAsString(
-				"fragment_entry_link_editable_values_matching_segment_and_" +
-					"default_language.json"));
+				"fragment_entry_link_editable_values_matching_experience_and_default_language.json"));
 
 		Assert.assertEquals(
 			_processedHTML,
@@ -242,7 +239,7 @@ public class FragmentEntryProcessorEditableTest {
 	}
 
 	@Test
-	public void testFragmentEntryProcessorEditableWithMatchedSegmentAndLanguage()
+	public void testFragmentEntryProcessorEditableWithMatchedExperienceAndLanguage()
 		throws Exception {
 
 		FragmentEntryLink fragmentEntryLink =
@@ -254,8 +251,7 @@ public class FragmentEntryProcessorEditableTest {
 
 		fragmentEntryLink.setEditableValues(
 			_getJsonFileAsString(
-				"fragment_entry_link_editable_values_matching_segment_and_" +
-					"language.json"));
+				"fragment_entry_link_editable_values_matching_experience_and_language.json"));
 
 		Assert.assertEquals(
 			_processedHTML,
@@ -285,8 +281,7 @@ public class FragmentEntryProcessorEditableTest {
 
 		fragmentEntryLink.setEditableValues(
 			_getJsonFileAsString(
-				"fragment_entry_link_editable_values_unmatching_language." +
-					"json"));
+				"fragment_entry_link_editable_values_unmatching_language.json"));
 
 		Assert.assertEquals(
 			_processedHTML,
@@ -308,8 +303,7 @@ public class FragmentEntryProcessorEditableTest {
 
 		fragmentEntryLink.setEditableValues(
 			_getJsonFileAsString(
-				"fragment_entry_link_editable_values_unmatching_language_" +
-					"compatibility.json"));
+				"fragment_entry_link_editable_values_unmatching_language_compatibility.json"));
 
 		Assert.assertEquals(
 			_processedHTML,
