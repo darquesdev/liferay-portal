@@ -12,14 +12,33 @@
  * details.
  */
 
-package com.liferay.segments.constants;
+package com.liferay.segments.exception;
+
+import aQute.bnd.annotation.ProviderType;
+
+import com.liferay.portal.kernel.exception.PortalException;
 
 /**
  * @author Eduardo García
  */
-public class SegmentsWebKeys {
+@ProviderType
+public class SegmentsExperienceSegmentsEntryException extends PortalException {
 
-	public static final String SEGMENTS_EXPERIENCE_IDS =
-		"SEGMENTS_EXPERIENCE_IDS";
+	public SegmentsExperienceSegmentsEntryException() {
+	}
+
+	public SegmentsExperienceSegmentsEntryException(String msg) {
+		super(msg);
+	}
+
+	public SegmentsExperienceSegmentsEntryException(
+		String msg, Throwable cause) {
+
+		super(msg, cause);
+	}
+
+	public SegmentsExperienceSegmentsEntryException(Throwable cause) {
+		super(cause);
+	}
 
 }
