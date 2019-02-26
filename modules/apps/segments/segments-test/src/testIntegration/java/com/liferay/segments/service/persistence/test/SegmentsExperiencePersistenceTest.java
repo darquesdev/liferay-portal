@@ -222,6 +222,24 @@ public class SegmentsExperiencePersistenceTest {
 	}
 
 	@Test
+	public void testCountByG_S_C_C_A() throws Exception {
+		_persistence.countByG_S_C_C_A(RandomTestUtil.nextLong(),
+			RandomTestUtil.nextLong(), RandomTestUtil.nextLong(),
+			RandomTestUtil.nextLong(), RandomTestUtil.randomBoolean());
+
+		_persistence.countByG_S_C_C_A(0L, 0L, 0L, 0L,
+			RandomTestUtil.randomBoolean());
+	}
+
+	@Test
+	public void testCountByG_S_C_C_AArrayable() throws Exception {
+		_persistence.countByG_S_C_C_A(RandomTestUtil.nextLong(),
+			new long[] { RandomTestUtil.nextLong(), 0L },
+			RandomTestUtil.nextLong(), RandomTestUtil.nextLong(),
+			RandomTestUtil.randomBoolean());
+	}
+
+	@Test
 	public void testFindByPrimaryKeyExisting() throws Exception {
 		SegmentsExperience newSegmentsExperience = addSegmentsExperience();
 

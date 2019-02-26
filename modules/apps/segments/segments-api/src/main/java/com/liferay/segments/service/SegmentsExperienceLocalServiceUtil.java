@@ -284,6 +284,27 @@ public class SegmentsExperienceLocalServiceUtil {
 			active, start, end, orderByComparator);
 	}
 
+	public static java.util.List<com.liferay.segments.model.SegmentsExperience> getSegmentsExperiences(
+		long groupId, long[] segmentsEntryIds, long classNameId, long classPK,
+		boolean active, boolean addDefaultExperience, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.segments.model.SegmentsExperience> orderByComparator)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .getSegmentsExperiences(groupId, segmentsEntryIds,
+			classNameId, classPK, active, addDefaultExperience, start, end,
+			orderByComparator);
+	}
+
+	public static java.util.List<com.liferay.segments.model.SegmentsExperience> getSegmentsExperiences(
+		long groupId, long[] segmentsEntryIds, long classNameId, long classPK,
+		boolean active, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.segments.model.SegmentsExperience> orderByComparator)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .getSegmentsExperiences(groupId, segmentsEntryIds,
+			classNameId, classPK, active, start, end, orderByComparator);
+	}
+
 	/**
 	* Returns the number of segments experiences.
 	*
