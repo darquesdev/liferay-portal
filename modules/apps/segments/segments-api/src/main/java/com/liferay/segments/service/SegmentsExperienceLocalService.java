@@ -65,7 +65,7 @@ public interface SegmentsExperienceLocalService
 	 *
 	 * Never modify or reference this interface directly. Always use {@link SegmentsExperienceLocalServiceUtil} to access the segments experience local service. Add custom service methods to <code>com.liferay.segments.service.impl.SegmentsExperienceLocalServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public SegmentsExperience addDefaultExperience(
+	public SegmentsExperience addDefaultSegmentsExperience(
 			long groupId, long classNameId, long classPK)
 		throws PortalException;
 
