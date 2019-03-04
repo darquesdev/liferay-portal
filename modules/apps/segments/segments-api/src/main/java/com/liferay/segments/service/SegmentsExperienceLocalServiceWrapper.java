@@ -37,6 +37,15 @@ public class SegmentsExperienceLocalServiceWrapper
 	}
 
 	@Override
+	public com.liferay.segments.model.SegmentsExperience addDefaultExperience(
+			long groupId, long classNameId, long classPK)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _segmentsExperienceLocalService.addDefaultExperience(
+			groupId, classNameId, classPK);
+	}
+
+	@Override
 	public com.liferay.segments.model.SegmentsExperience addSegmentsExperience(
 			long segmentsEntryId, long classNameId, long classPK,
 			java.util.Map<java.util.Locale, String> nameMap, int priority,
