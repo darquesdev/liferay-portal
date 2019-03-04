@@ -15,6 +15,7 @@
 package com.liferay.segments.service.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
@@ -25,9 +26,13 @@ import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.util.ResourceBundleLoader;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.segments.constants.SegmentsConstants;
+import com.liferay.segments.exception.SegmentsExperienceSegmentsEntryException;
 import com.liferay.segments.model.SegmentsEntry;
 import com.liferay.segments.model.SegmentsExperience;
 import com.liferay.segments.service.SegmentsEntryLocalService;
@@ -63,12 +68,33 @@ public class SegmentsExperienceLocalServiceTest {
 	}
 
 	@Test
+	public void testAddDefaultExperience() throws PortalException {
+		long classNameId = _classNameLocalService.getClassNameId(
+			Layout.class.getName());
+
+		SegmentsExperience segmentsExperience =
+			_segmentsExperienceLocalService.addDefaultExperience(
+				_group.getGroupId(), classNameId, RandomTestUtil.randomLong());
+
+		Map<Locale, String> nameMap = ResourceBundleUtil.getLocalizationMap(
+			_resourceBundleLoader, "default-experience-name");
+
+		Assert.assertEquals(nameMap, segmentsExperience.getNameMap());
+
+		SegmentsEntry segmentsEntry = _getDefaultSegment(_group.getGroupId());
+
+		Assert.assertEquals(
+			segmentsEntry.getSegmentsEntryId(),
+			segmentsExperience.getSegmentsEntryId());
+	}
+
+	@Test
 	public void testAddSegmentsExperience() throws Exception {
 		SegmentsEntry segmentsEntry = SegmentsTestUtil.addSegmentsEntry(
 			_group.getGroupId());
 		long classNameId = _classNameLocalService.getClassNameId(
 			Layout.class.getName());
-		long classPK = RandomTestUtil.randomInt();
+		long classPK = RandomTestUtil.randomLong();
 		Map<Locale, String> nameMap = RandomTestUtil.randomLocaleStringMap();
 		int priority = RandomTestUtil.randomInt();
 		boolean active = RandomTestUtil.randomBoolean();
@@ -145,11 +171,29 @@ public class SegmentsExperienceLocalServiceTest {
 			RandomTestUtil.randomInt(), true, serviceContext);
 	}
 
+	private SegmentsEntry _getDefaultSegment(long groupId)
+		throws PortalException {
+
+		SegmentsEntry segmentsEntry =
+			_segmentsEntryLocalService.fetchSegmentsEntry(
+				groupId, SegmentsConstants.KEY_DEFAULT, true);
+
+		if (segmentsEntry == null) {
+			throw new SegmentsExperienceSegmentsEntryException(
+				"Unable to find default segment");
+		}
+
+		return segmentsEntry;
+	}
+
 	@Inject
 	private ClassNameLocalService _classNameLocalService;
 
 	@DeleteAfterTestRun
 	private Group _group;
+
+	@Inject(filter = "bundle.symbolic.name=com.liferay.segments.lang")
+	private ResourceBundleLoader _resourceBundleLoader;
 
 	@Inject
 	private SegmentsEntryLocalService _segmentsEntryLocalService;
