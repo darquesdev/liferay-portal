@@ -127,7 +127,7 @@ public class LayoutModelDocumentContributor
 
 		try {
 			SegmentsExperience segmentsExperience =
-				_segmentsExperienceLocalService.fetchDefaultSegmentsExperience(
+				_segmentsExperienceLocalService.getDefaultSegmentsExperience(
 					groupId, classNameId, classPK, true);
 
 			if (segmentsExperience != null) {
