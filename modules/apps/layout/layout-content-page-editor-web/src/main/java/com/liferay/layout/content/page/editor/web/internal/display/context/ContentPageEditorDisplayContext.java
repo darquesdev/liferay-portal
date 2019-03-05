@@ -120,9 +120,6 @@ public class ContentPageEditorDisplayContext {
 		classNameId = PortalUtil.getClassNameId(className);
 		themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
-
-		_defaultExperienceId = _getDefaultExperienceId();
-
 		_fragmentCollectionContributorTracker =
 			(FragmentCollectionContributorTracker)request.getAttribute(
 				ContentPageEditorWebKeys.
@@ -147,7 +144,7 @@ public class ContentPageEditorDisplayContext {
 		soyContext.put("classPK", classPK);
 		soyContext.put(
 			"defaultEditorConfigurations", _getDefaultConfigurations());
-		soyContext.put("defaultExperienceId", _defaultExperienceId);
+		soyContext.put("defaultExperienceId", _getDefaultExperienceId());
 		soyContext.put("defaultLanguageId", themeDisplay.getLanguageId());
 		soyContext.put("defaultSegmentId", _getDefaultSegmentId());
 		soyContext.put(
@@ -198,7 +195,7 @@ public class ContentPageEditorDisplayContext {
 		soyContext.put(
 			"availableLanguages", _getAvailableLanguagesSoyContext());
 		soyContext.put("classPK", themeDisplay.getPlid());
-		soyContext.put("defaultExperienceId", _defaultExperienceId);
+		soyContext.put("defaultExperienceId", _getDefaultExperienceId());
 		soyContext.put("defaultLanguageId", themeDisplay.getLanguageId());
 		soyContext.put("defaultSegmentId", _getDefaultSegmentId());
 		soyContext.put("lastSaveDate", StringPool.BLANK);
@@ -358,19 +355,26 @@ public class ContentPageEditorDisplayContext {
 	}
 
 	private String _getDefaultExperienceId() {
+		if (_defaultExperienceId != null) {
+			return _defaultExperienceId;
+		}
+
+		_defaultExperienceId = StringPool.BLANK;
+
 		try {
 			SegmentsExperience segmentsExperience =
 				SegmentsExperienceLocalServiceUtil.
 					fetchDefaultSegmentsExperience(
 						getGroupId(), classNameId, classPK, true);
 
-			return String.valueOf(segmentsExperience.getSegmentsExperienceId());
+			_defaultExperienceId = String.valueOf(
+				segmentsExperience.getSegmentsExperienceId());
 		}
 		catch (PortalException pe) {
 			_log.error("Unable to find default experience", pe);
 		}
 
-		return StringPool.BLANK;
+		return _defaultExperienceId;
 	}
 
 	private String _getDefaultSegmentId() {
@@ -831,7 +835,7 @@ public class ContentPageEditorDisplayContext {
 		ContentPageEditorDisplayContext.class);
 
 	private Map<String, Object> _defaultConfigurations;
-	private final String _defaultExperienceId;
+	private String _defaultExperienceId;
 	private final FragmentCollectionContributorTracker
 		_fragmentCollectionContributorTracker;
 	private Long _groupId;
