@@ -1,11 +1,4 @@
-import {
-	ADD_FRAGMENT_ENTRY_LINK,
-	CHANGE_LANGUAGE_ID,
-	CREATE_EXPERIENCE,
-	REMOVE_FRAGMENT_ENTRY_LINK,
-	SELECT_EXPERIENCE,
-	UPDATE_TRANSLATION_STATUS
-} from '../actions/actions.es';
+import {ADD_FRAGMENT_ENTRY_LINK, CHANGE_LANGUAGE_ID, CREATE_EXPERIENCE, REMOVE_FRAGMENT_ENTRY_LINK, SELECT_EXPERIENCE, UPDATE_TRANSLATION_STATUS} from '../actions/actions.es';
 import {setIn} from '../utils/FragmentsEditorUpdateUtils.es';
 import {prefixExperienceId} from '../utils/prefixExperienceId.es';
 
