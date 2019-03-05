@@ -365,11 +365,9 @@ public class ContentPageEditorDisplayContext {
 						getGroupId(), classNameId, classPK, true);
 
 			return String.valueOf(segmentsExperience.getSegmentsExperienceId());
-
 		}
 		catch (PortalException pe) {
 			_log.error("Unable to find default experience", pe);
-
 		}
 
 		return StringPool.BLANK;
