@@ -1,10 +1,7 @@
-import {
-	CREATE_EXPERIENCE,
-	END_CREATE_EXPERIENCE,
-	SELECT_EXPERIENCE,
-	START_CREATE_EXPERIENCE
-} from '../actions/actions.es';
+import {CREATE_EXPERIENCE, END_CREATE_EXPERIENCE, SELECT_EXPERIENCE, START_CREATE_EXPERIENCE} from '../actions/actions.es';
 import {setIn} from '../utils/utils.es';
+
+const CREATE_EXPERIENCE_URL = '/segments.segmentsexperience/add-segments-experience';
 
 /**
  * @param {!object} state
@@ -15,7 +12,7 @@ import {setIn} from '../utils/utils.es';
  * @return {object}
  * @review
  */
-export function createExperienceReducer(state, actionType, payload) {
+function createExperienceReducer(state, actionType, payload) {
 	return new Promise(
 		resolve => {
 			let nextState = state;
@@ -92,11 +89,10 @@ export function createExperienceReducer(state, actionType, payload) {
 /**
  * @param {!object} state
  * @param {!string} actionType
- * @param {object} [payload]
  * @return {object}
  * @review
  */
-export function startCreateExperience(state, actionType, payload) {
+function startCreateExperience(state, actionType) {
 	let nextState = state;
 
 	if (actionType === START_CREATE_EXPERIENCE) {
@@ -115,11 +111,10 @@ export function startCreateExperience(state, actionType, payload) {
 /**
  * @param {!object} state
  * @param {!string} actionType
- * @param {object} [payload]
  * @return {object}
  * @review
  */
-export function endCreateExperience(state, actionType, payload) {
+function endCreateExperience(state, actionType) {
 	let nextState = state;
 
 	if (actionType === END_CREATE_EXPERIENCE) {
@@ -145,7 +140,7 @@ export function endCreateExperience(state, actionType, payload) {
  * @param {!string} payload.experienceId
  * @returns
  */
-export function selectExperienceReducer(state, actionType, payload) {
+function selectExperienceReducer(state, actionType, payload) {
 	let nextState = state;
 
 	if (actionType === SELECT_EXPERIENCE) {
@@ -159,4 +154,9 @@ export function selectExperienceReducer(state, actionType, payload) {
 	return nextState;
 }
 
-const CREATE_EXPERIENCE_URL = '/segments.segmentsexperience/add-segments-experience';
+export {
+	createExperienceReducer,
+	startCreateExperience,
+	endCreateExperience,
+	selectExperienceReducer
+};
