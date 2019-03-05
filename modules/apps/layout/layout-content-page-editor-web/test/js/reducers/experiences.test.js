@@ -63,7 +63,7 @@ describe(
 					liferayServiceParams,
 					expect.objectContaining({}),
 					expect.objectContaining({})
-				);
+				)
 
 				const secondPayload = {
 					experienceLabel: 'second test experience label',
