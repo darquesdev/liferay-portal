@@ -50,16 +50,11 @@ public class ContentPageLayoutEditorDisplayContext
 
 		SoyContext soyContext = super.getEditorContext();
 
-		List<SegmentsEntry> segmentsEntries = _getSegmentsEntries();
-
 		soyContext.put(
 			"availableExperiences",
 			_getSoyContextAvailableSegmentsExperiences());
-
 		soyContext.put(
-			"availableSegments",
-			_getSoyContextAvailableSegmentsEntries(segmentsEntries));
-
+			"availableSegments", _getSoyContextAvailableSegmentsEntries());
 		soyContext.put("sidebarPanels", getSidebarPanelSoyContexts(false));
 
 		_editorSoyContext = soyContext;
@@ -77,12 +72,8 @@ public class ContentPageLayoutEditorDisplayContext
 
 		SoyContext soyContext = super.getFragmentsEditorToolbarContext();
 
-		List<SegmentsEntry> segmentsEntries = _getSegmentsEntries();
-
 		soyContext.put(
-			"availableSegments",
-			_getSoyContextAvailableSegmentsEntries(segmentsEntries));
-
+			"availableSegments", _getSoyContextAvailableSegmentsEntries());
 		soyContext.put(
 			"availableExperiences",
 			_getSoyContextAvailableSegmentsExperiences());
@@ -92,16 +83,13 @@ public class ContentPageLayoutEditorDisplayContext
 		return _fragmentsEditorToolbarSoyContext;
 	}
 
-	private List<SegmentsEntry> _getSegmentsEntries() {
-		return SegmentsEntryServiceUtil.getSegmentsEntries(
-			getGroupId(), true, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	private SoyContext _getSoyContextAvailableSegmentsEntries(
-		List<SegmentsEntry> segmentsEntries) {
-
+	private SoyContext _getSoyContextAvailableSegmentsEntries() {
 		SoyContext availableSegmentsEntriesSoyContext =
 			SoyContextFactoryUtil.createSoyContext();
+
+		List<SegmentsEntry> segmentsEntries =
+			SegmentsEntryServiceUtil.getSegmentsEntries(
+				getGroupId(), true, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 
 		for (SegmentsEntry segmentsEntry : segmentsEntries) {
 			SoyContext segmentsSoyContext =
