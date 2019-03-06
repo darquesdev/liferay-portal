@@ -105,7 +105,7 @@ public class FragmentEntryProcessorRegistryImpl
 	@Override
 	public String processFragmentEntryLinkHTML(
 			FragmentEntryLink fragmentEntryLink, String mode, Locale locale,
-			long[] experiencesIds)
+			long[] segmentsExperienceIds)
 		throws PortalException {
 
 		String html = fragmentEntryLink.getHtml();
@@ -114,7 +114,7 @@ public class FragmentEntryProcessorRegistryImpl
 				_serviceTrackerList) {
 
 			html = fragmentEntryProcessor.processFragmentEntryLinkHTML(
-				fragmentEntryLink, html, mode, locale, experiencesIds);
+				fragmentEntryLink, html, mode, locale, segmentsExperienceIds);
 		}
 
 		return html;
