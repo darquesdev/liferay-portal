@@ -144,9 +144,10 @@ public class ContentPageEditorDisplayContext {
 		soyContext.put("classPK", classPK);
 		soyContext.put(
 			"defaultEditorConfigurations", _getDefaultConfigurations());
-		soyContext.put("defaultExperienceId", _getDefaultExperienceId());
+		soyContext.put(
+			"defaultExperienceId", _getDefaultSegmentsExperienceId());
 		soyContext.put("defaultLanguageId", themeDisplay.getLanguageId());
-		soyContext.put("defaultSegmentId", _getDefaultSegmentId());
+		soyContext.put("defaultSegmentId", _getDefaultSegmentsEntryId());
 		soyContext.put(
 			"deleteFragmentEntryLinkURL",
 			getFragmentEntryActionURL(
@@ -195,9 +196,10 @@ public class ContentPageEditorDisplayContext {
 		soyContext.put(
 			"availableLanguages", _getAvailableLanguagesSoyContext());
 		soyContext.put("classPK", themeDisplay.getPlid());
-		soyContext.put("defaultExperienceId", _getDefaultExperienceId());
+		soyContext.put(
+			"defaultExperienceId", _getDefaultSegmentsExperienceId());
 		soyContext.put("defaultLanguageId", themeDisplay.getLanguageId());
-		soyContext.put("defaultSegmentId", _getDefaultSegmentId());
+		soyContext.put("defaultSegmentId", _getDefaultSegmentsEntryId());
 		soyContext.put("lastSaveDate", StringPool.BLANK);
 		soyContext.put("portletNamespace", _renderResponse.getNamespace());
 		soyContext.put(
@@ -354,34 +356,41 @@ public class ContentPageEditorDisplayContext {
 		return _defaultConfigurations;
 	}
 
-	private String _getDefaultExperienceId() {
-		if (_defaultExperienceId != null) {
-			return _defaultExperienceId;
+	private String _getDefaultSegmentsEntryId() {
+		if (_defaultSegmentsEntryId != null) {
+			return _defaultSegmentsEntryId;
 		}
 
-		_defaultExperienceId = StringPool.BLANK;
+		SegmentsEntry segmentsEntry =
+			SegmentsEntryLocalServiceUtil.fetchSegmentsEntry(
+				getGroupId(), SegmentsConstants.KEY_DEFAULT, true);
+
+		_defaultSegmentsEntryId = String.valueOf(
+			segmentsEntry.getSegmentsEntryId());
+
+		return _defaultSegmentsEntryId;
+	}
+
+	private String _getDefaultSegmentsExperienceId() {
+		if (_defaultSegmentsExperienceId != null) {
+			return _defaultSegmentsExperienceId;
+		}
+
+		_defaultSegmentsExperienceId = StringPool.BLANK;
 
 		try {
 			SegmentsExperience segmentsExperience =
 				SegmentsExperienceLocalServiceUtil.getDefaultSegmentsExperience(
 					getGroupId(), classNameId, classPK, true);
 
-			_defaultExperienceId = String.valueOf(
+			_defaultSegmentsExperienceId = String.valueOf(
 				segmentsExperience.getSegmentsExperienceId());
 		}
 		catch (PortalException pe) {
 			_log.error("Unable to find default experience", pe);
 		}
 
-		return _defaultExperienceId;
-	}
-
-	private String _getDefaultSegmentId() {
-		SegmentsEntry segmentsEntry =
-			SegmentsEntryLocalServiceUtil.fetchSegmentsEntry(
-				getGroupId(), SegmentsConstants.KEY_DEFAULT, true);
-
-		return String.valueOf(segmentsEntry.getSegmentsEntryId());
+		return _defaultSegmentsExperienceId;
 	}
 
 	private List<SoyContext> _getFragmentEntriesSoyContext(
@@ -834,7 +843,8 @@ public class ContentPageEditorDisplayContext {
 		ContentPageEditorDisplayContext.class);
 
 	private Map<String, Object> _defaultConfigurations;
-	private String _defaultExperienceId;
+	private String _defaultSegmentsEntryId;
+	private String _defaultSegmentsExperienceId;
 	private final FragmentCollectionContributorTracker
 		_fragmentCollectionContributorTracker;
 	private Long _groupId;
