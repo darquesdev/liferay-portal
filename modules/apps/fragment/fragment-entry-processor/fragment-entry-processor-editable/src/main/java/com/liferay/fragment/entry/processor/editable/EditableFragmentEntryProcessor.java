@@ -314,7 +314,7 @@ public class EditableFragmentEntryProcessor implements FragmentEntryProcessor {
 		JSONObject jsonObject, Locale locale, long[] segmentsExperienceIds) {
 
 		if (_isPersonalizationSupported(jsonObject)) {
-			return _getEditableValueBySegmentsAndLocale(
+			return _getEditableValueBySegmentsExperienceAndLocale(
 				jsonObject, locale, segmentsExperienceIds);
 		}
 
@@ -340,11 +340,12 @@ public class EditableFragmentEntryProcessor implements FragmentEntryProcessor {
 		return value;
 	}
 
-	private String _getEditableValueBySegmentsAndLocale(
+	private String _getEditableValueBySegmentsExperienceAndLocale(
 		JSONObject jsonObject, Locale locale, long[] segmentsExperienceIds) {
 
-		for (long segmentId : segmentsExperienceIds) {
-			String value = _getSegmentValue(jsonObject, locale, segmentId);
+		for (long segmentsExperienceId : segmentsExperienceIds) {
+			String value = _getSegmentsExperienceValue(
+				jsonObject, locale, segmentsExperienceId);
 
 			if (Validator.isNotNull(value)) {
 				return value;
@@ -367,24 +368,25 @@ public class EditableFragmentEntryProcessor implements FragmentEntryProcessor {
 			editableElementParser.getFieldTemplate(), "field_name", value);
 	}
 
-	private String _getSegmentValue(
-		JSONObject jsonObject, Locale locale, Long segmentId) {
+	private String _getSegmentsExperienceValue(
+		JSONObject jsonObject, Locale locale, Long segmentsExperienceId) {
 
-		JSONObject segmentJSONObject = jsonObject.getJSONObject(
-			_EDITABLE_VALUES_SEGMENTS_PREFIX + segmentId);
+		JSONObject segmentsExperienceJSONObject = jsonObject.getJSONObject(
+			_EDITABLE_VALUES_SEGMENTS_EXPERIENCE_ID_PREFIX +
+				segmentsExperienceId);
 
-		if (segmentJSONObject == null) {
+		if (segmentsExperienceJSONObject == null) {
 			return StringPool.BLANK;
 		}
 
-		String value = segmentJSONObject.getString(
+		String value = segmentsExperienceJSONObject.getString(
 			LanguageUtil.getLanguageId(locale));
 
 		if (Validator.isNotNull(value)) {
 			return value;
 		}
 
-		value = segmentJSONObject.getString(
+		value = segmentsExperienceJSONObject.getString(
 			LanguageUtil.getLanguageId(LocaleUtil.getMostRelevantLocale()));
 
 		if (Validator.isNotNull(value)) {
@@ -423,12 +425,14 @@ public class EditableFragmentEntryProcessor implements FragmentEntryProcessor {
 	}
 
 	private boolean _isPersonalizationSupported(JSONObject jsonObject) {
-		Iterator<String> segmentsKeys = jsonObject.keys();
+		Iterator<String> keys = jsonObject.keys();
 
-		while (segmentsKeys.hasNext()) {
-			String segmentKey = segmentsKeys.next();
+		while (keys.hasNext()) {
+			String key = keys.next();
 
-			if (segmentKey.startsWith(_EDITABLE_VALUES_SEGMENTS_PREFIX)) {
+			if (key.startsWith(
+					_EDITABLE_VALUES_SEGMENTS_EXPERIENCE_ID_PREFIX)) {
+
 				return true;
 			}
 		}
@@ -563,7 +567,7 @@ public class EditableFragmentEntryProcessor implements FragmentEntryProcessor {
 				"you-must-define-a-valid-type-for-each-editable-element"));
 	}
 
-	private static final String _EDITABLE_VALUES_SEGMENTS_PREFIX =
+	private static final String _EDITABLE_VALUES_SEGMENTS_EXPERIENCE_ID_PREFIX =
 		"experience-id-";
 
 	private static final String[] _REQUIRED_ATTRIBUTE_NAMES = {"id", "type"};

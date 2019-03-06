@@ -64,9 +64,9 @@ public class SegmentResourceImpl extends BaseSegmentResourceImpl {
 		List<SegmentsEntry> segmentsEntries = new ArrayList<>(
 			segmentsEntryIds.length);
 
-		for (long segmentEntryId : segmentsEntryIds) {
+		for (long segmentsEntryId : segmentsEntryIds) {
 			SegmentsEntry segmentsEntry =
-				_segmentsEntryService.getSegmentsEntry(segmentEntryId);
+				_segmentsEntryService.getSegmentsEntry(segmentsEntryId);
 
 			segmentsEntries.add(segmentsEntry);
 		}
