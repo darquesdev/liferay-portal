@@ -70,7 +70,7 @@ String ppid = ParamUtil.getString(request, "p_p_id");
 					try {
 						request.setAttribute(WebKeys.PORTLET_DECORATE, Boolean.FALSE);
 
-						long[] experiencesIds = GetterUtil.getLongValues(request.getAttribute(SegmentsWebKeys.SEGMENTS_EXPERIENCE_IDS), new long[0]);
+						long[] segmentsExperienceIds = GetterUtil.getLongValues(request.getAttribute(SegmentsWebKeys.SEGMENTS_EXPERIENCE_IDS), new long[0]);
 
 						for (int i = 0; i < structureJSONArray.length(); i++) {
 							JSONObject rowJSONObject = structureJSONArray.getJSONObject(i);
@@ -126,7 +126,7 @@ String ppid = ParamUtil.getString(request, "p_p_id");
 													}
 												%>
 
-													<%= FragmentEntryRenderUtil.renderFragmentEntryLink(fragmentEntryLink, FragmentEntryLinkConstants.VIEW, Collections.emptyMap(), locale, experiencesIds, request, response) %>
+													<%= FragmentEntryRenderUtil.renderFragmentEntryLink(fragmentEntryLink, FragmentEntryLinkConstants.VIEW, Collections.emptyMap(), locale, segmentsExperienceIds, request, response) %>
 
 												<%
 												}

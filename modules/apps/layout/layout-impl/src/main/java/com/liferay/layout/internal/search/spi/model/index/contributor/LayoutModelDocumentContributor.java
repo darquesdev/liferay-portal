@@ -98,7 +98,7 @@ public class LayoutModelDocumentContributor
 			response = serviceContext.getResponse();
 		}
 
-		long[] experiencesIds = _getExperiencesIds(
+		long[] segmentsExperienceIds = _getSegmentsExperienceIds(
 			layout.getGroupId(),
 			_classNameLocalService.getClassNameId(Layout.class.getName()),
 			layout.getPrimaryKey());
@@ -111,7 +111,7 @@ public class LayoutModelDocumentContributor
 					LayoutPageTemplateStructureRenderUtil.renderLayoutContent(
 						request, response, layoutPageTemplateStructure,
 						FragmentEntryLinkConstants.VIEW, new HashMap<>(),
-						locale, experiencesIds);
+						locale, segmentsExperienceIds);
 
 				document.addText(
 					Field.getLocalizedName(locale, Field.CONTENT), content);
@@ -122,7 +122,7 @@ public class LayoutModelDocumentContributor
 		}
 	}
 
-	private long[] _getExperiencesIds(
+	private long[] _getSegmentsExperienceIds(
 		long groupId, long classNameId, long classPK) {
 
 		try {
