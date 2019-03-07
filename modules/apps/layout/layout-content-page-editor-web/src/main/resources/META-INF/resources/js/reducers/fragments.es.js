@@ -468,9 +468,9 @@ function updateEditableValueReducer(state, actionType, payload) {
 
 							[
 								'config',
-								state.defaultSegmentId,
+								state.defaultSegmentsEntryId,
 								...Object.keys(state.availableLanguages),
-								...Object.keys(state.availableSegments)
+								...Object.keys(state.availableSegmentsEntries)
 							].forEach(
 								key => {
 									delete nextEditableValue[key];

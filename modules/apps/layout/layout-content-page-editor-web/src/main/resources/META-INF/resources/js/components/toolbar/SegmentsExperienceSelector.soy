@@ -1,39 +1,39 @@
-{namespace com.liferay.layout.content.page.editor.web.ExperienceSelector}
+{namespace com.liferay.layout.content.page.editor.web.SegmentsExperienceSelector}
 
 /**
- * ExperienceSelector
+ * SegmentsExperienceSelector
  */
 {template .render}
 	{@param? activeExperienceLabel: string }
-	{@param? availableExperiences: list<[
-		experienceId: string,
-		experienceLabel: string,
+	{@param? availableSegmentsExperiences: list<[
+		segmentsExperienceId: string,
+		segmentsExperienceLabel: string,
 		segmentLabel: string
 	]>}
 	{@param? _closeModal: any }
-	{@param? _handleExperienceClick: any}
+	{@param? _handleSegmentsExperienceClick: any}
 	{@param? _handleDropdownBlur: any}
 	{@param? _handleDropdownFocus: any}
 	{@param? _handleDropdownButtonClick: any}
 	{@param? _handleFormSubmit: any }
 	{@param? _openModal: any }
 	{@param? _toggleModal: any }
-	{@param? availableSegments: list<[
-		segmentId: string,
+	{@param? availableSegmentsEntries: list<[
+		segmentEntryId: string,
 		segmentLabel: string
 	]>}
-	{@param? experienceId: string}
+	{@param? segmentsExperienceId: string}
 	{@param? openDropdown: bool}
 	{@param? portletNamespace: string}
 	{@param spritemap: string}
-	{@param? experienceCreation: ?}
+	{@param? experienceSegmentsCreation: ?}
 
-	{if $availableExperiences and length($availableExperiences) > 0}
+	{if $availableSegmentsExperiences and length($availableSegmentsExperiences) > 0}
 		<div
-			class="experience-selector position-relative"
+			class="segments-experience-selector position-relative"
 			tabindex="0"
 		>
-			<label class="mr-2 text-white" for="{$portletNamespace}ExperienceSelector">
+			<label class="mr-2 text-white" for="{$portletNamespace}SegmentsExperienceSelector">
 				{msg desc=""}experience{/msg}
 			</label>
 
@@ -42,7 +42,7 @@
 				data-onclick="{$_handleDropdownButtonClick}"
 				data-onblur="{$_handleDropdownBlur}"
 				type="button"
-				id="{$portletNamespace}ExperienceSelector"
+				id="{$portletNamespace}SegmentsExperienceSelector"
 			>
 				{$activeExperienceLabel}
 			</button>
@@ -56,7 +56,7 @@
 				<div class="align-items-start d-flex justify-content-between">
 					<h2>{msg desc=""}select-experience{/msg}</h2>
 
-					{if $availableSegments and length($availableSegments) > 0}
+					{if $availableSegments and length($availableSegmentsEntries) > 0}
 						<button class="btn btn-secondary btn-sm text-dark" data-onclick="{$_openModal}">
 							{msg desc=""}new-experience{/msg}
 						</button>
@@ -64,11 +64,11 @@
 				</div>
 
 				<ul class="list-unstyled mt-3">
-					{foreach $experience in $availableExperiences}
+					{foreach $experience in $availableSegmentsExperiences}
 						{let $experienceClasses kind="text"}
 							dropdown-menu__experience
 
-							{if $experience.experienceId == $experienceId }
+							{if $experience.segmentsExperienceId == $segmentsExperienceId }
 								{sp}dropdown-menu__experience--active
 							{/if}
 						{/let}
@@ -76,12 +76,12 @@
 						<li class="{$experienceClasses}">
 							<button
 								class="title btn-unstyled p-3 d-flex justify-content-between align-items-baseline text-dark w-100"
-								data-onclick="{$_handleExperienceClick}"
-								data-experience-id="{$experience.experienceId}"
+								data-onclick="{$_handleSegmentsExperienceClick}"
+								data-segments-experience-id="{$experience.segmentsExperienceId}"
 								tabindex="0"
 							>
 								<span class="flex-grow-1 p-1 truncate-text">
-									{$experience.experienceLabel}
+									{$experience.segmentsExperienceLabel}
 								</span>
 								<span class="audience d-inline-block p-1 truncate-text">
 									<span class="text-secondary">
@@ -98,7 +98,7 @@
 			</div>
 		</div>
 
-		{if $experienceCreation and $experienceCreation.creatingExperience }
+		{if $experienceSegmentsCreation and $experienceSegmentsCreation.creatingSegmentsExperience }
 			{call liferay.frontend.Modal.render}
 				{param body kind="html"}
 					<form autocomplete="off" class="mb-3" data-onsubmit="{$_handleFormSubmit}">
@@ -118,7 +118,7 @@
 						</div>
 
 						<div class="form-group my-2">
-							{if $availableSegments and length($availableSegments) > 0}
+							{if $availableSegments and length($availableSegmentsEntries) > 0}
 									<label for="{$portletNamespace}SegmentSelector">
 										{msg desc=""}audience{/msg}
 									</label>
@@ -129,8 +129,8 @@
 										name="experienceSegmentId"
 										ref="experienceSegmentId"
 									>
-										{foreach $segment in $availableSegments}
-											<option value="{$segment.segmentId}">
+										{foreach $segment in $availableSegmentsEntries}
+											<option value="{$segment.segmentEntryId}">
 												{$segment.segmentLabel}
 											</option>
 										{/foreach}

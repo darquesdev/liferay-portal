@@ -28,7 +28,7 @@ function addPortletReducer(state, actionType, payload) {
 					nextState.classNameId,
 					nextState.classPK,
 					nextState.portletNamespace,
-					nextState.defaultExperienceId
+					nextState.defaultSegmentsExperienceId
 				)
 					.then(
 						response => {
@@ -114,7 +114,7 @@ function addPortletReducer(state, actionType, payload) {
  * @param {string} classNameId
  * @param {string} classPK
  * @param {string} portletNamespace
- * @param {string} defaultExperienceId
+ * @param {string} defaultSegmentsExperienceId
  * @return {object}
  * @review
  */
@@ -124,7 +124,7 @@ function _addPortlet(
 	classNameId,
 	classPK,
 	portletNamespace,
-	defaultExperienceId
+	defaultSegmentsExperienceId
 ) {
 	const formData = new FormData();
 
@@ -152,7 +152,7 @@ function _addPortlet(
 				return {
 					config: {},
 					content: response.content,
-					editableValues: editableValuesMigrator(response.editableValues, defaultExperienceId),
+					editableValues: editableValuesMigrator(response.editableValues, defaultSegmentsExperienceId),
 					fragmentEntryLinkId: response.fragmentEntryLinkId,
 					name: response.name
 				};
