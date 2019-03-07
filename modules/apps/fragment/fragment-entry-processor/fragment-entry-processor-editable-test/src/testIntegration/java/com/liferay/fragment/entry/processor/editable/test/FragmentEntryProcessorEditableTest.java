@@ -164,7 +164,7 @@ public class FragmentEntryProcessorEditableTest {
 		fragmentEntryLink.setEditableValues(
 			_getJsonFileAsString(
 				"fragment_entry_link_editable_values_matching_default_" +
-					"experience_and_default_language.json"));
+					"segments_experience_and_default_language.json"));
 
 		Assert.assertEquals(
 			_processedHTML,
@@ -186,8 +186,8 @@ public class FragmentEntryProcessorEditableTest {
 
 		fragmentEntryLink.setEditableValues(
 			_getJsonFileAsString(
-				"fragment_entry_link_editable_values_matching_experience_and_" +
-					"default_language.json"));
+				"fragment_entry_link_editable_values_matching_segments_" +
+					"experience_and_default_language.json"));
 
 		Assert.assertEquals(
 			_processedHTML,
@@ -209,8 +209,8 @@ public class FragmentEntryProcessorEditableTest {
 
 		fragmentEntryLink.setEditableValues(
 			_getJsonFileAsString(
-				"fragment_entry_link_editable_values_matching_experience_" +
-					"and_language.json"));
+				"fragment_entry_link_editable_values_matching_segments_" +
+					"experience_and_language.json"));
 
 		Assert.assertEquals(
 			_processedHTML,

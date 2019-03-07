@@ -50,10 +50,11 @@ public class ContentPageLayoutEditorDisplayContext
 		SoyContext soyContext = super.getEditorContext();
 
 		soyContext.put(
-			"availableExperiences",
-			_getSoyContextAvailableSegmentsExperiences());
+			"availableSegmentsEntries",
+			_getSoyContextAvailableSegmentsEntries());
 		soyContext.put(
-			"availableSegments", _getSoyContextAvailableSegmentsEntries());
+			"availableSegmentsExperiences",
+			_getSoyContextAvailableSegmentsExperiences());
 		soyContext.put("sidebarPanels", getSidebarPanelSoyContexts(false));
 
 		_editorSoyContext = soyContext;
@@ -72,9 +73,10 @@ public class ContentPageLayoutEditorDisplayContext
 		SoyContext soyContext = super.getFragmentsEditorToolbarContext();
 
 		soyContext.put(
-			"availableSegments", _getSoyContextAvailableSegmentsEntries());
+			"availableSegmentsEntries",
+			_getSoyContextAvailableSegmentsEntries());
 		soyContext.put(
-			"availableExperiences",
+			"availableSegmentsExperiences",
 			_getSoyContextAvailableSegmentsExperiences());
 
 		_fragmentsEditorToolbarSoyContext = soyContext;
@@ -94,10 +96,10 @@ public class ContentPageLayoutEditorDisplayContext
 				SoyContextFactoryUtil.createSoyContext();
 
 			segmentsEntriesSoyContext.put(
-				"segmentId",
+				"segmentsEntryId",
 				String.valueOf(segmentsEntry.getSegmentsEntryId()));
 			segmentsEntriesSoyContext.put(
-				"segmentLabel",
+				"segmentsEntryLabel",
 				segmentsEntry.getName(themeDisplay.getLocale()));
 
 			availableSegmentsEntriesSoyContext.put(
@@ -123,13 +125,13 @@ public class ContentPageLayoutEditorDisplayContext
 				SoyContextFactoryUtil.createSoyContext();
 
 			segmentsExperiencesSoyContext.put(
-				"experienceId",
+				"segmentsExperienceId",
 				String.valueOf(segmentsExperience.getSegmentsExperienceId()));
 			segmentsExperiencesSoyContext.put(
-				"experienceLabel",
+				"segmentsExperienceLabel",
 				segmentsExperience.getName(themeDisplay.getLocale()));
 			segmentsExperiencesSoyContext.put(
-				"segmentId",
+				"segmentsEntryId",
 				String.valueOf(segmentsExperience.getSegmentsEntryId()));
 
 			availableSegmentsEntriesSoyContext.put(

@@ -144,10 +144,10 @@ public class ContentPageEditorDisplayContext {
 		soyContext.put("classPK", classPK);
 		soyContext.put(
 			"defaultEditorConfigurations", _getDefaultConfigurations());
-		soyContext.put(
-			"defaultExperienceId", _getDefaultSegmentsExperienceId());
 		soyContext.put("defaultLanguageId", themeDisplay.getLanguageId());
-		soyContext.put("defaultSegmentId", _getDefaultSegmentsEntryId());
+		soyContext.put("defaultSegmentsEntryId", _getDefaultSegmentsEntryId());
+		soyContext.put(
+			"defaultSegmentsExperienceId", _getDefaultSegmentsExperienceId());
 		soyContext.put(
 			"deleteFragmentEntryLinkURL",
 			getFragmentEntryActionURL(
@@ -196,10 +196,10 @@ public class ContentPageEditorDisplayContext {
 		soyContext.put(
 			"availableLanguages", _getAvailableLanguagesSoyContext());
 		soyContext.put("classPK", themeDisplay.getPlid());
-		soyContext.put(
-			"defaultExperienceId", _getDefaultSegmentsExperienceId());
 		soyContext.put("defaultLanguageId", themeDisplay.getLanguageId());
-		soyContext.put("defaultSegmentId", _getDefaultSegmentsEntryId());
+		soyContext.put("defaultSegmentsEntryId", _getDefaultSegmentsEntryId());
+		soyContext.put(
+			"defaultSegmentsExperienceId", _getDefaultSegmentsExperienceId());
 		soyContext.put("lastSaveDate", StringPool.BLANK);
 		soyContext.put("portletNamespace", _renderResponse.getNamespace());
 		soyContext.put(
@@ -387,7 +387,7 @@ public class ContentPageEditorDisplayContext {
 				segmentsExperience.getSegmentsExperienceId());
 		}
 		catch (PortalException pe) {
-			_log.error("Unable to find default experience", pe);
+			_log.error("Unable to get default segments experience", pe);
 		}
 
 		return _defaultSegmentsExperienceId;
