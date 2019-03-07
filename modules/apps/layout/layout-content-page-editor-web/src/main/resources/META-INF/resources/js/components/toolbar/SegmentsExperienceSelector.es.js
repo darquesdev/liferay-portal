@@ -2,8 +2,8 @@ import Component from 'metal-component';
 import Soy, {Config} from 'metal-soy';
 
 import getConnectedComponent from '../../store/ConnectedComponent.es';
-import templates from './ExperienceSelector.soy';
-import {CREATE_EXPERIENCE, END_CREATE_EXPERIENCE, SELECT_EXPERIENCE, START_CREATE_EXPERIENCE} from '../../actions/actions.es';
+import templates from './SegmentsExperienceSelector.soy';
+import {CREATE_SEGMENTS_EXPERIENCE, END_CREATE_SEGMENTS_EXPERIENCE, SELECT_SEGMENTS_EXPERIENCE, START_CREATE_SEGMENTS_EXPERIENCE} from '../../actions/actions.es';
 import 'frontend-js-web/liferay/compat/modal/Modal.es';
 import {setIn} from '../../utils/FragmentsEditorUpdateUtils.es';
 
@@ -37,37 +37,37 @@ function comparePriority(obj1, obj2) {
  *
  * @review
  * @param {Array} segments
- * @param {string} segmentId
+ * @param {string} segmentEntryId
  * @returns {string|undefined}
  */
-function findSegmentLabelById(segments, segmentId) {
+function findSegmentLabelById(segments, segmentEntryId) {
 	const mostWantedSegment = segments.find(
-		segment => segment.segmentId === segmentId
+		segment => segment.segmentEntryId === segmentEntryId
 	);
 
 	return mostWantedSegment && mostWantedSegment.segmentLabel;
 }
 
 /**
- * ExperienceSelector
+ * SegmentsExperienceSelector
  */
-class ExperienceSelector extends Component {
+class SegmentsExperienceSelector extends Component {
 
 	/**
-	 * Transforms `availableSegments` and `availableExperiences` objects into arrays
+	 * Transforms `availableSegments` and `availableSegmentsExperiences` objects into arrays
 	 * Adds `activeExperienceLabel` to the component state
 	 *
 	 * @inheritDoc
 	 * @review
 	 */
 	prepareStateForRender(state) {
-		const availableExperiencesArray = Object.values(state.availableExperiences || [])
+		const availableSegmentsExperiencesArray = Object.values(state.availableSegmentsExperiences || [])
 			.sort(comparePriority)
 			.map(
 				experience => {
 					const label = findSegmentLabelById(
 						Object.values(state.availableSegments),
-						experience.segmentId
+						experience.segmentEntryId
 					);
 
 					const updatedExperience = setIn(
@@ -80,25 +80,25 @@ class ExperienceSelector extends Component {
 				}
 			);
 
-		const selectedExperienceId = state.experienceId || state.defaultExperienceId;
+		const selectedSegmentsExperienceId = state.segmentsExperienceId || state.defaultSegmentsExperienceId;
 
-		const activeExperience = availableExperiencesArray.find(
-			experience => experience.experienceId === selectedExperienceId
+		const activeExperience = availableSegmentsExperiencesArray.find(
+			experience => experience.segmentsExperienceId === selectedSegmentsExperienceId
 		);
 
 		const availableSegments = Object.values(state.availableSegments || [])
 			.filter(
-				segment => segment.segmentId !== state.defaultSegmentId
+				segment => segment.segmentEntryId !== state.defaultSegmentId
 			);
 
 		const innerState = Object.assign(
 			{},
 			state,
 			{
-				activeExperienceLabel: activeExperience && activeExperience.experienceLabel,
-				availableExperiences: availableExperiencesArray,
+				activeExperienceLabel: activeExperience && activeExperience.segmentsExperienceLabel,
+				availableSegmentsExperiences: availableSegmentsExperiencesArray,
 				availableSegments,
-				experienceId: selectedExperienceId
+				segmentsExperienceId: selectedSegmentsExperienceId
 			}
 		);
 
@@ -108,7 +108,7 @@ class ExperienceSelector extends Component {
 	/**
 	 * @private
 	 * @review
-	 * @memberof ExperienceSelector
+	 * @memberof SegmentsExperienceSelector
 	 */
 	_closeDropdown() {
 		this.openDropdown = false;
@@ -117,37 +117,37 @@ class ExperienceSelector extends Component {
 	/**
 	 * @private
 	 * @review
-	 * @memberof ExperienceSelector
+	 * @memberof SegmentsExperienceSelector
 	 */
 	_closeModal() {
 		this.store.dispatchAction(
-			END_CREATE_EXPERIENCE
+			END_CREATE_SEGMENTS_EXPERIENCE
 		);
 	}
 
 	/**
 	 * @private
 	 * @review
-	 * @param {!string} experienceLabel
-	 * @param {!string} segmentId
-	 * @memberof ExperienceSelector
+	 * @param {!string} segmentsExperienceLabel
+	 * @param {!string} segmentEntryId
+	 * @memberof SegmentsExperienceSelector
 	 */
-	_createExperience(experienceLabel, segmentId) {
+	_createExperience(segmentsExperienceLabel, segmentEntryId) {
 		this.store.dispatchAction(
-			CREATE_EXPERIENCE,
+			CREATE_SEGMENTS_EXPERIENCE,
 			{
-				experienceLabel,
-				segmentId
+				segmentsExperienceLabel,
+				segmentEntryId
 			}
 		).dispatchAction(
-			END_CREATE_EXPERIENCE
+			END_CREATE_SEGMENTS_EXPERIENCE
 		);
 	}
 
 	/**
 	 * @private
 	 * @review
-	 * @memberof ExperienceSelector
+	 * @memberof SegmentsExperienceSelector
 	 */
 	_handleDropdownBlur() {
 		cancelAnimationFrame(this.willToggleDropdownId);
@@ -162,7 +162,7 @@ class ExperienceSelector extends Component {
 	/**
 	 * @private
 	 * @review
-	 * @memberof ExperienceSelector
+	 * @memberof SegmentsExperienceSelector
 	 */
 	_handleDropdownButtonClick() {
 		this._toggleDropdown();
@@ -171,7 +171,7 @@ class ExperienceSelector extends Component {
 	/**
 	 * @private
 	 * @review
-	 * @memberof ExperienceSelector
+	 * @memberof SegmentsExperienceSelector
 	 */
 	_handleDropdownFocus() {
 		cancelAnimationFrame(this.willToggleDropdownId);
@@ -181,18 +181,18 @@ class ExperienceSelector extends Component {
 	 * @private
 	 * @review
 	 * @param {Event} event
-	 * @memberof ExperienceSelector
+	 * @memberof SegmentsExperienceSelector
 	 */
-	_handleExperienceClick(event) {
-		const experienceId = event.delegateTarget.dataset.experienceId;
-		this._selectExperience(experienceId);
+	_handleSegmentsExperienceClick(event) {
+		const segmentsExperienceId = event.delegateTarget.dataset.segmentsExperienceId;
+		this._selectSegmentsExperience(segmentsExperienceId);
 	}
 
 	/**
 	 *
 	 * @review
 	 * @param {Event} event
-	 * @memberof ExperienceSelector
+	 * @memberof SegmentsExperienceSelector
 	 */
 	_handleFormSubmit(event) {
 		event.preventDefault();
@@ -206,7 +206,7 @@ class ExperienceSelector extends Component {
 	/**
 	 * @private
 	 * @review
-	 * @memberof ExperienceSelector
+	 * @memberof SegmentsExperienceSelector
 	 */
 	_openDropdown() {
 		this.openDropdown = true;
@@ -215,25 +215,25 @@ class ExperienceSelector extends Component {
 	/**
 	 * @private
 	 * @review
-	 * @memberof ExperienceSelector
+	 * @memberof SegmentsExperienceSelector
 	 */
 	_openModal() {
 		this.store.dispatchAction(
-			START_CREATE_EXPERIENCE
+			START_CREATE_SEGMENTS_EXPERIENCE
 		);
 	}
 
 	/**
 	 * @private
 	 * @review
-	 * @param {!string} experienceId
-	 * @memberof ExperienceSelector
+	 * @param {!string} segmentsExperienceId
+	 * @memberof SegmentsExperienceSelector
 	 */
-	_selectExperience(experienceId) {
+	_selectSegmentsExperience(segmentsExperienceId) {
 		this.store.dispatchAction(
-			SELECT_EXPERIENCE,
+			SELECT_SEGMENTS_EXPERIENCE,
 			{
-				experienceId
+				segmentsExperienceId
 			}
 		);
 	}
@@ -241,10 +241,10 @@ class ExperienceSelector extends Component {
 	/**
 	 * @private
 	 * @review
-	 * @memberof ExperienceSelector
+	 * @memberof SegmentsExperienceSelector
 	 */
 	_toggleModal() {
-		const modalAction = this.experienceCreation.creatingExperience ?
+		const modalAction = this.experienceSegmentsCreation.creatingSegmentsExperience ?
 			this._closeModal :
 			this._openModal;
 
@@ -254,7 +254,7 @@ class ExperienceSelector extends Component {
 	/**
 	 * @private
 	 * @review
-	 * @memberof ExperienceSelector
+	 * @memberof SegmentsExperienceSelector
 	 */
 	_toggleDropdown() {
 		const dropdownAction = this.openDropdown ?
@@ -266,22 +266,22 @@ class ExperienceSelector extends Component {
 
 }
 
-ExperienceSelector.STATE = {
+SegmentsExperienceSelector.STATE = {
 	openDropdown: Config.bool().internal().value(false),
-	segmentId: Config.string().internal()
+	segmentEntryId: Config.string().internal()
 };
 
-const ConnectedExperienceSelector = getConnectedComponent(
-	ExperienceSelector,
+const ConnectedSegmentsExperienceSelector = getConnectedComponent(
+	SegmentsExperienceSelector,
 	[
 		'classPK',
-		'availableExperiences',
-		'experienceId',
+		'availableSegmentsExperiences',
+		'segmentsExperienceId',
 		'defaultSegmentId'
 	]
 );
 
-Soy.register(ConnectedExperienceSelector, templates);
+Soy.register(ConnectedSegmentsExperienceSelector, templates);
 
-export {ConnectedExperienceSelector};
-export default ConnectedExperienceSelector;
+export {ConnectedSegmentsExperienceSelector};
+export default ConnectedSegmentsExperienceSelector;

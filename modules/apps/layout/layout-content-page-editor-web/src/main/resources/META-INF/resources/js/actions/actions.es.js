@@ -11,12 +11,12 @@ export const UPDATE_LAST_SAVE_DATE = 'updateLastSaveDate';
 export const UPDATE_SAVING_CHANGES_STATUS = 'updateSavingChangesStatus';
 
 export const CHANGE_LANGUAGE_ID = 'languageId';
-export const SELECT_EXPERIENCE = 'selectExperience';
+export const SELECT_SEGMENTS_EXPERIENCE = 'selectSegmentsExperience';
 export const UPDATE_TRANSLATION_STATUS = 'updateTranslationStatus';
 
-export const CREATE_EXPERIENCE = 'createExperience';
-export const END_CREATE_EXPERIENCE = 'endCreateExperience';
-export const START_CREATE_EXPERIENCE = 'startCreateExperience';
+export const CREATE_SEGMENTS_EXPERIENCE = 'createSegmentsExperience';
+export const END_CREATE_SEGMENTS_EXPERIENCE = 'endCreateSegmentsExperience';
+export const START_CREATE_SEGMENTS_EXPERIENCE = 'startCreateSegmentsExperience';
 
 export const ADD_SECTION = 'addSection';
 export const MOVE_SECTION = 'moveSection';

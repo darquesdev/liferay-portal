@@ -78,7 +78,7 @@ const INITIAL_STATE = {
 		.objectOf(
 			Config.shapeOf(
 				{
-					segmentId: Config.string().required(),
+					segmentEntryId: Config.string().required(),
 					segmentLabel: Config.string().required()
 				}
 			)
@@ -131,7 +131,7 @@ const INITIAL_STATE = {
 	 * @review
 	 * @type {string}
 	 */
-	defaultExperienceId: Config
+	defaultSegmentsExperienceId: Config
 		.string()
 		.value(''),
 
@@ -186,33 +186,33 @@ const INITIAL_STATE = {
 	 * @review
 	 * @type {object[]}
 	 */
-	availableExperiences: Config
+	availableSegmentsExperiences: Config
 		.objectOf(
 			Config.shapeOf(
 				{
-					experienceId: Config.string(),
-					experienceLabel: Config.string(),
-					segmentId: Config.string()
+					segmentsExperienceId: Config.string(),
+					segmentsExperienceLabel: Config.string(),
+					segmentEntryId: Config.string()
 				}
 			)
 		)
 		.value({}),
 
-	experienceCreation: Config
+	experienceSegmentsCreation: Config
 		.shapeOf(
 			{
-				creatingExperience: Config.bool().required(),
+				creatingSegmentsExperience: Config.bool().required(),
 				error: Config.string()
 			}
 		)
 		.value(
 			{
-				creatingExperience: false,
+				creatingSegmentsExperience: false,
 				error: null
 			}
 		),
 
-	experienceId: Config
+	segmentsExperienceId: Config
 		.string()
 		.value(),
 

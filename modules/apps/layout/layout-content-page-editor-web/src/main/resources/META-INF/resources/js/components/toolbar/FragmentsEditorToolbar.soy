@@ -4,7 +4,7 @@
  * FragmentsEditorToolbar
  */
 {template .render}
-	{@param defaultExperienceId: string }
+	{@param defaultSegmentsExperienceId: string }
 	{@param? availableSegments: ?}
 	{@param? _handleToggleContextualSidebarButtonClick: any}
 	{@param? classPK: ?}
@@ -33,9 +33,9 @@
 		<div class="container-fluid container-fluid-max-xl">
 			<ul class="navbar-nav">
 				<li class="nav-item">
-					{call com.liferay.layout.content.page.editor.web.ExperienceSelector.render}
+					{call com.liferay.layout.content.page.editor.web.SegmentsExperienceSelector.render}
 						{param availableSegments: $availableSegments /}
-						{param defaultExperienceId: $defaultExperienceId /}
+						{param defaultSegmentsExperienceId: $defaultSegmentsExperienceId /}
 						{param spritemap: $spritemap ?: '' /}
 						{param store: $store /}
 					{/call}
