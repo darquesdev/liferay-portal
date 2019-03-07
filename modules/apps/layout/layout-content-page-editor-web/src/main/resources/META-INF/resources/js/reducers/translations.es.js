@@ -1,6 +1,6 @@
-import {ADD_FRAGMENT_ENTRY_LINK, CHANGE_LANGUAGE_ID, CREATE_EXPERIENCE, REMOVE_FRAGMENT_ENTRY_LINK, SELECT_EXPERIENCE, UPDATE_TRANSLATION_STATUS} from '../actions/actions.es';
+import {ADD_FRAGMENT_ENTRY_LINK, CHANGE_LANGUAGE_ID, CREATE_SEGMENTS_EXPERIENCE, REMOVE_FRAGMENT_ENTRY_LINK, SELECT_SEGMENTS_EXPERIENCE, UPDATE_TRANSLATION_STATUS} from '../actions/actions.es';
 import {setIn} from '../utils/FragmentsEditorUpdateUtils.es';
-import {prefixExperienceId} from '../utils/prefixExperienceId.es';
+import {prefixSegmentsExperienceId} from '../utils/prefixSegmentsExperienceId.es';
 
 const EDITABLE_VALUES_KEY = 'com.liferay.fragment.entry.processor.editable.EditableFragmentEntryProcessor';
 
@@ -36,15 +36,15 @@ function translationStatusReducer(state, actionType) {
 		actionType === ADD_FRAGMENT_ENTRY_LINK ||
 		actionType === UPDATE_TRANSLATION_STATUS ||
 		actionType === REMOVE_FRAGMENT_ENTRY_LINK ||
-		actionType === SELECT_EXPERIENCE ||
-		actionType === CREATE_EXPERIENCE
+		actionType === SELECT_SEGMENTS_EXPERIENCE ||
+		actionType === CREATE_SEGMENTS_EXPERIENCE
 	) {
-		const experienceId = nextState.experienceId || nextState.defaultExperienceId;
+		const segmentsExperienceId = nextState.segmentsExperienceId || nextState.defaultSegmentsExperienceId;
 
 		const nextTranslationStatus = _getTranslationStatus(
 			_getLanguageKeys(nextState.availableLanguages),
 			_getEditableValues(nextState.fragmentEntryLinks),
-			prefixExperienceId(experienceId)
+			prefixSegmentsExperienceId(segmentsExperienceId)
 		);
 
 		nextState = setIn(nextState, ['translationStatus'], nextTranslationStatus);
@@ -102,7 +102,7 @@ function _getLanguageKeys(availableLanguages) {
  * @return {object} A translation status object
  * @review
  */
-function _getTranslationStatus(languageIds, editableValues, experienceId) {
+function _getTranslationStatus(languageIds, editableValues, segmentsExperienceId) {
 	const translationKeys = editableValues.map(
 		editableValue => Object.keys(editableValue).map(
 			editableValueId => editableValue[editableValueId].defaultValue
@@ -119,8 +119,8 @@ function _getTranslationStatus(languageIds, editableValues, experienceId) {
 					editableValueId => {
 						return editableValue &&
 							editableValue[editableValueId] &&
-							editableValue[editableValueId][experienceId] &&
-							editableValue[editableValueId][experienceId][languageId];
+							editableValue[editableValueId][segmentsExperienceId] &&
+							editableValue[editableValueId][segmentsExperienceId][languageId];
 					}
 				)
 			)

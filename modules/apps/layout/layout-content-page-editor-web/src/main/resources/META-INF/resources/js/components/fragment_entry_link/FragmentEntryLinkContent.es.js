@@ -9,7 +9,7 @@ import FragmentStyleEditor from './FragmentStyleEditor.es';
 import MetalStore from '../../store/store.es';
 import {setIn} from '../../utils/FragmentsEditorUpdateUtils.es';
 import {shouldUpdateOnChangeProperties} from '../../utils/FragmentsEditorComponentUtils.es';
-import {prefixExperienceId} from '../../utils/prefixExperienceId.es';
+import {prefixSegmentsExperienceId} from '../../utils/prefixSegmentsExperienceId.es';
 import templates from './FragmentEntryLinkContent.soy';
 import {UPDATE_EDITABLE_VALUE} from '../../actions/actions.es';
 
@@ -71,7 +71,7 @@ class FragmentEntryLinkContent extends Component {
 			[
 				'content',
 				'languageId',
-				'experienceId',
+				'segmentsExperienceId',
 				'selectedMappingTypes',
 				'showMapping'
 			]
@@ -116,10 +116,10 @@ class FragmentEntryLinkContent extends Component {
 
 		this._update(
 			{
-				defaultExperienceId: this.defaultExperienceId,
 				defaultLanguageId: this.defaultLanguageId,
-				experienceId: this.experienceId,
+				defaultSegmentsExperienceId: this.defaultSegmentsExperienceId,
 				languageId: this.languageId,
+				segmentsExperienceId: this.segmentsExperienceId,
 				updateFunctions: []
 			}
 		);
@@ -220,7 +220,6 @@ class FragmentEntryLinkContent extends Component {
 							mapButtonClicked: this._handleMapButtonClick
 						},
 
-						experienceId: this.experienceId,
 						fragmentEntryLinkId: this.fragmentEntryLinkId,
 
 						processorsOptions: {
@@ -228,6 +227,7 @@ class FragmentEntryLinkContent extends Component {
 							imageSelectorURL: this.imageSelectorURL
 						},
 
+						segmentsExperienceId: this.segmentsExperienceId,
 						showMapping: this.showMapping,
 						store: this.store,
 						type: editable.getAttribute('type')
@@ -298,15 +298,15 @@ class FragmentEntryLinkContent extends Component {
 	 * @param {Object} event
 	 */
 	_handleStyleChanged(event) {
-		const editableValueExperienceId = prefixExperienceId(this.experienceId) || prefixExperienceId(this.defaultExperienceId);
+		const editableValueSegmentsExperienceId = prefixSegmentsExperienceId(this.segmentsExperienceId) || prefixSegmentsExperienceId(this.defaultSegmentsExperienceId);
 
 		this.store.dispatchAction(
 			UPDATE_EDITABLE_VALUE,
 			{
 				editableId: event.name,
 				editableValue: event.value,
-				editableValueExperienceId,
 				editableValueId: this.languageId,
+				editableValueSegmentsExperienceId,
 				fragmentEntryLinkId: this.fragmentEntryLinkId
 			}
 		);
@@ -335,10 +335,10 @@ class FragmentEntryLinkContent extends Component {
 
 					this._update(
 						{
-							defaultExperienceId: this.defaultExperienceId,
 							defaultLanguageId: this.defaultLanguageId,
-							experienceId: this.experienceId,
+							defaultSegmentsExperienceId: this.defaultSegmentsExperienceId,
 							languageId: this.languageId,
+							segmentsExperienceId: this.segmentsExperienceId,
 							updateFunctions: []
 						}
 					);
@@ -360,9 +360,9 @@ class FragmentEntryLinkContent extends Component {
 	_update(
 		{
 			defaultLanguageId,
-			defaultExperienceId,
+			defaultSegmentsExperienceId,
 			languageId,
-			experienceId,
+			segmentsExperienceId,
 			updateFunctions
 		}
 	) {
@@ -371,9 +371,9 @@ class FragmentEntryLinkContent extends Component {
 		Object.keys(editableValues).forEach(
 			editableId => {
 				const editableValue = editableValues[editableId];
-				const segmentedEditableValue = experienceId && editableValue[experienceId] || editableValue[defaultExperienceId];
+				const segmentedEditableValue = segmentsExperienceId && editableValue[segmentsExperienceId] || editableValue[defaultSegmentsExperienceId];
 
-				const defaultSegmentedEditableValue = editableValue[defaultExperienceId];
+				const defaultSegmentedEditableValue = editableValue[defaultSegmentsExperienceId];
 
 				const defaultValue = (segmentedEditableValue && segmentedEditableValue[defaultLanguageId]) ||
 					defaultSegmentedEditableValue && defaultSegmentedEditableValue[defaultLanguageId] ||
@@ -447,7 +447,7 @@ FragmentEntryLinkContent.STATE = {
 	 * @review
 	 * @type {!string}
 	 */
-	defaultExperienceId: Config.string().required(),
+	defaultSegmentsExperienceId: Config.string().required(),
 
 	/**
 	 * Editable values that should be used instead of the default ones
@@ -498,7 +498,7 @@ FragmentEntryLinkContent.STATE = {
 	 * @review
 	 * @type {!string}
 	 */
-	experienceId: Config.string(),
+	segmentsExperienceId: Config.string(),
 
 	/**
 	 * Selected mapping type label

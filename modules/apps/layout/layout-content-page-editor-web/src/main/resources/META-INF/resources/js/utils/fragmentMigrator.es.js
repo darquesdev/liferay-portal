@@ -1,6 +1,6 @@
 const EDITABLE_FRAGMENT_ENTRY_PROCESSOR = 'com.liferay.fragment.entry.processor.editable.EditableFragmentEntryProcessor';
 
-function _editableFragmentMigrator(object, defaultExperienceKey) {
+function _editableFragmentMigrator(object, defaultSegmentsExperienceKey) {
 	let alternativeObject = null;
 	let defaultSegment = {};
 	Object.keys(object).forEach(
@@ -12,14 +12,14 @@ function _editableFragmentMigrator(object, defaultExperienceKey) {
 	);
 	if (Object.keys(defaultSegment).length > 0) {
 		alternativeObject = {
-			[defaultExperienceKey]: defaultSegment,
+			[defaultSegmentsExperienceKey]: defaultSegment,
 			defaultValue: object.defaultValue
 		};
 	}
 	return alternativeObject || object;
 }
 
-function editableValuesMigrator(editableValue, defaultExperienceKey) {
+function editableValuesMigrator(editableValue, defaultSegmentsExperienceKey) {
 	let jsonEditableValues = JSON.parse(editableValue);
 	let object = {
 		[EDITABLE_FRAGMENT_ENTRY_PROCESSOR]: {}
@@ -29,7 +29,7 @@ function editableValuesMigrator(editableValue, defaultExperienceKey) {
 			editableFragmentKey => {
 				object[EDITABLE_FRAGMENT_ENTRY_PROCESSOR][editableFragmentKey] = _editableFragmentMigrator(
 					jsonEditableValues[EDITABLE_FRAGMENT_ENTRY_PROCESSOR][editableFragmentKey],
-					defaultExperienceKey
+					defaultSegmentsExperienceKey
 				);
 			}
 		);

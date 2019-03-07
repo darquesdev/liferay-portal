@@ -7,7 +7,7 @@ import './FragmentEditableFieldTooltip.es';
 
 import {CLEAR_ACTIVE_ITEM, OPEN_MAPPING_FIELDS_DIALOG, UPDATE_ACTIVE_ITEM, UPDATE_EDITABLE_VALUE, UPDATE_HOVERED_ITEM, UPDATE_LAST_SAVE_DATE, UPDATE_SAVING_CHANGES_STATUS, UPDATE_TRANSLATION_STATUS} from '../../actions/actions.es';
 import {FLOATING_TOOLBAR_PANELS, FRAGMENTS_EDITOR_ITEM_TYPES} from '../../utils/constants';
-import {prefixExperienceId} from '../../utils/prefixExperienceId.es';
+import {prefixSegmentsExperienceId} from '../../utils/prefixSegmentsExperienceId.es';
 import {getConnectedComponent} from '../../store/ConnectedComponent.es';
 import {setIn, shouldClearFocus} from '../../utils/FragmentsEditorUpdateUtils.es';
 import {shouldUpdateOnChangeProperties, shouldUpdatePureComponent} from '../../utils/FragmentsEditorComponentUtils.es';
@@ -69,11 +69,11 @@ class FragmentEditableField extends Component {
 	 * @returns {object}
 	 */
 	prepareStateForRender(state) {
-		const defaultExperienceId = prefixExperienceId(this.defaultExperienceId);
-		const experienceId = prefixExperienceId(this.experienceId);
+		const defaultSegmentsExperienceId = prefixSegmentsExperienceId(this.defaultSegmentsExperienceId);
+		const segmentsExperienceId = prefixSegmentsExperienceId(this.segmentsExperienceId);
 
-		const segmentedValue = this.editableValues[experienceId] ||
-			this.editableValues[defaultExperienceId] ||
+		const segmentedValue = this.editableValues[segmentsExperienceId] ||
+			this.editableValues[defaultSegmentsExperienceId] ||
 			this.editableValues;
 
 		const translatedValue = segmentedValue[this.languageId] ||
@@ -130,7 +130,7 @@ class FragmentEditableField extends Component {
 	 */
 	shouldUpdate(changes) {
 		return this._editing ?
-			shouldUpdateOnChangeProperties(changes, ['languageId', 'experienceId']) :
+			shouldUpdateOnChangeProperties(changes, ['languageId', 'segmentsExperienceId']) :
 			shouldUpdatePureComponent(changes);
 	}
 
@@ -355,7 +355,7 @@ class FragmentEditableField extends Component {
 	 */
 	_saveChanges(newValue) {
 		this._unsavedChanges = false;
-		const editableValueExperienceId = prefixExperienceId(this.experienceId) || prefixExperienceId(this.defaultExperienceId);
+		const editableValueSegmentsExperienceId = prefixSegmentsExperienceId(this.segmentsExperienceId) || prefixSegmentsExperienceId(this.defaultSegmentsExperienceId);
 
 		this.store
 			.dispatchAction(
@@ -369,15 +369,15 @@ class FragmentEditableField extends Component {
 				{
 					editableId: this.editableId,
 					editableValue: newValue,
-					editableValueExperienceId,
 					editableValueId: this.languageId || DEFAULT_LANGUAGE_ID_KEY,
+					editableValueSegmentsExperienceId,
 					fragmentEntryLinkId: this.fragmentEntryLinkId
 				}
 			)
 			.dispatchAction(
 				UPDATE_TRANSLATION_STATUS,
 				{
-					experienceId: this.experienceId || this.defaultExperienceId
+					segmentsExperienceId: this.segmentsExperienceId || this.defaultSegmentsExperienceId
 				}
 			)
 			.dispatchAction(
@@ -532,12 +532,12 @@ const ConnectedFragmentEditableField = getConnectedComponent(
 		'activeItemId',
 		'activeItemType',
 		'defaultLanguageId',
-		'defaultExperienceId',
+		'defaultSegmentsExperienceId',
 		'hoveredItemId',
 		'hoveredItemType',
 		'languageId',
 		'portletNamespace',
-		'experienceId'
+		'segmentsExperienceId'
 	]
 );
 

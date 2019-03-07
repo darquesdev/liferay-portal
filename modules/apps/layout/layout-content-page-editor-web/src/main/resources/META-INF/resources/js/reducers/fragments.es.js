@@ -438,16 +438,16 @@ function updateEditableValueReducer(state, actionType, payload) {
 				const {
 					editableId,
 					editableValue,
-					editableValueExperienceId,
-					editableValueId
+					editableValueId,
+					editableValueSegmentsExperienceId
 				} = payload;
 
 				const {editableValues} = nextState.fragmentEntryLinks[payload.fragmentEntryLinkId];
 
-				const keysTreeArray = editableValueExperienceId ? [
+				const keysTreeArray = editableValueSegmentsExperienceId ? [
 					EDITABLE_FRAGMENT_ENTRY_PROCESSOR,
 					editableId,
-					editableValueExperienceId
+					editableValueSegmentsExperienceId
 				] : [
 					EDITABLE_FRAGMENT_ENTRY_PROCESSOR,
 					editableId
@@ -468,9 +468,9 @@ function updateEditableValueReducer(state, actionType, payload) {
 
 							[
 								'config',
-								state.defaultSegmentId,
+								state.defaultSegmentsEntryId,
 								...Object.keys(state.availableLanguages),
-								...Object.keys(state.availableSegments)
+								...Object.keys(state.availableSegmentsEntries)
 							].forEach(
 								key => {
 									delete nextEditableValue[key];
