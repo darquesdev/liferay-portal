@@ -15,11 +15,11 @@
 package com.liferay.segments.service.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.layout.constants.LayoutConstants;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -77,7 +77,7 @@ public class SegmentsExperienceLocalServiceTest {
 
 		Layout layout = LayoutTestUtil.addLayout(_group);
 
-		layout.setType(LayoutConstants.LAYOUT_TYPE_CONTENT);
+		layout.setType(LayoutConstants.TYPE_CONTENT);
 
 		layout = _layoutLocalService.updateLayout(layout);
 
