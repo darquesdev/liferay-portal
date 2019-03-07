@@ -356,8 +356,10 @@ public class SegmentsExperienceLocalServiceImpl
 			return;
 		}
 
-		SegmentsExperience segmentsExperience = fetchDefaultSegmentsExperience(
-			groupId, classNameId, classPK, false);
+		SegmentsExperience segmentsExperience =
+			segmentsExperiencePersistence.fetchByG_S_C_C_First(
+				groupId, defaultSegmentsEntry.getSegmentsEntryId(), classNameId,
+				classPK, null);
 
 		if (segmentsExperience == null) {
 			return;
