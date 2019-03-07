@@ -9,7 +9,7 @@
 export function prefixExperienceId(experienceId) {
 	return (experienceId === undefined) ?
 		undefined :
-		(EXPERIENCE_ID_PREFIX + experienceId);
+		(SEGMENT_EXPERIENCE_ID_PREFIX + experienceId);
 }
 
-const EXPERIENCE_ID_PREFIX = 'experience-id-';
+const SEGMENT_EXPERIENCE_ID_PREFIX = 'segments-experience-id-';
