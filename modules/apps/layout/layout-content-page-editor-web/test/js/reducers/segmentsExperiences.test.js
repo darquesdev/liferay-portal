@@ -58,7 +58,7 @@ describe(
 
 				const payload = {
 					segmentsEntryId: 'test-segment-id',
-					label: 'test experience label'
+					name: 'test experience name'
 				};
 
 				const nextState = {
@@ -69,7 +69,7 @@ describe(
 							priority: 0,
 							segmentsEntryId: payload.segmentsEntryId,
 							segmentsExperienceId: SEGMENTS_EXPERIENCE_ID,
-							label: payload.label
+							name: payload.name
 						}
 					},
 					segmentsExperienceId: SEGMENTS_EXPERIENCE_ID
@@ -79,7 +79,7 @@ describe(
 					active: true,
 					classNameId: prevState.classNameId,
 					classPK: prevState.classPK,
-					nameMap: JSON.stringify({en_US: payload.label}),
+					nameMap: JSON.stringify({en_US: payload.name}),
 					priority: 0,
 					segmentsEntryId: payload.segmentsEntryId
 				};
@@ -102,7 +102,7 @@ describe(
 
 				const secondPayload = {
 					segmentsEntryId: 'test-segment-id',
-					label: 'second test experience label'
+					name: 'second test experience name'
 				};
 
 				const secondNextState = {
@@ -114,7 +114,7 @@ describe(
 							priority: 1,
 							segmentsEntryId: secondPayload.segmentsEntryId,
 							segmentsExperienceId: SEGMENTS_EXPERIENCE_ID_SECOND,
-							label: secondPayload.label
+							name: secondPayload.name
 						}
 					},
 					segmentsExperienceId: SEGMENTS_EXPERIENCE_ID_SECOND
@@ -124,7 +124,7 @@ describe(
 					active: true,
 					classNameId: prevState.classNameId,
 					classPK: prevState.classPK,
-					nameMap: JSON.stringify({en_US: secondPayload.label}),
+					nameMap: JSON.stringify({en_US: secondPayload.name}),
 					priority: 1,
 					segmentsEntryId: secondPayload.segmentsEntryId
 				};
@@ -187,17 +187,17 @@ describe(
 					[SEGMENTS_EXPERIENCE_ID]: {
 						segmentsEntryId: 'notRelevantSegmentId',
 						segmentsExperienceId: SEGMENTS_EXPERIENCE_ID,
-						label: 'A test experience'
+						name: 'A test experience'
 					},
 					[SEGMENTS_EXPERIENCE_ID_DEFAULT]: {
 						segmentsEntryId: 'notRelevantSegmentId',
 						segmentsExperienceId: SEGMENTS_EXPERIENCE_ID,
-						label: 'A default test experience'
+						name: 'A default test experience'
 					},
 					[SEGMENTS_EXPERIENCE_ID_SECOND]: {
 						segmentsEntryId: 'notRelevantSegmentId',
 						segmentsExperienceId: SEGMENTS_EXPERIENCE_ID_SECOND,
-						label: 'A second test experience'
+						name: 'A second test experience'
 					}
 				};
 

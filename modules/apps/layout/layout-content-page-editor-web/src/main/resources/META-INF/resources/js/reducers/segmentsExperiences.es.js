@@ -10,7 +10,7 @@ const DELETE_SEGMENTS_EXPERIENCE_URL = '/segments.segmentsexperience/delete-segm
  * @param {!string} actionType
  * @param {!object} payload
  * @param {string} payload.segmentsEntryId
- * @param {string} payload.label
+ * @param {string} payload.name
  * @return {object}
  * @review
  */
@@ -19,7 +19,7 @@ function createSegmentsExperienceReducer(state, actionType, payload) {
 		resolve => {
 			let nextState = state;
 			if (actionType === CREATE_SEGMENTS_EXPERIENCE) {
-				const {segmentsEntryId, label} = payload;
+				const {segmentsEntryId, name} = payload;
 
 				const {
 					classNameId,
@@ -28,7 +28,7 @@ function createSegmentsExperienceReducer(state, actionType, payload) {
 
 				const nameMap = JSON.stringify(
 					{
-						[state.defaultLanguageId]: label
+						[state.defaultLanguageId]: name
 					}
 				);
 				const priority = Object.values(nextState.availableSegmentsExperiences || []).length;
@@ -64,7 +64,7 @@ function createSegmentsExperienceReducer(state, actionType, payload) {
 								priority,
 								segmentsEntryId,
 								segmentsExperienceId,
-								label: nameCurrentValue
+								name: nameCurrentValue
 							}
 						);
 

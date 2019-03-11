@@ -38,12 +38,12 @@ function comparePriority(obj1, obj2) {
  * @returns {string|undefined}
  * @review
  */
-function findSegmentsEntryLabelById(segments, segmentsEntryId) {
+function findSegmentsEntryNameById(segments, segmentsEntryId) {
 	const mostWantedSegment = segments.find(
 		segment => segment.segmentsEntryId === segmentsEntryId
 	);
 
-	return mostWantedSegment && mostWantedSegment.label;
+	return mostWantedSegment && mostWantedSegment.name;
 }
 
 /**
@@ -53,7 +53,7 @@ class SegmentsExperienceSelector extends Component {
 
 	/**
 	 * Transforms `availableSegmentsEntries` and `availableSegmentsExperiences` objects into arrays
-	 * Adds `activeSegmentsExperienceLabel` to the component state
+	 * Adds `activeSegmentsExperienceName` to the component state
 	 * @inheritDoc
 	 * @review
 	 */
@@ -62,7 +62,7 @@ class SegmentsExperienceSelector extends Component {
 			.sort(comparePriority)
 			.map(
 				experience => {
-					const label = findSegmentsEntryLabelById(
+					const name = findSegmentsEntryNameById(
 						Object.values(state.availableSegmentsEntries),
 						experience.segmentsEntryId
 					);
@@ -70,7 +70,7 @@ class SegmentsExperienceSelector extends Component {
 					const updatedExperience = setIn(
 						experience,
 						['segmentsEntryLabel'],
-						label
+						name
 					);
 
 					return updatedExperience;
@@ -92,7 +92,7 @@ class SegmentsExperienceSelector extends Component {
 			{},
 			state,
 			{
-				activeSegmentsExperienceLabel: activeExperience && activeExperience.label,
+				activeSegmentsExperienceName: activeExperience && activeExperience.name,
 				availableSegmentsEntries,
 				availableSegmentsExperiences: availableSegmentsExperiencesArray,
 				segmentsExperienceId: selectedSegmentsExperienceId
@@ -125,17 +125,17 @@ class SegmentsExperienceSelector extends Component {
 	/**
 	 * Dispatches action to create an experience
 	 * @memberof SegmentsExperienceSelector
-	 * @param {!string} label
+	 * @param {!string} name
 	 * @param {!string} segmentsEntryId
 	 * @private
 	 * @review
 	 */
-	_createSegmentsExperience(label, segmentsEntryId) {
+	_createSegmentsExperience(name, segmentsEntryId) {
 		this.store.dispatchAction(
 			CREATE_SEGMENTS_EXPERIENCE,
 			{
 				segmentsEntryId,
-				label
+				name
 			}
 		).dispatchAction(
 			END_CREATE_SEGMENTS_EXPERIENCE
