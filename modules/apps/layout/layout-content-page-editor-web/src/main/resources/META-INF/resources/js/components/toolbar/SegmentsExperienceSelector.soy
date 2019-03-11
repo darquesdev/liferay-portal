@@ -4,10 +4,10 @@
  * SegmentsExperienceSelector
  */
 {template .render}
-	{@param? activeSegmentsExperienceLabel: string }
+	{@param? activeSegmentsExperienceName: string }
 	{@param? availableSegmentsExperiences: list<[
 		segmentsExperienceId: string,
-		label: string,
+		name: string,
 		segmentsEntryLabel: string
 	]>}
 	{@param? defaultSegmentsExperienceId: string }
@@ -22,7 +22,7 @@
 	{@param? _toggleModal: any }
 	{@param? availableSegmentsEntries: list<[
 		segmentsEntryId: string,
-		label: string
+		name: string
 	]>}
 	{@param? segmentsExperienceId: string}
 	{@param? openDropdown: bool}
@@ -46,7 +46,7 @@
 				type="button"
 				id="{$portletNamespace}SegmentsExperienceSelector"
 			>
-				{$activeSegmentsExperienceLabel}
+				{$activeSegmentsExperienceName}
 			</button>
 
 			<div
@@ -84,7 +84,7 @@
 								tabindex="0"
 							>
 								<span class="flex-grow-1 p-1 truncate-text">
-									{$experience.label}
+									{$experience.name}
 								</span>
 								<span class="audience d-inline-block p-1 truncate-text">
 									<span class="text-secondary">
@@ -153,7 +153,7 @@
 									>
 										{foreach $segment in $availableSegmentsEntries}
 											<option value="{$segment.segmentsEntryId}">
-												{$segment.label}
+												{$segment.name}
 											</option>
 										{/foreach}
 									</select>
