@@ -79,7 +79,7 @@ const INITIAL_STATE = {
 			Config.shapeOf(
 				{
 					segmentsEntryId: Config.string().required(),
-					segmentsEntryLabel: Config.string().required()
+					label: Config.string().required()
 				}
 			)
 		)
