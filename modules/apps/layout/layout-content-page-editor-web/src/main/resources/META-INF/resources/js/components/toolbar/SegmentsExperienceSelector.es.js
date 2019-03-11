@@ -92,7 +92,7 @@ class SegmentsExperienceSelector extends Component {
 			{},
 			state,
 			{
-				activeSegmentsExperienceLabel: activeExperience && activeExperience.segmentsExperienceLabel,
+				activeSegmentsExperienceLabel: activeExperience && activeExperience.label,
 				availableSegmentsEntries,
 				availableSegmentsExperiences: availableSegmentsExperiencesArray,
 				segmentsExperienceId: selectedSegmentsExperienceId
@@ -125,17 +125,17 @@ class SegmentsExperienceSelector extends Component {
 	/**
 	 * Dispatches action to create an experience
 	 * @memberof SegmentsExperienceSelector
-	 * @param {!string} segmentsExperienceLabel
+	 * @param {!string} label
 	 * @param {!string} segmentsEntryId
 	 * @private
 	 * @review
 	 */
-	_createSegmentsExperience(segmentsExperienceLabel, segmentsEntryId) {
+	_createSegmentsExperience(label, segmentsEntryId) {
 		this.store.dispatchAction(
 			CREATE_SEGMENTS_EXPERIENCE,
 			{
 				segmentsEntryId,
-				segmentsExperienceLabel
+				label
 			}
 		).dispatchAction(
 			END_CREATE_SEGMENTS_EXPERIENCE

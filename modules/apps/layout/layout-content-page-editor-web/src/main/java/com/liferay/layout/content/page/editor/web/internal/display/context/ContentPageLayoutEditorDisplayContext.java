@@ -125,11 +125,11 @@ public class ContentPageLayoutEditorDisplayContext
 				SoyContextFactoryUtil.createSoyContext();
 
 			segmentsExperienceSoyContext.put(
+				"label",
+				segmentsExperience.getName(themeDisplay.getLocale()));
+			segmentsExperienceSoyContext.put(
 				"segmentsExperienceId",
 				String.valueOf(segmentsExperience.getSegmentsExperienceId()));
-			segmentsExperienceSoyContext.put(
-				"segmentsExperienceLabel",
-				segmentsExperience.getName(themeDisplay.getLocale()));
 			segmentsExperienceSoyContext.put(
 				"segmentsEntryId",
 				String.valueOf(segmentsExperience.getSegmentsEntryId()));

@@ -192,7 +192,7 @@ const INITIAL_STATE = {
 				{
 					segmentsEntryId: Config.string(),
 					segmentsExperienceId: Config.string(),
-					segmentsExperienceLabel: Config.string()
+					label: Config.string()
 				}
 			)
 		)

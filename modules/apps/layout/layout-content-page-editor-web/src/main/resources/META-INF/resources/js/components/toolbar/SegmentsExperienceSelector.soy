@@ -2,12 +2,13 @@
 
 /**
  * SegmentsExperienceSelector
+ * 
  */
 {template .render}
 	{@param? activeSegmentsExperienceLabel: string }
 	{@param? availableSegmentsExperiences: list<[
 		segmentsExperienceId: string,
-		segmentsExperienceLabel: string,
+		label: string,
 		segmentsEntryLabel: string
 	]>}
 	{@param? defaultSegmentsExperienceId: string }
@@ -84,7 +85,7 @@
 								tabindex="0"
 							>
 								<span class="flex-grow-1 p-1 truncate-text">
-									{$experience.segmentsExperienceLabel}
+									{$experience.label}
 								</span>
 								<span class="audience d-inline-block p-1 truncate-text">
 									<span class="text-secondary">
