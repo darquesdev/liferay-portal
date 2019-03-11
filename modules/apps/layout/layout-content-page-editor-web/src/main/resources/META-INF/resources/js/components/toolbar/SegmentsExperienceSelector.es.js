@@ -43,7 +43,7 @@ function findSegmentsEntryLabelById(segments, segmentsEntryId) {
 		segment => segment.segmentsEntryId === segmentsEntryId
 	);
 
-	return mostWantedSegment && mostWantedSegment.segmentsEntryLabel;
+	return mostWantedSegment && mostWantedSegment.label;
 }
 
 /**
