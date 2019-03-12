@@ -44,7 +44,7 @@
 		{/if}
 
 		{if not $mappingFieldsURL or $_selectedSourceTypeId == $_sourceTypeIds.content}
-			<div class="form-group floating-toolbar-mapping-panel__asset-select">
+			<div class="floating-toolbar-mapping-panel__asset-select form-group">
 				{call .assetSelect}
 					{param handleAssetOptionChange: $_handleAssetOptionChange /}
 					{param selectedAssetEntryEncodedId: $item.editableValues.assetEntryEncodedId /}

@@ -11,5 +11,14 @@
 			"com.liferay.frontend.js.web",
 			"com.liferay.frontend.taglib"
 		]
-	}
+	},
+	"lint": [
+		"src/**/*.css",
+		"src/**/*.js",
+		"src/**/*.jspf",
+		"src/**/*.jsp",
+		"src/**/*.scss",
+		"src/**/*.soy",
+		"test/**/*.test.js"
+	]
 }

@@ -78,8 +78,8 @@ const INITIAL_STATE = {
 		.objectOf(
 			Config.shapeOf(
 				{
-					segmentsEntryId: Config.string().required(),
-					name: Config.string().required()
+					name: Config.string().required(),
+					segmentsEntryId: Config.string().required()
 				}
 			)
 		)
@@ -190,9 +190,9 @@ const INITIAL_STATE = {
 		.objectOf(
 			Config.shapeOf(
 				{
+					name: Config.string(),
 					segmentsEntryId: Config.string(),
-					segmentsExperienceId: Config.string(),
-					name: Config.string()
+					segmentsExperienceId: Config.string()
 				}
 			)
 		)
@@ -209,6 +209,24 @@ const INITIAL_STATE = {
 			{
 				creatingSegmentsExperience: false,
 				error: null
+			}
+		),
+
+	segmentsExperienceEdition: Config
+		.shapeOf(
+			{
+				error: Config.string(),
+				name: Config.string(),
+				segmentsEntryId: Config.string(),
+				segmentsExperienceId: Config.string()
+			}
+		)
+		.value(
+			{
+				error: null,
+				name: null,
+				segmentsEntryId: null,
+				segmentsExperienceId: null
 			}
 		),
 
