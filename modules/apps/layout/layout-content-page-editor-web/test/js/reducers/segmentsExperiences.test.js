@@ -1,11 +1,15 @@
 /* globals describe, test, jest, expect, beforeAll, afterAll */
 
-import {createSegmentsExperienceReducer, deleteSegmentsExperienceReducer, endCreateSegmentsExperience, startCreateSegmentsExperience} from '../../../src/main/resources/META-INF/resources/js/reducers/segmentsExperiences.es';
-import {CREATE_SEGMENTS_EXPERIENCE, DELETE_SEGMENTS_EXPERIENCE, END_CREATE_SEGMENTS_EXPERIENCE, START_CREATE_SEGMENTS_EXPERIENCE} from '../../../src/main/resources/META-INF/resources/js/actions/actions.es';
+import {createSegmentsExperienceReducer, deleteSegmentsExperienceReducer, editSegmentsExperienceReducer, endCreateSegmentsExperience, startCreateSegmentsExperience} from '../../../src/main/resources/META-INF/resources/js/reducers/segmentsExperiences.es';
+import {CREATE_SEGMENTS_EXPERIENCE, DELETE_SEGMENTS_EXPERIENCE, EDIT_SEGMENTS_EXPERIENCE, END_CREATE_SEGMENTS_EXPERIENCE, START_CREATE_SEGMENTS_EXPERIENCE} from '../../../src/main/resources/META-INF/resources/js/actions/actions.es';
 
 const SEGMENTS_EXPERIENCE_ID = 'SEGMENTS_EXPERIENCE_ID';
 
+const SEGMENTS_EXPERIENCE_ID_DEFAULT = 'SEGMENTS_EXPERIENCE_ID_DEFAULT';
+
 const SEGMENTS_EXPERIENCE_ID_SECOND = 'SEGMENTS_EXPERIENCE_ID_SECOND';
+
+const SEGMENTS_EXPERIENCES_LIST = [SEGMENTS_EXPERIENCE_ID, SEGMENTS_EXPERIENCE_ID_SECOND];
 
 describe(
 	'segments experiences reducers',
@@ -18,12 +22,12 @@ describe(
 					Service(
 						URL,
 						{
+							active,
 							classNameId,
 							classPK,
-							segmentsEntryId,
 							nameMap,
-							active,
-							priority
+							priority,
+							segmentsEntryId
 						},
 						callbackFunc,
 						errorFunc
@@ -45,8 +49,6 @@ describe(
 				const classPK = 'test-class-p-k';
 				const spy = jest.spyOn(global.Liferay, 'Service');
 
-				const SEGMENTS_EXPERIENCES_LIST = [SEGMENTS_EXPERIENCE_ID, SEGMENTS_EXPERIENCE_ID_SECOND];
-
 				let experiencesCount = -1;
 
 				const prevState = {
@@ -57,8 +59,8 @@ describe(
 				};
 
 				const payload = {
-					segmentsEntryId: 'test-segment-id',
-					name: 'test experience name'
+					name: 'test experience name',
+					segmentsEntryId: 'test-segment-id'
 				};
 
 				const nextState = {
@@ -66,10 +68,10 @@ describe(
 					availableSegmentsExperiences: {
 						[SEGMENTS_EXPERIENCE_ID]: {
 							active: true,
+							name: payload.name,
 							priority: 0,
 							segmentsEntryId: payload.segmentsEntryId,
-							segmentsExperienceId: SEGMENTS_EXPERIENCE_ID,
-							name: payload.name
+							segmentsExperienceId: SEGMENTS_EXPERIENCE_ID
 						}
 					},
 					segmentsExperienceId: SEGMENTS_EXPERIENCE_ID
@@ -101,8 +103,8 @@ describe(
 				);
 
 				const secondPayload = {
-					segmentsEntryId: 'test-segment-id',
-					name: 'second test experience name'
+					name: 'second test experience name',
+					segmentsEntryId: 'test-segment-id'
 				};
 
 				const secondNextState = {
@@ -111,10 +113,10 @@ describe(
 						...nextState.availableSegmentsExperiences,
 						[SEGMENTS_EXPERIENCE_ID_SECOND]: {
 							active: true,
+							name: secondPayload.name,
 							priority: 1,
 							segmentsEntryId: secondPayload.segmentsEntryId,
-							segmentsExperienceId: SEGMENTS_EXPERIENCE_ID_SECOND,
-							name: secondPayload.name
+							segmentsExperienceId: SEGMENTS_EXPERIENCE_ID_SECOND
 						}
 					},
 					segmentsExperienceId: SEGMENTS_EXPERIENCE_ID_SECOND
@@ -181,23 +183,22 @@ describe(
 			'deleteExperience communicates with API and updates the state',
 			() => {
 				let prevLiferayGlobal = {...global.Liferay};
-				const SEGMENTS_EXPERIENCE_ID_DEFAULT = 'SEGMENTS_EXPERIENCE_ID_DEFAULT';
 
 				const availableSegmentsExperiences = {
 					[SEGMENTS_EXPERIENCE_ID]: {
+						name: 'A test experience',
 						segmentsEntryId: 'notRelevantSegmentId',
-						segmentsExperienceId: SEGMENTS_EXPERIENCE_ID,
-						name: 'A test experience'
+						segmentsExperienceId: SEGMENTS_EXPERIENCE_ID
 					},
 					[SEGMENTS_EXPERIENCE_ID_DEFAULT]: {
+						name: 'A default test experience',
 						segmentsEntryId: 'notRelevantSegmentId',
-						segmentsExperienceId: SEGMENTS_EXPERIENCE_ID,
-						name: 'A default test experience'
+						segmentsExperienceId: SEGMENTS_EXPERIENCE_ID
 					},
 					[SEGMENTS_EXPERIENCE_ID_SECOND]: {
+						name: 'A second test experience',
 						segmentsEntryId: 'notRelevantSegmentId',
-						segmentsExperienceId: SEGMENTS_EXPERIENCE_ID_SECOND,
-						name: 'A second test experience'
+						segmentsExperienceId: SEGMENTS_EXPERIENCE_ID_SECOND
 					}
 				};
 
@@ -287,6 +288,93 @@ describe(
 					expect.objectContaining({}),
 					expect.objectContaining({})
 				);
+				global.Liferay = prevLiferayGlobal;
+			}
+		);
+
+		test(
+			'editExperience communicates with API and updates the state',
+			() => {
+				let prevLiferayGlobal = {...global.Liferay};
+				global.Liferay = {
+					Service(
+						URL,
+						{
+							active,
+							nameMap,
+							priority,
+							segmentsEntryId,
+							segmentsExperienceId
+						},
+						callbackFunc,
+						errorFunc
+					) {
+						return callbackFunc(
+							{
+								active,
+								nameCurrentValue: JSON.parse(nameMap).en_US,
+								priority,
+								segmentsEntryId,
+								segmentsExperienceId
+							}
+						);
+					}
+				};
+
+				const availableSegmentsExperiences = {
+					[SEGMENTS_EXPERIENCE_ID]: {
+						active: true,
+						name: 'A test experience',
+						priority: 3,
+						segmentsEntryId: 'notRelevantSegmentId',
+						segmentsExperienceId: SEGMENTS_EXPERIENCE_ID
+					},
+					[SEGMENTS_EXPERIENCE_ID_DEFAULT]: {
+						active: true,
+						name: 'A default test experience',
+						priority: 3,
+						segmentsEntryId: 'notRelevantSegmentId',
+						segmentsExperienceId: SEGMENTS_EXPERIENCE_ID
+					},
+					[SEGMENTS_EXPERIENCE_ID_SECOND]: {
+						active: true,
+						name: 'A second test experience',
+						priority: 3,
+						segmentsEntryId: 'notRelevantSegmentId',
+						segmentsExperienceId: SEGMENTS_EXPERIENCE_ID_SECOND
+					}
+				};
+
+				const payload = {
+					name: 'A modified test experience',
+					segmentsEntryId: 'relevantSegmentId',
+					segmentsExperienceId: SEGMENTS_EXPERIENCE_ID
+				};
+				const prevState = {
+					availableSegmentsExperiences,
+					defaultLanguageId: 'en_US'
+				};
+
+				expect.assertions(3);
+
+				editSegmentsExperienceReducer(
+					prevState,
+					EDIT_SEGMENTS_EXPERIENCE,
+					payload
+				).then(
+					state => {
+						expect(state.availableSegmentsExperiences[SEGMENTS_EXPERIENCE_ID_SECOND]).toEqual(prevState.availableSegmentsExperiences[SEGMENTS_EXPERIENCE_ID_SECOND]);
+						expect(state.availableSegmentsExperiences[SEGMENTS_EXPERIENCE_ID_DEFAULT]).toEqual(prevState.availableSegmentsExperiences[SEGMENTS_EXPERIENCE_ID_DEFAULT]);
+						expect(state.availableSegmentsExperiences[SEGMENTS_EXPERIENCE_ID]).toEqual(
+							{
+								...prevState.availableSegmentsExperiences[SEGMENTS_EXPERIENCE_ID],
+								name: payload.name,
+								segmentsEntryId: payload.segmentsEntryId
+							}
+						);
+					}
+				);
+
 				global.Liferay = prevLiferayGlobal;
 			}
 		);
