@@ -139,7 +139,7 @@ public class ContentPageLayoutEditorDisplayContext
 
 		List<SegmentsExperience> segmentsExperiences =
 			SegmentsExperienceServiceUtil.getSegmentsExperiences(
-				getGroupId(), classNameId, classPK, true);
+				getGroupId(), classNameId, _getPublishedClassPK(), true);
 
 		for (SegmentsExperience segmentsExperience : segmentsExperiences) {
 			SoyContext segmentsExperienceSoyContext =
@@ -194,17 +194,7 @@ public class ContentPageLayoutEditorDisplayContext
 		try {
 			SegmentsExperience defaultSegmentsExperience =
 				SegmentsExperienceLocalServiceUtil.getDefaultSegmentsExperience(
-					getGroupId(), classNameId, classPK);
-
-			if (classNameId == PortalUtil.getClassNameId(Layout.class)) {
-				Layout draftLayout = LayoutLocalServiceUtil.getLayout(classPK);
-
-				defaultSegmentsExperience =
-					SegmentsExperienceLocalServiceUtil.
-						getDefaultSegmentsExperience(
-							getGroupId(), classNameId,
-							draftLayout.getClassPK());
-			}
+					getGroupId(), classNameId, _getPublishedClassPK());
 
 			_defaultSegmentsExperienceId = String.valueOf(
 				defaultSegmentsExperience.getSegmentsExperienceId());
@@ -214,6 +204,20 @@ public class ContentPageLayoutEditorDisplayContext
 		}
 
 		return _defaultSegmentsExperienceId;
+	}
+
+	private long _getPublishedClassPK() throws PortalException {
+		long publishedClassPK = classPK;
+
+		if (classNameId == PortalUtil.getClassNameId(Layout.class)) {
+			Layout draftLayout = LayoutLocalServiceUtil.getLayout(classPK);
+
+			if (draftLayout != null) {
+				publishedClassPK = draftLayout.getClassPK();
+			}
+		}
+
+		return publishedClassPK;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
