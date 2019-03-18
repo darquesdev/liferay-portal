@@ -447,7 +447,7 @@ FragmentEntryLinkContent.STATE = {
 	 * @review
 	 * @type {!string}
 	 */
-	defaultSegmentsExperienceId: Config.string().required(),
+	defaultSegmentsExperienceId: Config.string(),
 
 	/**
 	 * Editable values that should be used instead of the default ones
