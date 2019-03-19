@@ -29,34 +29,36 @@ import java.util.List;
  * @generated
  */
 @ProviderType
-public class LayoutPageTemplateStructureSoap implements Serializable {
+public class LayoutPageTemplateStructureRelSoap implements Serializable {
 
-	public static LayoutPageTemplateStructureSoap toSoapModel(
-		LayoutPageTemplateStructure model) {
+	public static LayoutPageTemplateStructureRelSoap toSoapModel(
+		LayoutPageTemplateStructureRel model) {
 
-		LayoutPageTemplateStructureSoap soapModel =
-			new LayoutPageTemplateStructureSoap();
+		LayoutPageTemplateStructureRelSoap soapModel =
+			new LayoutPageTemplateStructureRelSoap();
 
 		soapModel.setUuid(model.getUuid());
-		soapModel.setLayoutPageTemplateStructureId(
-			model.getLayoutPageTemplateStructureId());
+		soapModel.setLayoutPageTemplateStructureRelId(
+			model.getLayoutPageTemplateStructureRelId());
 		soapModel.setGroupId(model.getGroupId());
 		soapModel.setCompanyId(model.getCompanyId());
 		soapModel.setUserId(model.getUserId());
 		soapModel.setUserName(model.getUserName());
 		soapModel.setCreateDate(model.getCreateDate());
 		soapModel.setModifiedDate(model.getModifiedDate());
-		soapModel.setClassNameId(model.getClassNameId());
-		soapModel.setClassPK(model.getClassPK());
+		soapModel.setLayoutPageTemplateStructureId(
+			model.getLayoutPageTemplateStructureId());
+		soapModel.setSegmentsExperienceId(model.getSegmentsExperienceId());
+		soapModel.setData(model.getData());
 
 		return soapModel;
 	}
 
-	public static LayoutPageTemplateStructureSoap[] toSoapModels(
-		LayoutPageTemplateStructure[] models) {
+	public static LayoutPageTemplateStructureRelSoap[] toSoapModels(
+		LayoutPageTemplateStructureRel[] models) {
 
-		LayoutPageTemplateStructureSoap[] soapModels =
-			new LayoutPageTemplateStructureSoap[models.length];
+		LayoutPageTemplateStructureRelSoap[] soapModels =
+			new LayoutPageTemplateStructureRelSoap[models.length];
 
 		for (int i = 0; i < models.length; i++) {
 			soapModels[i] = toSoapModel(models[i]);
@@ -65,17 +67,17 @@ public class LayoutPageTemplateStructureSoap implements Serializable {
 		return soapModels;
 	}
 
-	public static LayoutPageTemplateStructureSoap[][] toSoapModels(
-		LayoutPageTemplateStructure[][] models) {
+	public static LayoutPageTemplateStructureRelSoap[][] toSoapModels(
+		LayoutPageTemplateStructureRel[][] models) {
 
-		LayoutPageTemplateStructureSoap[][] soapModels = null;
+		LayoutPageTemplateStructureRelSoap[][] soapModels = null;
 
 		if (models.length > 0) {
-			soapModels = new LayoutPageTemplateStructureSoap
+			soapModels = new LayoutPageTemplateStructureRelSoap
 				[models.length][models[0].length];
 		}
 		else {
-			soapModels = new LayoutPageTemplateStructureSoap[0][0];
+			soapModels = new LayoutPageTemplateStructureRelSoap[0][0];
 		}
 
 		for (int i = 0; i < models.length; i++) {
@@ -85,29 +87,29 @@ public class LayoutPageTemplateStructureSoap implements Serializable {
 		return soapModels;
 	}
 
-	public static LayoutPageTemplateStructureSoap[] toSoapModels(
-		List<LayoutPageTemplateStructure> models) {
+	public static LayoutPageTemplateStructureRelSoap[] toSoapModels(
+		List<LayoutPageTemplateStructureRel> models) {
 
-		List<LayoutPageTemplateStructureSoap> soapModels =
-			new ArrayList<LayoutPageTemplateStructureSoap>(models.size());
+		List<LayoutPageTemplateStructureRelSoap> soapModels =
+			new ArrayList<LayoutPageTemplateStructureRelSoap>(models.size());
 
-		for (LayoutPageTemplateStructure model : models) {
+		for (LayoutPageTemplateStructureRel model : models) {
 			soapModels.add(toSoapModel(model));
 		}
 
 		return soapModels.toArray(
-			new LayoutPageTemplateStructureSoap[soapModels.size()]);
+			new LayoutPageTemplateStructureRelSoap[soapModels.size()]);
 	}
 
-	public LayoutPageTemplateStructureSoap() {
+	public LayoutPageTemplateStructureRelSoap() {
 	}
 
 	public long getPrimaryKey() {
-		return _layoutPageTemplateStructureId;
+		return _layoutPageTemplateStructureRelId;
 	}
 
 	public void setPrimaryKey(long pk) {
-		setLayoutPageTemplateStructureId(pk);
+		setLayoutPageTemplateStructureRelId(pk);
 	}
 
 	public String getUuid() {
@@ -118,14 +120,14 @@ public class LayoutPageTemplateStructureSoap implements Serializable {
 		_uuid = uuid;
 	}
 
-	public long getLayoutPageTemplateStructureId() {
-		return _layoutPageTemplateStructureId;
+	public long getLayoutPageTemplateStructureRelId() {
+		return _layoutPageTemplateStructureRelId;
 	}
 
-	public void setLayoutPageTemplateStructureId(
-		long layoutPageTemplateStructureId) {
+	public void setLayoutPageTemplateStructureRelId(
+		long layoutPageTemplateStructureRelId) {
 
-		_layoutPageTemplateStructureId = layoutPageTemplateStructureId;
+		_layoutPageTemplateStructureRelId = layoutPageTemplateStructureRelId;
 	}
 
 	public long getGroupId() {
@@ -176,31 +178,42 @@ public class LayoutPageTemplateStructureSoap implements Serializable {
 		_modifiedDate = modifiedDate;
 	}
 
-	public long getClassNameId() {
-		return _classNameId;
+	public long getLayoutPageTemplateStructureId() {
+		return _layoutPageTemplateStructureId;
 	}
 
-	public void setClassNameId(long classNameId) {
-		_classNameId = classNameId;
+	public void setLayoutPageTemplateStructureId(
+		long layoutPageTemplateStructureId) {
+
+		_layoutPageTemplateStructureId = layoutPageTemplateStructureId;
 	}
 
-	public long getClassPK() {
-		return _classPK;
+	public long getSegmentsExperienceId() {
+		return _segmentsExperienceId;
 	}
 
-	public void setClassPK(long classPK) {
-		_classPK = classPK;
+	public void setSegmentsExperienceId(long segmentsExperienceId) {
+		_segmentsExperienceId = segmentsExperienceId;
+	}
+
+	public String getData() {
+		return _data;
+	}
+
+	public void setData(String data) {
+		_data = data;
 	}
 
 	private String _uuid;
-	private long _layoutPageTemplateStructureId;
+	private long _layoutPageTemplateStructureRelId;
 	private long _groupId;
 	private long _companyId;
 	private long _userId;
 	private String _userName;
 	private Date _createDate;
 	private Date _modifiedDate;
-	private long _classNameId;
-	private long _classPK;
+	private long _layoutPageTemplateStructureId;
+	private long _segmentsExperienceId;
+	private String _data;
 
 }
