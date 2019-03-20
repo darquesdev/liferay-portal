@@ -42,7 +42,10 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.segments.model.SegmentsExperience;
+import com.liferay.segments.service.SegmentsExperienceLocalService;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
@@ -129,20 +132,59 @@ public class LayoutModelListener extends BaseModelListener<Layout> {
 					layoutPageTemplateEntry.getLayoutPageTemplateEntryId(),
 					true);
 
-		JSONObject dataJSONObject = JSONFactoryUtil.createJSONObject(
-			layoutPageTemplateStructure.getData());
-
-		JSONArray structureJSONArray = dataJSONObject.getJSONArray("structure");
-
-		if (structureJSONArray == null) {
+		if (layoutPageTemplateStructure == null) {
 			return null;
 		}
 
 		Layout draftLayout = _layoutLocalService.fetchLayout(
 			_portal.getClassNameId(Layout.class), layout.getPlid());
 
+		if (draftLayout == null) {
+			return null;
+		}
+
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
+
+		_layoutPageTemplateStructureLocalService.addLayoutPageTemplateStructure(
+			layout.getUserId(), layout.getGroupId(),
+			_portal.getClassNameId(Layout.class), draftLayout.getPlid(), null,
+			serviceContext);
+
+		List<SegmentsExperience> segmentsExperiences =
+			_segmentsExperienceLocalService.getSegmentsExperiences(
+				layout.getGroupId(), _portal.getClassNameId(Layout.class),
+				draftLayout.getPlid(), true);
+
+		for (SegmentsExperience segmentsExperience : segmentsExperiences) {
+			_copyStructureExperience(
+				layoutPageTemplateStructure,
+				segmentsExperience.getSegmentsExperienceId(), layout,
+				draftLayout, serviceContext);
+		}
+
+		Layout pageTemplateLayout = _layoutLocalService.getLayout(
+			layoutPageTemplateEntry.getPlid());
+
+		_layoutCopyHelper.copyLayout(pageTemplateLayout, draftLayout);
+
+		return null;
+	}
+
+	private void _copyStructureExperience(
+			LayoutPageTemplateStructure layoutPageTemplateStructure,
+			long segmentsExperienceId, Layout layout, Layout draftLayout,
+			ServiceContext serviceContext)
+		throws Exception {
+
+		JSONObject dataJSONObject = JSONFactoryUtil.createJSONObject(
+			layoutPageTemplateStructure.getData(segmentsExperienceId));
+
+		JSONArray structureJSONArray = dataJSONObject.getJSONArray("structure");
+
+		if (structureJSONArray == null) {
+			return;
+		}
 
 		for (int i = 0; i < structureJSONArray.length(); i++) {
 			JSONObject rowJSONObject = structureJSONArray.getJSONObject(i);
@@ -198,17 +240,11 @@ public class LayoutModelListener extends BaseModelListener<Layout> {
 			}
 		}
 
-		_layoutPageTemplateStructureLocalService.addLayoutPageTemplateStructure(
-			layout.getUserId(), layout.getGroupId(),
-			_portal.getClassNameId(Layout.class), draftLayout.getPlid(),
-			dataJSONObject.toString(), serviceContext);
-
-		Layout pagetTemplateLayout = _layoutLocalService.getLayout(
-			layoutPageTemplateEntry.getPlid());
-
-		_layoutCopyHelper.copyLayout(pagetTemplateLayout, draftLayout);
-
-		return null;
+		_layoutPageTemplateStructureLocalService.
+			updateLayoutPageTemplateStructure(
+				layout.getGroupId(), _portal.getClassNameId(Layout.class),
+				draftLayout.getPlid(), segmentsExperienceId,
+				dataJSONObject.toString());
 	}
 
 	private LayoutPageTemplateEntry _getLayoutPageTemplateEntry(Layout layout) {
@@ -271,5 +307,8 @@ public class LayoutModelListener extends BaseModelListener<Layout> {
 
 	@Reference
 	private PortletPreferencesLocalService _portletPreferencesLocalService;
+
+	@Reference
+	private SegmentsExperienceLocalService _segmentsExperienceLocalService;
 
 }
