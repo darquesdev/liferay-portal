@@ -40,6 +40,8 @@ import com.liferay.portal.kernel.transaction.TransactionConfig;
 import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.segments.model.SegmentsExperience;
+import com.liferay.segments.service.SegmentsExperienceLocalService;
 
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -97,9 +99,18 @@ public class AddFragmentEntryLinkMVCActionCommand extends BaseMVCActionCommand {
 
 		String data = ParamUtil.getString(actionRequest, "data");
 
+		SegmentsExperience defaultSegmentsExperience =
+			_segmentsExperienceLocalService.getDefaultSegmentsExperience(
+				serviceContext.getScopeGroupId(), classNameId, classPK);
+
+		long segmentsExperienceId = ParamUtil.getLong(
+			actionRequest, "segmentsExperienceId",
+			defaultSegmentsExperience.getSegmentsExperienceId());
+
 		_layoutPageTemplateStructureLocalService.
 			updateLayoutPageTemplateStructure(
-				serviceContext.getScopeGroupId(), classNameId, classPK, data);
+				serviceContext.getScopeGroupId(), classNameId, classPK,
+				segmentsExperienceId, data);
 
 		return fragmentEntryLink;
 	}
@@ -181,6 +192,9 @@ public class AddFragmentEntryLinkMVCActionCommand extends BaseMVCActionCommand {
 	@Reference
 	private LayoutPageTemplateStructureLocalService
 		_layoutPageTemplateStructureLocalService;
+
+	@Reference
+	private SegmentsExperienceLocalService _segmentsExperienceLocalService;
 
 	private class AddFragmentEntryLinkCallable
 		implements Callable<FragmentEntryLink> {
