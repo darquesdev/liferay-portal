@@ -37,6 +37,8 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.segments.model.SegmentsExperience;
+import com.liferay.segments.service.SegmentsExperienceLocalService;
 
 import java.util.concurrent.Callable;
 
@@ -78,9 +80,18 @@ public class DeleteFragmentEntryLinkMVCActionCommand
 		long classPK = ParamUtil.getLong(actionRequest, "classPK");
 		String data = ParamUtil.getString(actionRequest, "data");
 
+		SegmentsExperience defaultSegmentsExperience =
+			_segmentsExperienceLocalService.getDefaultSegmentsExperience(
+				themeDisplay.getScopeGroupId(), classNameId, classPK);
+
+		long segmentsExperienceId = ParamUtil.getLong(
+			actionRequest, "segmentsExperienceId",
+			defaultSegmentsExperience.getSegmentsExperienceId());
+
 		_layoutPageTemplateStructureLocalService.
 			updateLayoutPageTemplateStructure(
-				themeDisplay.getScopeGroupId(), classNameId, classPK, data);
+				themeDisplay.getScopeGroupId(), classNameId, classPK,
+				segmentsExperienceId, data);
 
 		if (fragmentEntryLink.getFragmentEntryId() == 0) {
 			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
@@ -147,6 +158,9 @@ public class DeleteFragmentEntryLinkMVCActionCommand
 
 	@Reference
 	private PortletPreferencesLocalService _portletPreferencesLocalService;
+
+	@Reference
+	private SegmentsExperienceLocalService _segmentsExperienceLocalService;
 
 	private class DeleteFragmentEntryLinkCallable
 		implements Callable<FragmentEntryLink> {
