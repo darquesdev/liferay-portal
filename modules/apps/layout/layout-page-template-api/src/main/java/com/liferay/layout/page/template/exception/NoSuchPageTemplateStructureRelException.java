@@ -11,6 +11,7 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
+
 package com.liferay.layout.page.template.exception;
 
 import aQute.bnd.annotation.ProviderType;
@@ -21,7 +22,8 @@ import com.liferay.portal.kernel.exception.NoSuchModelException;
  * @author Brian Wing Shun Chan
  */
 @ProviderType
-public class NoSuchPageTemplateStructureRelException extends NoSuchModelException {
+public class NoSuchPageTemplateStructureRelException
+	extends NoSuchModelException {
 
 	public NoSuchPageTemplateStructureRelException() {
 	}
@@ -30,7 +32,9 @@ public class NoSuchPageTemplateStructureRelException extends NoSuchModelExceptio
 		super(msg);
 	}
 
-	public NoSuchPageTemplateStructureRelException(String msg, Throwable cause) {
+	public NoSuchPageTemplateStructureRelException(
+		String msg, Throwable cause) {
+
 		super(msg, cause);
 	}
 

@@ -14,11 +14,14 @@
 
 package com.liferay.layout.page.template.service.impl;
 
+import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.service.FragmentEntryLinkLocalService;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
+import com.liferay.layout.page.template.model.LayoutPageTemplateStructureRel;
 import com.liferay.layout.page.template.service.base.LayoutPageTemplateStructureLocalServiceBaseImpl;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -33,6 +36,8 @@ import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.spring.extender.service.ServiceReference;
+import com.liferay.segments.model.SegmentsExperience;
+import com.liferay.segments.service.SegmentsExperienceLocalService;
 
 import java.util.Date;
 import java.util.List;
@@ -68,12 +73,25 @@ public class LayoutPageTemplateStructureLocalServiceImpl
 			serviceContext.getModifiedDate(new Date()));
 		layoutPageTemplateStructure.setClassNameId(classNameId);
 		layoutPageTemplateStructure.setClassPK(classPK);
-		layoutPageTemplateStructure.setData(data);
 
 		layoutPageTemplateStructurePersistence.update(
 			layoutPageTemplateStructure);
 
 		_fragmentEntryLinkLocalService.updateClassModel(classNameId, classPK);
+
+		// Layout page template structure rel
+
+		if (!ExportImportThreadLocal.isImportInProcess()) {
+			SegmentsExperience defaultSegmentsExperience =
+				_segmentsExperienceLocalService.getDefaultSegmentsExperience(
+					groupId, classNameId, classPK);
+
+			layoutPageTemplateStructureRelLocalService.
+				addLayoutPageTemplateStructureRel(
+					userId, groupId, layoutPageTemplateStructureId,
+					defaultSegmentsExperience.getSegmentsExperienceId(), data,
+					serviceContext);
+		}
 
 		return layoutPageTemplateStructure;
 	}
@@ -115,6 +133,72 @@ public class LayoutPageTemplateStructureLocalServiceImpl
 			return layoutPageTemplateStructure;
 		}
 
+		layoutPageTemplateStructure = addLayoutPageTemplateStructure(
+			PrincipalThreadLocal.getUserId(), groupId, classNameId, classPK,
+			null, ServiceContextThreadLocal.getServiceContext());
+
+		List<SegmentsExperience> segmentsExperiences =
+			_segmentsExperienceLocalService.getSegmentsExperiences(
+				groupId, classNameId, classPK, true, QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS, null);
+
+		for (SegmentsExperience segmentsExperience : segmentsExperiences) {
+			updateLayoutPageTemplateStructure(
+				groupId, classNameId, classPK,
+				segmentsExperience.getSegmentsExperienceId(),
+				_getData(groupId, classNameId, classPK));
+		}
+
+		return layoutPageTemplateStructure;
+	}
+
+	@Override
+	public LayoutPageTemplateStructure updateLayoutPageTemplateStructure(
+			long groupId, long classNameId, long classPK,
+			long segmentsExperienceId, String data)
+		throws PortalException {
+
+		LayoutPageTemplateStructure layoutPageTemplateStructure =
+			layoutPageTemplateStructurePersistence.findByG_C_C(
+				groupId, classNameId, classPK);
+
+		layoutPageTemplateStructure.setModifiedDate(new Date());
+
+		layoutPageTemplateStructurePersistence.update(
+			layoutPageTemplateStructure);
+
+		// Layout page template structure rel
+
+		LayoutPageTemplateStructureRel layoutPageTemplateStructureRel =
+			layoutPageTemplateStructureRelLocalService.
+				fetchLayoutPageTemplateStructureRel(
+					layoutPageTemplateStructure.
+						getLayoutPageTemplateStructureId(),
+					segmentsExperienceId);
+
+		if (layoutPageTemplateStructureRel == null) {
+			layoutPageTemplateStructureRelLocalService.
+				addLayoutPageTemplateStructureRel(
+					PrincipalThreadLocal.getUserId(), groupId,
+					layoutPageTemplateStructure.
+						getLayoutPageTemplateStructureId(),
+					segmentsExperienceId, data,
+					ServiceContextThreadLocal.getServiceContext());
+		}
+		else {
+			layoutPageTemplateStructureRelLocalService.
+				updateLayoutPageTemplateStructureRel(
+					layoutPageTemplateStructure.
+						getLayoutPageTemplateStructureId(),
+					segmentsExperienceId, data);
+		}
+
+		_updateClassModel(classNameId, classPK);
+
+		return layoutPageTemplateStructure;
+	}
+
+	private String _getData(long groupId, long classNameId, long classPK) {
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
 		List<FragmentEntryLink> fragmentEntryLinks =
@@ -160,30 +244,7 @@ public class LayoutPageTemplateStructureLocalServiceImpl
 
 		jsonObject.put("structure", structureJSONArray);
 
-		return addLayoutPageTemplateStructure(
-			PrincipalThreadLocal.getUserId(), groupId, classNameId, classPK,
-			jsonObject.toString(),
-			ServiceContextThreadLocal.getServiceContext());
-	}
-
-	@Override
-	public LayoutPageTemplateStructure updateLayoutPageTemplateStructure(
-			long groupId, long classNameId, long classPK, String data)
-		throws PortalException {
-
-		LayoutPageTemplateStructure layoutPageTemplateStructure =
-			layoutPageTemplateStructurePersistence.findByG_C_C(
-				groupId, classNameId, classPK);
-
-		layoutPageTemplateStructure.setModifiedDate(new Date());
-		layoutPageTemplateStructure.setData(data);
-
-		layoutPageTemplateStructurePersistence.update(
-			layoutPageTemplateStructure);
-
-		_updateClassModel(classNameId, classPK);
-
-		return layoutPageTemplateStructure;
+		return jsonObject.toString();
 	}
 
 	private void _updateClassModel(long classNameId, long classPK)
@@ -218,5 +279,8 @@ public class LayoutPageTemplateStructureLocalServiceImpl
 
 	@ServiceReference(type = Portal.class)
 	private Portal _portal;
+
+	@ServiceReference(type = SegmentsExperienceLocalService.class)
+	private SegmentsExperienceLocalService _segmentsExperienceLocalService;
 
 }

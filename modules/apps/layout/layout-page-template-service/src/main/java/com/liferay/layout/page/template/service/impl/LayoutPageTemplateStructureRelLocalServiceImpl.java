@@ -14,27 +14,117 @@
 
 package com.liferay.layout.page.template.service.impl;
 
+import com.liferay.layout.page.template.model.LayoutPageTemplateStructureRel;
 import com.liferay.layout.page.template.service.base.LayoutPageTemplateStructureRelLocalServiceBaseImpl;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.SystemEventConstants;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.systemevent.SystemEvent;
+import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.spring.extender.service.ServiceReference;
+
+import java.util.Date;
+import java.util.List;
 
 /**
- * The implementation of the layout page template structure rel local service.
- *
- * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.liferay.layout.page.template.service.LayoutPageTemplateStructureRelLocalService</code> interface.
- *
- * <p>
- * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
- * </p>
- *
- * @author Brian Wing Shun Chan
- * @see LayoutPageTemplateStructureRelLocalServiceBaseImpl
+ * @author Eduardo García
  */
 public class LayoutPageTemplateStructureRelLocalServiceImpl
 	extends LayoutPageTemplateStructureRelLocalServiceBaseImpl {
 
-	/*
-	 * NOTE FOR DEVELOPERS:
-	 *
-	 * Never reference this class directly. Use <code>com.liferay.layout.page.template.service.LayoutPageTemplateStructureRelLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.liferay.layout.page.template.service.LayoutPageTemplateStructureRelLocalServiceUtil</code>.
-	 */
+	@Override
+	public LayoutPageTemplateStructureRel addLayoutPageTemplateStructureRel(
+			long userId, long groupId, long layoutPageTemplateStructureId,
+			long segmentsExperienceId, String data,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		User user = userLocalService.getUser(userId);
+
+		long layoutPageTemplateStructureRelId = counterLocalService.increment();
+
+		LayoutPageTemplateStructureRel layoutPageTemplateStructureRel =
+			layoutPageTemplateStructureRelPersistence.create(
+				layoutPageTemplateStructureRelId);
+
+		layoutPageTemplateStructureRel.setUuid(serviceContext.getUuid());
+		layoutPageTemplateStructureRel.setGroupId(groupId);
+		layoutPageTemplateStructureRel.setCompanyId(user.getCompanyId());
+		layoutPageTemplateStructureRel.setUserId(user.getUserId());
+		layoutPageTemplateStructureRel.setUserName(user.getFullName());
+		layoutPageTemplateStructureRel.setCreateDate(
+			serviceContext.getCreateDate(new Date()));
+		layoutPageTemplateStructureRel.setModifiedDate(
+			serviceContext.getModifiedDate(new Date()));
+		layoutPageTemplateStructureRel.setLayoutPageTemplateStructureId(
+			layoutPageTemplateStructureId);
+		layoutPageTemplateStructureRel.setSegmentsExperienceId(
+			segmentsExperienceId);
+		layoutPageTemplateStructureRel.setData(data);
+
+		layoutPageTemplateStructureRelPersistence.update(
+			layoutPageTemplateStructureRel);
+
+		return layoutPageTemplateStructureRel;
+	}
+
+	@Override
+	@SystemEvent(type = SystemEventConstants.TYPE_DELETE)
+	public LayoutPageTemplateStructureRel deleteLayoutPageTemplateStructureRel(
+			long layoutPageTemplateStructureId, long segmentsExperienceId)
+		throws PortalException {
+
+		LayoutPageTemplateStructureRel layoutPageTemplateStructureRel =
+			layoutPageTemplateStructureRelPersistence.findByL_S(
+				layoutPageTemplateStructureId, segmentsExperienceId);
+
+		layoutPageTemplateStructureRelPersistence.remove(
+			layoutPageTemplateStructureRel);
+
+		return layoutPageTemplateStructureRel;
+	}
+
+	@Override
+	public LayoutPageTemplateStructureRel fetchLayoutPageTemplateStructureRel(
+		long layoutPageTemplateStructureId, long segmentsExperienceId) {
+
+		return layoutPageTemplateStructureRelPersistence.fetchByL_S(
+			layoutPageTemplateStructureId, segmentsExperienceId);
+	}
+
+	@Override
+	public List<LayoutPageTemplateStructureRel>
+		getLayoutPageTemplateStructureRels(long layoutPageTemplateStructureId) {
+
+		return layoutPageTemplateStructureRelPersistence.
+			findByLayoutPageTemplateStructureId(layoutPageTemplateStructureId);
+	}
+
+	@Override
+	public LayoutPageTemplateStructureRel updateLayoutPageTemplateStructureRel(
+			long layoutPageTemplateStructureId, long segmentsExperienceId,
+			String data)
+		throws PortalException {
+
+		LayoutPageTemplateStructureRel layoutPageTemplateStructureRel =
+			layoutPageTemplateStructureRelPersistence.findByL_S(
+				layoutPageTemplateStructureId, segmentsExperienceId);
+
+		layoutPageTemplateStructureRel.setModifiedDate(new Date());
+		layoutPageTemplateStructureRel.setData(data);
+
+		layoutPageTemplateStructureRelPersistence.update(
+			layoutPageTemplateStructureRel);
+
+		return layoutPageTemplateStructureRel;
+	}
+
+	@ServiceReference(type = LayoutLocalService.class)
+	private LayoutLocalService _layoutLocalService;
+
+	@ServiceReference(type = Portal.class)
+	private Portal _portal;
+
 }
