@@ -104,6 +104,7 @@ function addFragmentEntryLinkReducer(state, actionType, payload) {
 					payload.fragmentName,
 					nextState.classNameId,
 					nextState.classPK,
+					nextState.segmentsExperienceId,
 					nextState.portletNamespace
 				)
 					.then(
@@ -123,6 +124,7 @@ function addFragmentEntryLinkReducer(state, actionType, payload) {
 								nextState.portletNamespace,
 								nextState.classNameId,
 								nextState.classPK,
+								nextState.segmentsExperienceId,
 								nextData
 							);
 						}
@@ -303,6 +305,7 @@ function moveFragmentEntryLinkReducer(state, actionType, payload) {
 					nextState.portletNamespace,
 					nextState.classNameId,
 					nextState.classPK,
+					nextState.segmentsExperienceId,
 					nextData
 				)
 					.then(
@@ -362,6 +365,7 @@ function removeFragmentEntryLinkReducer(state, actionType, payload) {
 					nextState.portletNamespace,
 					nextState.classNameId,
 					nextState.classPK,
+					nextState.segmentsExperienceId,
 					fragmentEntryLinkId,
 					nextData
 				)
@@ -582,6 +586,7 @@ function updateFragmentEntryLinkConfigReducer(state, actionType, payload) {
  * @param {string} fragmentName
  * @param {string} classNameId
  * @param {string} classPK
+ * @param {string} segmentsExperienceId
  * @param {string} portletNamespace
  * @return {object}
  * @review
@@ -592,6 +597,7 @@ function _addFragmentEntryLink(
 	fragmentName,
 	classNameId,
 	classPK,
+	segmentsExperienceId,
 	portletNamespace
 ) {
 	const formData = new FormData();
@@ -599,6 +605,7 @@ function _addFragmentEntryLink(
 	formData.append(`${portletNamespace}fragmentKey`, fragmentEntryKey);
 	formData.append(`${portletNamespace}classNameId`, classNameId);
 	formData.append(`${portletNamespace}classPK`, classPK);
+	formData.append(`${portletNamespace}segmentsExperienceId`, segmentsExperienceId);
 
 	return fetch(
 		addFragmentEntryLinkURL,
@@ -746,6 +753,7 @@ function _getDropFragmentPosition(
  * @param {string} portletNamespace
  * @param {string} classNameId
  * @param {string} classPK
+ * @param {string} segmentsExperienceId
  * @param {object} layoutData
  * @return {Promise}
  * @review
@@ -761,6 +769,7 @@ function _moveFragmentEntryLink(
 
 	formData.append(`${portletNamespace}classNameId`, classNameId);
 	formData.append(`${portletNamespace}classPK`, classPK);
+	formData.append(`${portletNamespace}segmentsExperienceId`, classPK);
 	formData.append(`${portletNamespace}data`, JSON.stringify(layoutData));
 
 	return fetch(
@@ -816,6 +825,7 @@ function _removeFragment(layoutData, fragmentEntryLinkId) {
  * @param {string} portletNamespace
  * @param {string} classNameId
  * @param {string} classPK
+ * @param {string} segmentsExperienceId
  * @param {string} fragmentEntryLinkId
  * @param {object} layoutData
  * @return {Promise}
@@ -826,6 +836,7 @@ function _removeFragmentEntryLink(
 	portletNamespace,
 	classNameId,
 	classPK,
+	segmentsExperienceId,
 	fragmentEntryLinkId,
 	layoutData
 ) {
@@ -833,6 +844,7 @@ function _removeFragmentEntryLink(
 
 	formData.append(`${portletNamespace}classNameId`, classNameId);
 	formData.append(`${portletNamespace}classPK`, classPK);
+	formData.append(`${portletNamespace}segmentsExperieceId`, segmentsExperienceId);
 	formData.append(`${portletNamespace}data`, JSON.stringify(layoutData));
 
 	formData.append(

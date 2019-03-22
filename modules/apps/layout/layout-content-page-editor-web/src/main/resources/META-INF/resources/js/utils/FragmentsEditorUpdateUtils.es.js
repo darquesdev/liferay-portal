@@ -232,6 +232,7 @@ function updateIn(object, keyPath, updater, defaultValue) {
  * @param {!string} portletNamespace
  * @param {!string} classNameId
  * @param {!string} classPK
+ * @param {!string} segmentsExperienceId
  * @param {!Object} data
  * @param {!Array} fragmentEntryLinkIds
  * @return {Promise}
@@ -242,6 +243,7 @@ function updateLayoutData(
 	portletNamespace,
 	classNameId,
 	classPK,
+	segmentsExperienceId,
 	data,
 	fragmentEntryLinkIds
 ) {
@@ -249,6 +251,7 @@ function updateLayoutData(
 
 	formData.append(`${portletNamespace}classNameId`, classNameId);
 	formData.append(`${portletNamespace}classPK`, classPK);
+	formData.append(`${portletNamespace}segmentsExperienceId`, segmentsExperienceId);
 
 	formData.append(
 		`${portletNamespace}data`,

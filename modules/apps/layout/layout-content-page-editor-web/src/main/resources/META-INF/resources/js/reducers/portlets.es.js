@@ -48,6 +48,7 @@ function addPortletReducer(state, actionType, payload) {
 								nextState.portletNamespace,
 								nextState.classNameId,
 								nextState.classPK,
+								nextState.segmentsExperienceId,
 								nextData
 							);
 						}
@@ -115,7 +116,7 @@ function addPortletReducer(state, actionType, payload) {
  * @param {string} classNameId
  * @param {string} classPK
  * @param {string} portletNamespace
- * @param {string} defaultSegmentsExperienceId
+ * @param {string} segmentsExperienceId
  * @return {object}
  * @review
  */
@@ -125,13 +126,14 @@ function _addPortlet(
 	classNameId,
 	classPK,
 	portletNamespace,
-	defaultSegmentsExperienceId
+	segmentsExperienceId
 ) {
 	const formData = new FormData();
 
 	formData.append(`${portletNamespace}portletId`, portletId);
 	formData.append(`${portletNamespace}classNameId`, classNameId);
 	formData.append(`${portletNamespace}classPK`, classPK);
+	formData.append(`${portletNamespace}segmentsExperienceId`, segmentsExperienceId);
 
 	return fetch(
 		addPortletURL,
