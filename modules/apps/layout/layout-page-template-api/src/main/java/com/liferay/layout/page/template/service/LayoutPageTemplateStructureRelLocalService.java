@@ -26,10 +26,13 @@ import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.model.PersistedModel;
+import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
@@ -73,6 +76,12 @@ public interface LayoutPageTemplateStructureRelLocalService
 	public LayoutPageTemplateStructureRel addLayoutPageTemplateStructureRel(
 		LayoutPageTemplateStructureRel layoutPageTemplateStructureRel);
 
+	public LayoutPageTemplateStructureRel addLayoutPageTemplateStructureRel(
+			long userId, long groupId, long layoutPageTemplateStructureId,
+			long segmentsExperienceId, String data,
+			ServiceContext serviceContext)
+		throws PortalException;
+
 	/**
 	 * Creates a new layout page template structure rel with the primary key. Does not add the layout page template structure rel to the database.
 	 *
@@ -103,6 +112,11 @@ public interface LayoutPageTemplateStructureRelLocalService
 	@Indexable(type = IndexableType.DELETE)
 	public LayoutPageTemplateStructureRel deleteLayoutPageTemplateStructureRel(
 			long layoutPageTemplateStructureRelId)
+		throws PortalException;
+
+	@SystemEvent(type = SystemEventConstants.TYPE_DELETE)
+	public LayoutPageTemplateStructureRel deleteLayoutPageTemplateStructureRel(
+			long layoutPageTemplateStructureId, long segmentsExperienceId)
 		throws PortalException;
 
 	/**
@@ -182,6 +196,10 @@ public interface LayoutPageTemplateStructureRelLocalService
 	public LayoutPageTemplateStructureRel fetchLayoutPageTemplateStructureRel(
 		long layoutPageTemplateStructureRelId);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public LayoutPageTemplateStructureRel fetchLayoutPageTemplateStructureRel(
+		long layoutPageTemplateStructureId, long segmentsExperienceId);
+
 	/**
 	 * Returns the layout page template structure rel matching the UUID and group.
 	 *
@@ -245,6 +263,10 @@ public interface LayoutPageTemplateStructureRelLocalService
 	public List<LayoutPageTemplateStructureRel>
 		getLayoutPageTemplateStructureRels(int start, int end);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<LayoutPageTemplateStructureRel>
+		getLayoutPageTemplateStructureRels(long layoutPageTemplateStructureId);
+
 	/**
 	 * Returns all the layout page template structure rels matching the UUID and company.
 	 *
@@ -303,5 +325,10 @@ public interface LayoutPageTemplateStructureRelLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public LayoutPageTemplateStructureRel updateLayoutPageTemplateStructureRel(
 		LayoutPageTemplateStructureRel layoutPageTemplateStructureRel);
+
+	public LayoutPageTemplateStructureRel updateLayoutPageTemplateStructureRel(
+			long layoutPageTemplateStructureId, long segmentsExperienceId,
+			String data)
+		throws PortalException;
 
 }

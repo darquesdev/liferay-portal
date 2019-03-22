@@ -29,7 +29,7 @@ import com.liferay.portal.kernel.util.Accessor;
  */
 @ImplementationClassName("com.liferay.segments.model.impl.SegmentsEntryImpl")
 @ProviderType
-public interface SegmentsEntry extends PersistedModel, SegmentsEntryModel {
+public interface SegmentsEntry extends SegmentsEntryModel, PersistedModel {
 
 	/*
 	 * NOTE FOR DEVELOPERS:

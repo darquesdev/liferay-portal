@@ -179,6 +179,18 @@ public class LayoutPageTemplateStructureWrapper
 		return model.getCreateDate();
 	}
 
+	@Override
+	public String getData(long segmentsExperienceId) {
+		return model.getData(segmentsExperienceId);
+	}
+
+	@Override
+	public String getData(long[] segmentsExperienceIds)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return model.getData(segmentsExperienceIds);
+	}
+
 	/**
 	 * Returns the group ID of this layout page template structure.
 	 *

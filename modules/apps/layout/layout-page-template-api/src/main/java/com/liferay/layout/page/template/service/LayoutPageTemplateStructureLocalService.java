@@ -327,7 +327,8 @@ public interface LayoutPageTemplateStructureLocalService
 		LayoutPageTemplateStructure layoutPageTemplateStructure);
 
 	public LayoutPageTemplateStructure updateLayoutPageTemplateStructure(
-			long groupId, long classNameId, long classPK, String data)
+			long groupId, long classNameId, long classPK,
+			long segmentsExperienceId, String data)
 		throws PortalException;
 
 }

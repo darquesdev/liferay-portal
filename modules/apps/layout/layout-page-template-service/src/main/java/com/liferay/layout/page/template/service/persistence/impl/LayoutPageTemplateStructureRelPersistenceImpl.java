@@ -49,7 +49,6 @@ import java.lang.reflect.InvocationHandler;
 
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -2077,8 +2076,8 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 		_FINDER_COLUMN_LAYOUTPAGETEMPLATESTRUCTUREID_LAYOUTPAGETEMPLATESTRUCTUREID_2 =
 			"layoutPageTemplateStructureRel.layoutPageTemplateStructureId = ?";
 
-	private FinderPath _finderPathFetchByG_C_C;
-	private FinderPath _finderPathCountByG_C_C;
+	private FinderPath _finderPathFetchByL_S;
+	private FinderPath _finderPathCountByL_S;
 
 	/**
 	 * Returns the layout page template structure rel where layoutPageTemplateStructureId = &#63; and segmentsExperienceId = &#63; or throws a <code>NoSuchPageTemplateStructureRelException</code> if it could not be found.
@@ -2089,12 +2088,12 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 	 * @throws NoSuchPageTemplateStructureRelException if a matching layout page template structure rel could not be found
 	 */
 	@Override
-	public LayoutPageTemplateStructureRel findByG_C_C(
+	public LayoutPageTemplateStructureRel findByL_S(
 			long layoutPageTemplateStructureId, long segmentsExperienceId)
 		throws NoSuchPageTemplateStructureRelException {
 
 		LayoutPageTemplateStructureRel layoutPageTemplateStructureRel =
-			fetchByG_C_C(layoutPageTemplateStructureId, segmentsExperienceId);
+			fetchByL_S(layoutPageTemplateStructureId, segmentsExperienceId);
 
 		if (layoutPageTemplateStructureRel == null) {
 			StringBundler msg = new StringBundler(6);
@@ -2127,10 +2126,10 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 	 * @return the matching layout page template structure rel, or <code>null</code> if a matching layout page template structure rel could not be found
 	 */
 	@Override
-	public LayoutPageTemplateStructureRel fetchByG_C_C(
+	public LayoutPageTemplateStructureRel fetchByL_S(
 		long layoutPageTemplateStructureId, long segmentsExperienceId) {
 
-		return fetchByG_C_C(
+		return fetchByL_S(
 			layoutPageTemplateStructureId, segmentsExperienceId, true);
 	}
 
@@ -2143,7 +2142,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 	 * @return the matching layout page template structure rel, or <code>null</code> if a matching layout page template structure rel could not be found
 	 */
 	@Override
-	public LayoutPageTemplateStructureRel fetchByG_C_C(
+	public LayoutPageTemplateStructureRel fetchByL_S(
 		long layoutPageTemplateStructureId, long segmentsExperienceId,
 		boolean retrieveFromCache) {
 
@@ -2155,7 +2154,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 		if (retrieveFromCache) {
 			result = finderCache.getResult(
-				_finderPathFetchByG_C_C, finderArgs, this);
+				_finderPathFetchByL_S, finderArgs, this);
 		}
 
 		if (result instanceof LayoutPageTemplateStructureRel) {
@@ -2177,9 +2176,9 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 			query.append(_SQL_SELECT_LAYOUTPAGETEMPLATESTRUCTUREREL_WHERE);
 
-			query.append(_FINDER_COLUMN_G_C_C_LAYOUTPAGETEMPLATESTRUCTUREID_2);
+			query.append(_FINDER_COLUMN_L_S_LAYOUTPAGETEMPLATESTRUCTUREID_2);
 
-			query.append(_FINDER_COLUMN_G_C_C_SEGMENTSEXPERIENCEID_2);
+			query.append(_FINDER_COLUMN_L_S_SEGMENTSEXPERIENCEID_2);
 
 			String sql = query.toString();
 
@@ -2200,7 +2199,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 				if (list.isEmpty()) {
 					finderCache.putResult(
-						_finderPathFetchByG_C_C, finderArgs, list);
+						_finderPathFetchByL_S, finderArgs, list);
 				}
 				else {
 					LayoutPageTemplateStructureRel
@@ -2212,7 +2211,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(_finderPathFetchByG_C_C, finderArgs);
+				finderCache.removeResult(_finderPathFetchByL_S, finderArgs);
 
 				throw processException(e);
 			}
@@ -2237,12 +2236,12 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 	 * @return the layout page template structure rel that was removed
 	 */
 	@Override
-	public LayoutPageTemplateStructureRel removeByG_C_C(
+	public LayoutPageTemplateStructureRel removeByL_S(
 			long layoutPageTemplateStructureId, long segmentsExperienceId)
 		throws NoSuchPageTemplateStructureRelException {
 
 		LayoutPageTemplateStructureRel layoutPageTemplateStructureRel =
-			findByG_C_C(layoutPageTemplateStructureId, segmentsExperienceId);
+			findByL_S(layoutPageTemplateStructureId, segmentsExperienceId);
 
 		return remove(layoutPageTemplateStructureRel);
 	}
@@ -2255,10 +2254,10 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 	 * @return the number of matching layout page template structure rels
 	 */
 	@Override
-	public int countByG_C_C(
+	public int countByL_S(
 		long layoutPageTemplateStructureId, long segmentsExperienceId) {
 
-		FinderPath finderPath = _finderPathCountByG_C_C;
+		FinderPath finderPath = _finderPathCountByL_S;
 
 		Object[] finderArgs = new Object[] {
 			layoutPageTemplateStructureId, segmentsExperienceId
@@ -2271,9 +2270,9 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 
 			query.append(_SQL_COUNT_LAYOUTPAGETEMPLATESTRUCTUREREL_WHERE);
 
-			query.append(_FINDER_COLUMN_G_C_C_LAYOUTPAGETEMPLATESTRUCTUREID_2);
+			query.append(_FINDER_COLUMN_L_S_LAYOUTPAGETEMPLATESTRUCTUREID_2);
 
-			query.append(_FINDER_COLUMN_G_C_C_SEGMENTSEXPERIENCEID_2);
+			query.append(_FINDER_COLUMN_L_S_SEGMENTSEXPERIENCEID_2);
 
 			String sql = query.toString();
 
@@ -2308,10 +2307,10 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 	}
 
 	private static final String
-		_FINDER_COLUMN_G_C_C_LAYOUTPAGETEMPLATESTRUCTUREID_2 =
+		_FINDER_COLUMN_L_S_LAYOUTPAGETEMPLATESTRUCTUREID_2 =
 			"layoutPageTemplateStructureRel.layoutPageTemplateStructureId = ? AND ";
 
-	private static final String _FINDER_COLUMN_G_C_C_SEGMENTSEXPERIENCEID_2 =
+	private static final String _FINDER_COLUMN_L_S_SEGMENTSEXPERIENCEID_2 =
 		"layoutPageTemplateStructureRel.segmentsExperienceId = ?";
 
 	public LayoutPageTemplateStructureRelPersistenceImpl() {
@@ -2321,15 +2320,6 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 		setModelPKClass(long.class);
 		setEntityCacheEnabled(
 			LayoutPageTemplateStructureRelModelImpl.ENTITY_CACHE_ENABLED);
-
-		Map<String, String> dbColumnNames = new HashMap<String, String>();
-
-		dbColumnNames.put("uuid", "uuid_");
-		dbColumnNames.put(
-			"layoutPageTemplateStructureRelId", "lPageTemplateStructureRelId");
-		dbColumnNames.put("data", "data_");
-
-		setDBColumnNames(dbColumnNames);
 	}
 
 	/**
@@ -2356,7 +2346,7 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 			layoutPageTemplateStructureRel);
 
 		finderCache.putResult(
-			_finderPathFetchByG_C_C,
+			_finderPathFetchByL_S,
 			new Object[] {
 				layoutPageTemplateStructureRel.
 					getLayoutPageTemplateStructureId(),
@@ -2478,9 +2468,9 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 		};
 
 		finderCache.putResult(
-			_finderPathCountByG_C_C, args, Long.valueOf(1), false);
+			_finderPathCountByL_S, args, Long.valueOf(1), false);
 		finderCache.putResult(
-			_finderPathFetchByG_C_C, args,
+			_finderPathFetchByL_S, args,
 			layoutPageTemplateStructureRelModelImpl, false);
 	}
 
@@ -2519,12 +2509,12 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 					getSegmentsExperienceId()
 			};
 
-			finderCache.removeResult(_finderPathCountByG_C_C, args);
-			finderCache.removeResult(_finderPathFetchByG_C_C, args);
+			finderCache.removeResult(_finderPathCountByL_S, args);
+			finderCache.removeResult(_finderPathFetchByL_S, args);
 		}
 
 		if ((layoutPageTemplateStructureRelModelImpl.getColumnBitmask() &
-			 _finderPathFetchByG_C_C.getColumnBitmask()) != 0) {
+			 _finderPathFetchByL_S.getColumnBitmask()) != 0) {
 
 			Object[] args = new Object[] {
 				layoutPageTemplateStructureRelModelImpl.
@@ -2533,8 +2523,8 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 					getOriginalSegmentsExperienceId()
 			};
 
-			finderCache.removeResult(_finderPathCountByG_C_C, args);
-			finderCache.removeResult(_finderPathFetchByG_C_C, args);
+			finderCache.removeResult(_finderPathCountByL_S, args);
+			finderCache.removeResult(_finderPathFetchByL_S, args);
 		}
 	}
 
@@ -3269,22 +3259,21 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 			"countByLayoutPageTemplateStructureId",
 			new String[] {Long.class.getName()});
 
-		_finderPathFetchByG_C_C = new FinderPath(
+		_finderPathFetchByL_S = new FinderPath(
 			LayoutPageTemplateStructureRelModelImpl.ENTITY_CACHE_ENABLED,
 			LayoutPageTemplateStructureRelModelImpl.FINDER_CACHE_ENABLED,
 			LayoutPageTemplateStructureRelImpl.class, FINDER_CLASS_NAME_ENTITY,
-			"fetchByG_C_C",
+			"fetchByL_S",
 			new String[] {Long.class.getName(), Long.class.getName()},
 			LayoutPageTemplateStructureRelModelImpl.
 				LAYOUTPAGETEMPLATESTRUCTUREID_COLUMN_BITMASK |
 			LayoutPageTemplateStructureRelModelImpl.
 				SEGMENTSEXPERIENCEID_COLUMN_BITMASK);
 
-		_finderPathCountByG_C_C = new FinderPath(
+		_finderPathCountByL_S = new FinderPath(
 			LayoutPageTemplateStructureRelModelImpl.ENTITY_CACHE_ENABLED,
 			LayoutPageTemplateStructureRelModelImpl.FINDER_CACHE_ENABLED,
-			Long.class, FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByG_C_C",
+			Long.class, FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByL_S",
 			new String[] {Long.class.getName(), Long.class.getName()});
 	}
 
@@ -3332,6 +3321,6 @@ public class LayoutPageTemplateStructureRelPersistenceImpl
 		LayoutPageTemplateStructureRelPersistenceImpl.class);
 
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
-		new String[] {"uuid", "layoutPageTemplateStructureRelId", "data"});
+		new String[] {"uuid", "data"});
 
 }

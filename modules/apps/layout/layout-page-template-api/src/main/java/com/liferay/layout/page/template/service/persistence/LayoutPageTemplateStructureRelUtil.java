@@ -774,12 +774,12 @@ public class LayoutPageTemplateStructureRelUtil {
 	 * @return the matching layout page template structure rel
 	 * @throws NoSuchPageTemplateStructureRelException if a matching layout page template structure rel could not be found
 	 */
-	public static LayoutPageTemplateStructureRel findByG_C_C(
+	public static LayoutPageTemplateStructureRel findByL_S(
 			long layoutPageTemplateStructureId, long segmentsExperienceId)
 		throws com.liferay.layout.page.template.exception.
 			NoSuchPageTemplateStructureRelException {
 
-		return getPersistence().findByG_C_C(
+		return getPersistence().findByL_S(
 			layoutPageTemplateStructureId, segmentsExperienceId);
 	}
 
@@ -790,10 +790,10 @@ public class LayoutPageTemplateStructureRelUtil {
 	 * @param segmentsExperienceId the segments experience ID
 	 * @return the matching layout page template structure rel, or <code>null</code> if a matching layout page template structure rel could not be found
 	 */
-	public static LayoutPageTemplateStructureRel fetchByG_C_C(
+	public static LayoutPageTemplateStructureRel fetchByL_S(
 		long layoutPageTemplateStructureId, long segmentsExperienceId) {
 
-		return getPersistence().fetchByG_C_C(
+		return getPersistence().fetchByL_S(
 			layoutPageTemplateStructureId, segmentsExperienceId);
 	}
 
@@ -805,11 +805,11 @@ public class LayoutPageTemplateStructureRelUtil {
 	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the matching layout page template structure rel, or <code>null</code> if a matching layout page template structure rel could not be found
 	 */
-	public static LayoutPageTemplateStructureRel fetchByG_C_C(
+	public static LayoutPageTemplateStructureRel fetchByL_S(
 		long layoutPageTemplateStructureId, long segmentsExperienceId,
 		boolean retrieveFromCache) {
 
-		return getPersistence().fetchByG_C_C(
+		return getPersistence().fetchByL_S(
 			layoutPageTemplateStructureId, segmentsExperienceId,
 			retrieveFromCache);
 	}
@@ -821,12 +821,12 @@ public class LayoutPageTemplateStructureRelUtil {
 	 * @param segmentsExperienceId the segments experience ID
 	 * @return the layout page template structure rel that was removed
 	 */
-	public static LayoutPageTemplateStructureRel removeByG_C_C(
+	public static LayoutPageTemplateStructureRel removeByL_S(
 			long layoutPageTemplateStructureId, long segmentsExperienceId)
 		throws com.liferay.layout.page.template.exception.
 			NoSuchPageTemplateStructureRelException {
 
-		return getPersistence().removeByG_C_C(
+		return getPersistence().removeByL_S(
 			layoutPageTemplateStructureId, segmentsExperienceId);
 	}
 
@@ -837,10 +837,10 @@ public class LayoutPageTemplateStructureRelUtil {
 	 * @param segmentsExperienceId the segments experience ID
 	 * @return the number of matching layout page template structure rels
 	 */
-	public static int countByG_C_C(
+	public static int countByL_S(
 		long layoutPageTemplateStructureId, long segmentsExperienceId) {
 
-		return getPersistence().countByG_C_C(
+		return getPersistence().countByL_S(
 			layoutPageTemplateStructureId, segmentsExperienceId);
 	}
 
