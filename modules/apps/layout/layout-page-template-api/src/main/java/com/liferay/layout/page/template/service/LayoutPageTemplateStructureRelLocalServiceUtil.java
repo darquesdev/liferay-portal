@@ -58,6 +58,21 @@ public class LayoutPageTemplateStructureRelLocalServiceUtil {
 			layoutPageTemplateStructureRel);
 	}
 
+	public static
+		com.liferay.layout.page.template.model.LayoutPageTemplateStructureRel
+				addLayoutPageTemplateStructureRel(
+					long userId, long groupId,
+					long layoutPageTemplateStructureId,
+					long segmentsExperienceId, String data,
+					com.liferay.portal.kernel.service.ServiceContext
+						serviceContext)
+			throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().addLayoutPageTemplateStructureRel(
+			userId, groupId, layoutPageTemplateStructureId,
+			segmentsExperienceId, data, serviceContext);
+	}
+
 	/**
 	 * Creates a new layout page template structure rel with the primary key. Does not add the layout page template structure rel to the database.
 	 *
@@ -105,6 +120,17 @@ public class LayoutPageTemplateStructureRelLocalServiceUtil {
 
 		return getService().deleteLayoutPageTemplateStructureRel(
 			layoutPageTemplateStructureRelId);
+	}
+
+	public static
+		com.liferay.layout.page.template.model.LayoutPageTemplateStructureRel
+				deleteLayoutPageTemplateStructureRel(
+					long layoutPageTemplateStructureId,
+					long segmentsExperienceId)
+			throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().deleteLayoutPageTemplateStructureRel(
+			layoutPageTemplateStructureId, segmentsExperienceId);
 	}
 
 	/**
@@ -212,6 +238,15 @@ public class LayoutPageTemplateStructureRelLocalServiceUtil {
 			layoutPageTemplateStructureRelId);
 	}
 
+	public static
+		com.liferay.layout.page.template.model.LayoutPageTemplateStructureRel
+			fetchLayoutPageTemplateStructureRel(
+				long layoutPageTemplateStructureId, long segmentsExperienceId) {
+
+		return getService().fetchLayoutPageTemplateStructureRel(
+			layoutPageTemplateStructureId, segmentsExperienceId);
+	}
+
 	/**
 	 * Returns the layout page template structure rel matching the UUID and group.
 	 *
@@ -302,6 +337,15 @@ public class LayoutPageTemplateStructureRelLocalServiceUtil {
 		return getService().getLayoutPageTemplateStructureRels(start, end);
 	}
 
+	public static java.util.List
+		<com.liferay.layout.page.template.model.LayoutPageTemplateStructureRel>
+			getLayoutPageTemplateStructureRels(
+				long layoutPageTemplateStructureId) {
+
+		return getService().getLayoutPageTemplateStructureRels(
+			layoutPageTemplateStructureId);
+	}
+
 	/**
 	 * Returns all the layout page template structure rels matching the UUID and company.
 	 *
@@ -382,6 +426,17 @@ public class LayoutPageTemplateStructureRelLocalServiceUtil {
 
 		return getService().updateLayoutPageTemplateStructureRel(
 			layoutPageTemplateStructureRel);
+	}
+
+	public static
+		com.liferay.layout.page.template.model.LayoutPageTemplateStructureRel
+				updateLayoutPageTemplateStructureRel(
+					long layoutPageTemplateStructureId,
+					long segmentsExperienceId, String data)
+			throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().updateLayoutPageTemplateStructureRel(
+			layoutPageTemplateStructureId, segmentsExperienceId, data);
 	}
 
 	public static LayoutPageTemplateStructureRelLocalService getService() {

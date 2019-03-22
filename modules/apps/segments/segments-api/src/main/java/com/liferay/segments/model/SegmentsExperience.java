@@ -32,7 +32,7 @@ import com.liferay.portal.kernel.util.Accessor;
 )
 @ProviderType
 public interface SegmentsExperience
-	extends PersistedModel, SegmentsExperienceModel {
+	extends SegmentsExperienceModel, PersistedModel {
 
 	/*
 	 * NOTE FOR DEVELOPERS:

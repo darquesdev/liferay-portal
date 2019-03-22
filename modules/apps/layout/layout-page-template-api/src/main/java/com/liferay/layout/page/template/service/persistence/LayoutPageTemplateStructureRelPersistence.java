@@ -556,7 +556,7 @@ public interface LayoutPageTemplateStructureRelPersistence
 	 * @return the matching layout page template structure rel
 	 * @throws NoSuchPageTemplateStructureRelException if a matching layout page template structure rel could not be found
 	 */
-	public LayoutPageTemplateStructureRel findByG_C_C(
+	public LayoutPageTemplateStructureRel findByL_S(
 			long layoutPageTemplateStructureId, long segmentsExperienceId)
 		throws NoSuchPageTemplateStructureRelException;
 
@@ -567,7 +567,7 @@ public interface LayoutPageTemplateStructureRelPersistence
 	 * @param segmentsExperienceId the segments experience ID
 	 * @return the matching layout page template structure rel, or <code>null</code> if a matching layout page template structure rel could not be found
 	 */
-	public LayoutPageTemplateStructureRel fetchByG_C_C(
+	public LayoutPageTemplateStructureRel fetchByL_S(
 		long layoutPageTemplateStructureId, long segmentsExperienceId);
 
 	/**
@@ -578,7 +578,7 @@ public interface LayoutPageTemplateStructureRelPersistence
 	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the matching layout page template structure rel, or <code>null</code> if a matching layout page template structure rel could not be found
 	 */
-	public LayoutPageTemplateStructureRel fetchByG_C_C(
+	public LayoutPageTemplateStructureRel fetchByL_S(
 		long layoutPageTemplateStructureId, long segmentsExperienceId,
 		boolean retrieveFromCache);
 
@@ -589,7 +589,7 @@ public interface LayoutPageTemplateStructureRelPersistence
 	 * @param segmentsExperienceId the segments experience ID
 	 * @return the layout page template structure rel that was removed
 	 */
-	public LayoutPageTemplateStructureRel removeByG_C_C(
+	public LayoutPageTemplateStructureRel removeByL_S(
 			long layoutPageTemplateStructureId, long segmentsExperienceId)
 		throws NoSuchPageTemplateStructureRelException;
 
@@ -600,7 +600,7 @@ public interface LayoutPageTemplateStructureRelPersistence
 	 * @param segmentsExperienceId the segments experience ID
 	 * @return the number of matching layout page template structure rels
 	 */
-	public int countByG_C_C(
+	public int countByL_S(
 		long layoutPageTemplateStructureId, long segmentsExperienceId);
 
 	/**

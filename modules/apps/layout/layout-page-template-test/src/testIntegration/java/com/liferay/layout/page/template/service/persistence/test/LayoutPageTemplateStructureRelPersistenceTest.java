@@ -244,11 +244,11 @@ public class LayoutPageTemplateStructureRelPersistenceTest {
 	}
 
 	@Test
-	public void testCountByG_C_C() throws Exception {
-		_persistence.countByG_C_C(
+	public void testCountByL_S() throws Exception {
+		_persistence.countByL_S(
 			RandomTestUtil.nextLong(), RandomTestUtil.nextLong());
 
-		_persistence.countByG_C_C(0L, 0L);
+		_persistence.countByL_S(0L, 0L);
 	}
 
 	@Test
