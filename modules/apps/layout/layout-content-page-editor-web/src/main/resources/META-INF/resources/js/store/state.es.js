@@ -3,6 +3,30 @@ import {Config} from 'metal-state';
 import {FRAGMENTS_EDITOR_ITEM_BORDERS} from '../utils/constants';
 import {setIn} from '../utils/FragmentsEditorUpdateUtils.es';
 
+
+const LayoutShape = {
+	nextColumnId: Config.number(),
+	nextRowId: Config.number(),
+	structure: Config.arrayOf(
+		Config.shapeOf(
+			{
+				columns: Config.arrayOf(
+					Config.shapeOf(
+						{
+							columnId: Config.string(),
+							fragmentEntryLinkIds: Config.arrayOf(
+								Config.string()
+							),
+							size: Config.string().value('')
+						}
+					)
+				),
+				rowId: Config.string()
+			}
+		)
+	)
+};
+
 /**
  * Initial state
  * @review
@@ -231,6 +255,20 @@ const INITIAL_STATE = {
 		.string()
 		.value(''),
 
+
+
+	segmentedLayoutStore: Config
+		.arrayOf(
+			Config.shapeOf(
+				{
+					layoutData: Config.shapeOf(LayoutShape).required(),
+					segmentsExperienceId: Config.string().required()
+				}
+			)
+		)
+		.value([]),
+	
+	
 	/**
 	 * URL for updating a distinct fragment entries of the editor.
 	 * @default ''
@@ -274,26 +312,6 @@ const INITIAL_STATE = {
 			)
 		)
 		.value([]),
-
-	/**
-	 * Object to control the process of the experience creation
-	 * @default { creatingSegmentsExperience: false, error: null }
-	 * @review
-	 * @type {object}
-	 */
-	experienceSegmentsCreation: Config
-		.shapeOf(
-			{
-				creatingSegmentsExperience: Config.bool().required(),
-				error: Config.string()
-			}
-		)
-		.value(
-			{
-				creatingSegmentsExperience: false,
-				error: null
-			}
-		),
 
 	/**
 	 * Fragment id to indicate if that fragment editor has to be cleared.
@@ -452,28 +470,7 @@ const INITIAL_STATE = {
 	 */
 	layoutData: Config
 		.shapeOf(
-			{
-				nextColumnId: Config.number(),
-				nextRowId: Config.number(),
-				structure: Config.arrayOf(
-					Config.shapeOf(
-						{
-							columns: Config.arrayOf(
-								Config.shapeOf(
-									{
-										columnId: Config.string(),
-										fragmentEntryLinkIds: Config.arrayOf(
-											Config.string()
-										),
-										size: Config.string().value('')
-									}
-								)
-							),
-							rowId: Config.string()
-						}
-					)
-				)
-			}
+			LayoutShape	
 		)
 		.value(
 			{
