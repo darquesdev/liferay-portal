@@ -70,6 +70,24 @@ function createSegmentsExperienceReducer(state, actionType, payload) {
 							}
 						);
 
+						if (nextState.segmentedLayoutStore.length === 0) {
+							nextState.segmentedLayoutStore.push(
+								{
+									layoutData: nextState.layoutData,
+									segmentsExperienceId: nextState.defaultSegmentsExperienceId
+								}
+							);
+						}
+
+						const baseLayoutData = nextState.segmentedLayoutStore.find(segmentedLayout => segmentedLayout.segmentsExperienceId === nextState.defaultSegmentsExperienceId);
+
+						nextState.segmentedLayoutStore.push(
+							{
+								layoutData: baseLayoutData,
+								segmentsExperienceId
+							}
+						)
+
 						nextState = setIn(
 							nextState,
 							['segmentsExperienceId'],
@@ -170,10 +188,44 @@ function selectSegmentsExperienceReducer(state, actionType, payload) {
 	let nextState = state;
 
 	if (actionType === SELECT_SEGMENTS_EXPERIENCE) {
+		const prevSegmentsExperienceId = nextState.segmentsExperienceId || nextState.defaultSegmentsExperienceId;
+		const prevLayout = nextState.layoutData;
+
 		nextState = setIn(
 			nextState,
 			['segmentsExperienceId'],
 			payload.segmentsExperienceId,
+		);
+
+
+		const { layoutData } = nextState.segmentedLayoutStore.find(segmentedLayout => {
+			return segmentedLayout.segmentsExperienceId === payload.segmentsExperienceId
+		});
+
+		nextState = setIn(
+			nextState,
+			['layoutData'],
+			layoutData
+		);
+
+		const newSegmentedLayoutStore = nextState.segmentedLayoutStore.map(segmentedLayout => {
+			if (segmentedLayout.segmentsExperienceId === prevSegmentsExperienceId) {
+				return Object.assign(
+					{},
+					segmentedLayout,
+					{
+						layoutData: prevLayout
+					}
+				);
+			}
+			return segmentedLayout;
+		});
+
+
+		nextState = setIn(
+			nextState,
+			['segmentedLayoutStore'],
+			newSegmentedLayoutStore
 		);
 	}
 
