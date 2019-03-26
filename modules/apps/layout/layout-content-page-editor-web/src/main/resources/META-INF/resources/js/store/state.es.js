@@ -3,6 +3,29 @@ import {Config} from 'metal-state';
 import {FRAGMENTS_EDITOR_ITEM_BORDERS} from '../utils/constants';
 import {setIn} from '../utils/FragmentsEditorUpdateUtils.es';
 
+const LayoutDataShape = {
+	nextColumnId: Config.number(),
+	nextRowId: Config.number(),
+	structure: Config.arrayOf(
+		Config.shapeOf(
+			{
+				columns: Config.arrayOf(
+					Config.shapeOf(
+						{
+							columnId: Config.string(),
+							fragmentEntryLinkIds: Config.arrayOf(
+								Config.string()
+							),
+							size: Config.string().value('')
+						}
+					)
+				),
+				rowId: Config.string()
+			}
+		)
+	)
+};
+
 /**
  * Initial state
  * @review
@@ -230,6 +253,23 @@ const INITIAL_STATE = {
 	dropTargetItemType: Config
 		.string()
 		.value(''),
+	
+	/**
+	 * List of layoutData related to segmentsExperiences
+	 * @default ''
+	 * @review
+	 * @type {!array}
+	 */
+	layoutDataList: Config
+		.arrayOf(
+			Config.shapeOf(
+				{
+					layoutData: Config.shapeOf(LayoutDataShape).required(),
+					segmentsExperienceId: Config.string().required()
+				}
+			)
+		)
+		.value([]),
 
 	/**
 	 * URL for updating a distinct fragment entries of the editor.
@@ -274,26 +314,6 @@ const INITIAL_STATE = {
 			)
 		)
 		.value([]),
-
-	/**
-	 * Object to control the process of the experience creation
-	 * @default { creatingSegmentsExperience: false, error: null }
-	 * @review
-	 * @type {object}
-	 */
-	experienceSegmentsCreation: Config
-		.shapeOf(
-			{
-				creatingSegmentsExperience: Config.bool().required(),
-				error: Config.string()
-			}
-		)
-		.value(
-			{
-				creatingSegmentsExperience: false,
-				error: null
-			}
-		),
 
 	/**
 	 * Fragment id to indicate if that fragment editor has to be cleared.
@@ -452,28 +472,7 @@ const INITIAL_STATE = {
 	 */
 	layoutData: Config
 		.shapeOf(
-			{
-				nextColumnId: Config.number(),
-				nextRowId: Config.number(),
-				structure: Config.arrayOf(
-					Config.shapeOf(
-						{
-							columns: Config.arrayOf(
-								Config.shapeOf(
-									{
-										columnId: Config.string(),
-										fragmentEntryLinkIds: Config.arrayOf(
-											Config.string()
-										),
-										size: Config.string().value('')
-									}
-								)
-							),
-							rowId: Config.string()
-						}
-					)
-				)
-			}
+			LayoutDataShape
 		)
 		.value(
 			{
@@ -586,29 +585,11 @@ const INITIAL_STATE = {
 		.value([]),
 
 	/**
-	 * Object to control the process of the experience edition
-	 * @default { error: null, name: null, segmentsEntryId: null, segmentsExperienceId: null }
+	 * The active segmentsExperience
+	 * @default ''
 	 * @review
-	 * @type {object}
+	 * @type {string}
 	 */
-	segmentsExperienceEdition: Config
-		.shapeOf(
-			{
-				error: Config.string(),
-				name: Config.string(),
-				segmentsEntryId: Config.string(),
-				segmentsExperienceId: Config.string()
-			}
-		)
-		.value(
-			{
-				error: null,
-				name: null,
-				segmentsEntryId: null,
-				segmentsExperienceId: null
-			}
-		),
-
 	segmentsExperienceId: Config
 		.string()
 		.value(),

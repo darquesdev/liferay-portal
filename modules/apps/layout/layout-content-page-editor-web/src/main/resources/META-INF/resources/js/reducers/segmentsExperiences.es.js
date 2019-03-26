@@ -1,5 +1,6 @@
 import {CREATE_SEGMENTS_EXPERIENCE, DELETE_SEGMENTS_EXPERIENCE, EDIT_SEGMENTS_EXPERIENCE, SELECT_SEGMENTS_EXPERIENCE, UPDATE_SEGMENTS_EXPERIENCE_PRIORITY} from '../actions/actions.es';
 import {setIn} from '../utils/utils.es';
+import {updateLayoutData} from '../utils/FragmentsEditorUpdateUtils.es';
 
 const CREATE_SEGMENTS_EXPERIENCE_URL = '/segments.segmentsexperience/add-segments-experience';
 
@@ -10,12 +11,150 @@ const EDIT_SEGMENTS_EXPERIENCE_URL = '/segments.segmentsexperience/update-segmen
 const UPDATE_SEGMENTS_EXPERIENCE_PRIORITY_URL = '/segments.segmentsexperience/update-segments-experience-priority';
 
 /**
+ * Stores a the layout data of a new experience in layoutDataList
+ * @param {!object} state
+ * @param {!array} state.layoutDataList
+ * @param {!object} state.layoutData
+ * @param {!string} state.defaultSegmentsExperienceId
+ * @param {!string} segmentsExperienceId The segmentsExperience id that owns this LayoutData
+ * @returns {Promise}
+ */
+function _storeNewLayoutData(state, segmentsExperienceId) {
+	let nextState = state;
+	return new Promise((resolve, reject) => {
+		let baseLayoutData = null;
+		if (
+			nextState.defaultSegmentsExperienceId === nextState.segmentsExperienceId ||
+			!nextState.segmentsExperienceId
+		) {
+
+			// the current layout is the latest default available
+
+			baseLayoutData = nextState.layoutData;
+		}
+		else {
+
+			// the layoutList contains the latest baseLayout
+
+			const defaultExperienceLayoutListItem = nextState.layoutDataList.find(segmentedLayout => segmentedLayout.segmentsExperienceId === nextState.defaultSegmentsExperienceId);
+			baseLayoutData = defaultExperienceLayoutListItem && defaultExperienceLayoutListItem.layoutData;
+		}
+
+		// make sure the backend knows the layoutData of the new segment
+
+		updateLayoutData(
+			{
+				classNameId: nextState.classNameId,
+				classPK: nextState.classPK,
+				data: baseLayoutData,
+				portletNamespace: nextState.portletNamespace,
+				segmentsExperienceId: segmentsExperienceId,
+				updateLayoutPageTemplateDataURL: nextState.updateLayoutPageTemplateDataURL
+			}
+		).then(
+			() => {
+				nextState.layoutDataList.push(
+					{
+						layoutData: baseLayoutData,
+						segmentsExperienceId
+					}
+				);
+
+				return resolve(nextState);
+			}
+		).catch(
+			e => {
+				reject(e);
+			}
+		);
+	});
+}
+
+/**
+ *
+ * @param {!object} state
+ * @param {!string} segmentsExperienceId
+ * @returns {Promise}
+ */
+function _switchLayoutDataList(state, segmentsExperienceId) {
+	let nextState = state;
+	return new Promise((resolve, reject) => {
+		try {
+
+		// this makes sure the server gets the latest changes of the layout belonging to the experience we are leaving
+
+			updateLayoutData(
+				{
+					classNameId: state.classNameId,
+					classPK: state.classPK,
+					data: state.layoutData,
+					portletNamespace: state.portletNamespace,
+					segmentsExperienceId: state.segmentsExperienceId || state.defaultSegmentsExperienceId,
+					updateLayoutPageTemplateDataURL: state.updateLayoutPageTemplateDataURL
+				}
+			)
+				.then(
+					() => {
+						const prevLayout = nextState.layoutData;
+						const prevSegmentsExperienceId = state.segmentsExperienceId || nextState.defaultSegmentsExperienceId;
+
+						const {layoutData} = nextState.layoutDataList.find(
+							segmentedLayout => {
+								return segmentedLayout.segmentsExperienceId === segmentsExperienceId;
+							}
+						);
+
+						nextState = setIn(
+							nextState,
+							['layoutData'],
+							layoutData
+						);
+
+						const newlayoutDataList = nextState.layoutDataList.map(
+							segmentedLayout => {
+								let noSingleReturnSegmentedLayout = segmentedLayout;
+								if (segmentedLayout.segmentsExperienceId === prevSegmentsExperienceId) {
+									noSingleReturnSegmentedLayout = Object.assign(
+										{},
+										segmentedLayout,
+										{
+											layoutData: prevLayout
+										}
+									);
+								}
+								return noSingleReturnSegmentedLayout;
+							}
+						);
+
+						nextState = setIn(
+							nextState,
+							['layoutDataList'],
+							newlayoutDataList
+						);
+
+						resolve(nextState);
+					}
+				)
+				.catch(
+					(error) => {
+						reject(error);
+					}
+				);
+		}
+		catch (e) {
+			reject(e);
+		}
+
+	});
+}
+
+/**
  * @param {!object} state
  * @param {!string} actionType
  * @param {!object} payload
  * @param {string} payload.segmentsEntryId
  * @param {string} payload.name
- * @return {object}
+ * @return {Promise}
  * @review
  */
 function createSegmentsExperienceReducer(state, actionType, payload) {
@@ -56,7 +195,6 @@ function createSegmentsExperienceReducer(state, actionType, payload) {
 						const {
 							active,
 							nameCurrentValue,
-							priority,
 							segmentsEntryId,
 							segmentsExperienceId
 						} = obj;
@@ -70,19 +208,33 @@ function createSegmentsExperienceReducer(state, actionType, payload) {
 							{
 								active,
 								name: nameCurrentValue,
-								priority,
 								segmentsEntryId,
 								segmentsExperienceId
 							}
 						);
 
-						nextState = setIn(
+						_storeNewLayoutData(
 							nextState,
-							['segmentsExperienceId'],
 							segmentsExperienceId
+						).then(
+							response => {
+								_switchLayoutDataList(response, segmentsExperienceId)
+									.then(
+										(newState) => {
+											let nextNewState = setIn(
+												newState,
+												['segmentsExperienceId'],
+												segmentsExperienceId
+											);
+											resolve(nextNewState);
+										}
+									).catch(
+										(e) => {
+											reject(e);
+										}
+									);
+							}
 						);
-
-						resolve(nextState);
 					},
 					error => {
 						reject(error);
@@ -101,62 +253,67 @@ function createSegmentsExperienceReducer(state, actionType, payload) {
  * @param {!string} actionType
  * @param {object} payload
  * @param {!string} payload.experienceId
- * @returns\
+ * @returns {Promise}
  */
 function deleteSegmentsExperienceReducer(state, actionType, payload) {
 	return new Promise(
 		(resolve, reject) => {
-			let nextState = state;
-			if (actionType === DELETE_SEGMENTS_EXPERIENCE) {
-				const {segmentsExperienceId} = payload;
+			try {
+				let nextState = state;
+				if (actionType === DELETE_SEGMENTS_EXPERIENCE) {
+					const {segmentsExperienceId} = payload;
 
-				Liferay.Service(
-					DELETE_SEGMENTS_EXPERIENCE_URL,
-					{
-						segmentsExperienceId
-					},
-					response => {
-						const priority = response.priority;
+					Liferay.Service(
+						DELETE_SEGMENTS_EXPERIENCE_URL,
+						{
+							segmentsExperienceId
+						},
+						response => {
+							const priority = response.priority;
 
-						let availableSegmentsExperiences = Object.assign(
-							{},
-							nextState.availableSegmentsExperiences
-						);
+							let availableSegmentsExperiences = Object.assign(
+								{},
+								nextState.availableSegmentsExperiences
+							);
 
-						delete availableSegmentsExperiences[response.segmentsExperienceId];
-						const experienceIdToSelect = (segmentsExperienceId === nextState.segmentsExperienceId) ? nextState.defaultSegmentsExperienceId : nextState.segmentsExperienceId;
+							delete availableSegmentsExperiences[response.segmentsExperienceId];
+							const experienceIdToSelect = (segmentsExperienceId === nextState.segmentsExperienceId) ? nextState.defaultSegmentsExperienceId : nextState.segmentsExperienceId;
 
-						Object.entries(availableSegmentsExperiences).forEach(
-							([key, experience]) => {
-								const segmentExperiencePriority = experience.priority;
+							Object.entries(availableSegmentsExperiences).forEach(
+								([key, experience]) => {
+									const segmentExperiencePriority = experience.priority;
 
-								if (segmentExperiencePriority > priority) {
-									experience.priority = segmentExperiencePriority - 1;
+									if (segmentExperiencePriority > priority) {
+										experience.priority = segmentExperiencePriority - 1;
+									}
 								}
-							}
-						);
+							);
 
-						nextState = setIn(
-							nextState,
-							['availableSegmentsExperiences'],
-							availableSegmentsExperiences
-						);
-						nextState = setIn(
-							nextState,
-							['segmentsExperienceId'],
-							experienceIdToSelect
-						);
-						resolve(nextState);
-					},
-					(error, {exception}) => {
+							nextState = setIn(
+								nextState,
+								['availableSegmentsExperiences'],
+								availableSegmentsExperiences
+							);
+							nextState = setIn(
+								nextState,
+								['segmentsExperienceId'],
+								experienceIdToSelect
+							);
+							resolve(nextState);
+						},
+						(error, {exception}) => {
 
-						reject(exception);
-					}
-				);
+							reject(exception);
+						}
+					);
 
+				}
+				else {
+					resolve(nextState);
+				}
 			}
-			else {
-				resolve(nextState);
+			catch (e) {
+				reject(e);
 			}
 		}
 	);
@@ -170,20 +327,38 @@ function deleteSegmentsExperienceReducer(state, actionType, payload) {
  * @param {!string} actionType
  * @param {!object} payload
  * @param {!string} payload.segmentsExperienceId
- * @returns
+ * @returns {Promise}
  */
 function selectSegmentsExperienceReducer(state, actionType, payload) {
-	let nextState = state;
-
-	if (actionType === SELECT_SEGMENTS_EXPERIENCE) {
-		nextState = setIn(
-			nextState,
-			['segmentsExperienceId'],
-			payload.segmentsExperienceId,
-		);
-	}
-
-	return nextState;
+	return new Promise((resolve, reject) => {
+		let nextState = state;
+		if (actionType === SELECT_SEGMENTS_EXPERIENCE) {
+			if (payload.segmentsExperienceId === nextState.segmentsExperienceId) {
+				resolve(nextState);
+			}
+			else {
+				_switchLayoutDataList(nextState, payload.segmentsExperienceId)
+					.then(
+						newState => {
+							let nextNewState = setIn(
+								newState,
+								['segmentsExperienceId'],
+								payload.segmentsExperienceId,
+							);
+							resolve(nextNewState);
+						}
+					)
+					.catch(
+						e => {
+							reject(e);
+						}
+					);
+			}
+		}
+		else {
+			resolve(nextState);
+		}
+	});
 }
 
 /**
@@ -193,7 +368,7 @@ function selectSegmentsExperienceReducer(state, actionType, payload) {
  * @param {!string} payload.segmentsEntryId
  * @param {!string} payload.name
  * @param {!string} payload.segmentsExperienceId
- * @return {object}
+ * @return {Promise}
  * @review
  */
 function editSegmentsExperienceReducer(state, actionType, payload) {
@@ -269,6 +444,7 @@ function editSegmentsExperienceReducer(state, actionType, payload) {
  * @param {!('up' | 'down')} payload.direction
  * @param {!string} payload.segmentsExperienceId
  * @param {!number} payload.priority
+ * @return {Promise}
  */
 function updateSegmentsExperiencePriorityReducer(state, actionType, payload) {
 	return new Promise((resolve, reject) => {
