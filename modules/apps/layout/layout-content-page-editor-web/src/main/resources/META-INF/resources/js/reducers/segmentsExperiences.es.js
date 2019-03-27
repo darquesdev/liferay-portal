@@ -48,7 +48,7 @@ function storeLayoutData(state, segmentsExperienceId) {
 
 	nextState.segmentedLayoutStore.push(
 		{
-			layoutData: baseLayoutData,
+			layoutData: baseLayoutData.layoutData,
 			segmentsExperienceId
 		}
 	);
@@ -65,6 +65,8 @@ function storeLayoutData(state, segmentsExperienceId) {
  * @returns
  */
 function switchLayout(state, segmentsExperienceId) {
+	if(segmentsExperienceId === state.segmentsExperienceId) return state;
+
 	let nextState = state;
 	const prevSegmentsExperienceId = state.segmentsExperienceId || nextState.defaultSegmentsExperienceId;
 	const prevLayout = state.layoutData;
@@ -163,8 +165,8 @@ function createSegmentsExperienceReducer(state, actionType, payload) {
 								segmentsExperienceId
 							}
 						);
-
 						nextState = storeLayoutData(nextState, segmentsExperienceId);
+						nextState = switchLayout(nextState, segmentsExperienceId);
 
 						nextState = setIn(
 							nextState,
@@ -266,6 +268,9 @@ function selectSegmentsExperienceReducer(state, actionType, payload) {
 	let nextState = state;
 
 	if (actionType === SELECT_SEGMENTS_EXPERIENCE) {
+		nextState = switchLayout(nextState, payload.segmentsExperienceId);
+
+
 		nextState = setIn(
 			nextState,
 			['segmentsExperienceId'],
@@ -273,7 +278,6 @@ function selectSegmentsExperienceReducer(state, actionType, payload) {
 		);
 
 
-		nextState = switchLayout(nextState, payload.segmentsExperienceId);
 	}
 
 	return nextState;
