@@ -256,8 +256,14 @@ const INITIAL_STATE = {
 		.value(''),
 
 
-
-	segmentedLayoutStore: Config
+	/**
+	 * Array containing layoutData objects
+	 * so they can be picked up when switching segmentsExperienceId
+	 * @default []
+	 * @review
+	 * @type {object}
+	 */
+	layoutDataPersonalization: Config
 		.arrayOf(
 			Config.shapeOf(
 				{
