@@ -257,7 +257,7 @@ const INITIAL_STATE = {
 
 
 
-	segmentedLayoutStore: Config
+	layoutDataPersonalization: Config
 		.arrayOf(
 			Config.shapeOf(
 				{

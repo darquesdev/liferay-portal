@@ -14,14 +14,14 @@ const UPDATE_SEGMENTS_EXPERIENCE_PRIORITY_URL = '/segments.segmentsexperience/up
  *
  *
  * @param {!object} state
- * @param {!array} state.segmentedLayoutStore
+ * @param {!array} state.layoutDataPersonalization
  * @param {!object} state.layoutData
  * @param {!string} state.defaultSegmentsExperienceId
  * @returns
  */
 function setBaseLayoutData(state) {
-	if (state.segmentedLayoutStore.length === 0) {
-		state.segmentedLayoutStore.push(
+	if (state.layoutDataPersonalization.length === 0) {
+		state.layoutDataPersonalization.push(
 			{
 				layoutData: state.layoutData,
 				segmentsExperienceId: state.defaultSegmentsExperienceId
@@ -36,7 +36,7 @@ function setBaseLayoutData(state) {
  *
  *
  * @param {!object} state
- * @param {!array} state.segmentedLayoutStore
+ * @param {!array} state.layoutDataPersonalization
  * @param {!object} state.layoutData
  * @param {!string} state.defaultSegmentsExperienceId
  * @param {!string} segmentsExperienceId The segmentsExperience id that owns this LayoutData
@@ -44,9 +44,9 @@ function setBaseLayoutData(state) {
  */
 function storeLayoutData(state, segmentsExperienceId) {
 	const nextState = setBaseLayoutData(state);
-	const baseLayoutData = nextState.segmentedLayoutStore.find(segmentedLayout => segmentedLayout.segmentsExperienceId === nextState.defaultSegmentsExperienceId);
+	const baseLayoutData = nextState.layoutDataPersonalization.find(segmentedLayout => segmentedLayout.segmentsExperienceId === nextState.defaultSegmentsExperienceId);
 
-	nextState.segmentedLayoutStore.push(
+	nextState.layoutDataPersonalization.push(
 		{
 			layoutData: baseLayoutData.layoutData,
 			segmentsExperienceId
@@ -71,7 +71,7 @@ function switchLayout(state, segmentsExperienceId) {
 	const prevSegmentsExperienceId = state.segmentsExperienceId || nextState.defaultSegmentsExperienceId;
 	const prevLayout = state.layoutData;
 
-	const { layoutData } = nextState.segmentedLayoutStore.find(segmentedLayout => {
+	const { layoutData } = nextState.layoutDataPersonalization.find(segmentedLayout => {
 		return segmentedLayout.segmentsExperienceId === segmentsExperienceId;
 	});
 
@@ -81,7 +81,7 @@ function switchLayout(state, segmentsExperienceId) {
 		layoutData
 	);
 
-	const newSegmentedLayoutStore = nextState.segmentedLayoutStore.map(
+	const newlayoutDataPersonalization = nextState.layoutDataPersonalization.map(
 		segmentedLayout => {
 			if (segmentedLayout.segmentsExperienceId === prevSegmentsExperienceId) {
 				return Object.assign(
@@ -98,8 +98,8 @@ function switchLayout(state, segmentsExperienceId) {
 
 	nextState = setIn(
 		nextState,
-		['segmentedLayoutStore'],
-		newSegmentedLayoutStore
+		['layoutDataPersonalization'],
+		newlayoutDataPersonalization
 	);
 
 	return nextState;
