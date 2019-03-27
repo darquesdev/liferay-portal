@@ -30,11 +30,14 @@ function addSectionReducer(state, actionType, payload) {
 				);
 
 				updateLayoutData(
-					nextState.updateLayoutPageTemplateDataURL,
-					nextState.portletNamespace,
-					nextState.classNameId,
-					nextState.classPK,
-					nextData
+					{
+						updateLayoutPageTemplateDataURL: nextState.updateLayoutPageTemplateDataURL,
+						portletNamespace: nextState.portletNamespace,
+						classNameId: nextState.classNameId,
+						classPK: nextState.classPK,
+						data: nextData,
+						segmentsExperienceId: nextState.segmentsExperienceId
+					}
 				)
 					.then(
 						() => {
@@ -84,11 +87,14 @@ function moveSectionReducer(state, actionType, payload) {
 				);
 
 				updateLayoutData(
-					nextState.updateLayoutPageTemplateDataURL,
-					nextState.portletNamespace,
-					nextState.classNameId,
-					nextState.classPK,
-					nextData
+					{
+						updateLayoutPageTemplateDataURL: nextState.updateLayoutPageTemplateDataURL,
+						portletNamespace: nextState.portletNamespace,
+						classNameId: nextState.classNameId,
+						classPK: nextState.classPK,
+						data: nextData,
+						segmentsExperienceId: nextState.segmentsExperienceId 
+					}
 				)
 					.then(
 						() => {
@@ -146,12 +152,15 @@ function removeSectionReducer(state, actionType, payload) {
 				);
 
 				updateLayoutData(
-					nextState.updateLayoutPageTemplateDataURL,
-					nextState.portletNamespace,
-					nextState.classNameId,
-					nextState.classPK,
-					nextData,
-					fragmentEntryLinkIds
+					{
+						updateLayoutPageTemplateDataURL: nextState.updateLayoutPageTemplateDataURL,
+						portletNamespace: nextState.portletNamespace,
+						classNameId: nextState.classNameId,
+						classPK: nextState.classPK,
+						data: nextData,
+						fragmentEntryLinkIds: fragmentEntryLinkIds,
+						segmentsExperienceId: nextState.segmentsExperienceId
+					}
 				)
 					.then(
 						() => {
@@ -212,11 +221,14 @@ const updateSectionColumnsReducer = (state, actionType, payload) => new Promise(
 				);
 
 				updateLayoutData(
-					nextState.updateLayoutPageTemplateDataURL,
-					nextState.portletNamespace,
-					nextState.classNameId,
-					nextState.classPK,
-					nextState.layoutData
+					{
+						updateLayoutPageTemplateDataURL: nextState.updateLayoutPageTemplateDataURL,
+						portletNamespace: nextState.portletNamespace,
+						classNameId: nextState.classNameId,
+						classPK: nextState.classPK,
+						data: nextState.layoutData,
+						segmentsExperienceId: nextState.segmentsExperienceId
+					}
 				)
 					.then(
 						() => {
@@ -281,12 +293,15 @@ function updateSectionColumnsNumberReducer(state, actionType, payload) {
 				}
 
 				updateLayoutData(
-					nextState.updateLayoutPageTemplateDataURL,
-					nextState.portletNamespace,
-					nextState.classNameId,
-					nextState.classPK,
-					nextData,
-					fragmentEntryLinkIdsToRemove
+					{
+						updateLayoutPageTemplateDataURL: nextState.updateLayoutPageTemplateDataURL,
+						portletNamespace: nextState.portletNamespace,
+						classNameId: nextState.classNameId,
+						classPK: nextState.classPK,
+						data: nextData,
+						fragmentEntryLinkIds: fragmentEntryLinkIdsToRemove,
+						segmentsExperienceId: nextState.segmentsExperienceId
+					}
 				)
 					.then(
 						() => {
@@ -355,11 +370,14 @@ const updateSectionConfigReducer = (state, actionType, payload) => new Promise(
 				);
 
 				updateLayoutData(
-					nextState.updateLayoutPageTemplateDataURL,
-					nextState.portletNamespace,
-					nextState.classNameId,
-					nextState.classPK,
-					nextState.layoutData
+					{
+						updateLayoutPageTemplateDataURL: nextState.updateLayoutPageTemplateDataURL,
+						portletNamespace: nextState.portletNamespace,
+						classNameId: nextState.classNameId,
+						classPK: nextState.classPK,
+						data: nextState.layoutData,
+						segmentsExperienceId: nextState.segmentsExperienceId
+					}
 				)
 					.then(
 						() => {
