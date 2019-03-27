@@ -119,11 +119,14 @@ function addFragmentEntryLinkReducer(state, actionType, payload) {
 							);
 
 							return updateLayoutData(
-								nextState.updateLayoutPageTemplateDataURL,
-								nextState.portletNamespace,
-								nextState.classNameId,
-								nextState.classPK,
-								nextData
+								{
+									updateLayoutPageTemplateDataURL: nextState.updateLayoutPageTemplateDataURL,
+									portletNamespace: nextState.portletNamespace,
+									classNameId: nextState.classNameId,
+									classPK: nextState.classPK,
+									data: nextData,
+									segmentsExperienceId: nextState.segmentsExperienceId
+								}
 							);
 						}
 					)

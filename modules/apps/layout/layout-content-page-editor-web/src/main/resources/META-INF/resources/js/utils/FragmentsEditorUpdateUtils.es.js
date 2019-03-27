@@ -179,17 +179,21 @@ function updateIn(object, keyPath, updater, defaultValue) {
  * @review
  */
 function updateLayoutData(
-	updateLayoutPageTemplateDataURL,
-	portletNamespace,
-	classNameId,
-	classPK,
-	data,
-	fragmentEntryLinkIds
+	{
+		updateLayoutPageTemplateDataURL,
+		portletNamespace,
+		classNameId,
+		classPK,
+		data,
+		fragmentEntryLinkIds,
+		segmentsExperienceId
+	}
 ) {
 	const formData = new FormData();
 
 	formData.append(`${portletNamespace}classNameId`, classNameId);
 	formData.append(`${portletNamespace}classPK`, classPK);
+	formData.append(`${portletNamespace}segmentsExperienceId`, segmentsExperienceId);
 
 	formData.append(
 		`${portletNamespace}data`,
