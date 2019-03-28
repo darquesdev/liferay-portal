@@ -14,8 +14,13 @@
 
 package com.liferay.layout.content.page.editor.web.internal.display.context;
 
+import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
+import com.liferay.layout.page.template.model.LayoutPageTemplateStructureRel;
+import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalServiceUtil;
+import com.liferay.layout.page.template.service.LayoutPageTemplateStructureRelLocalServiceUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -30,6 +35,7 @@ import com.liferay.segments.service.SegmentsEntryServiceUtil;
 import com.liferay.segments.service.SegmentsExperienceLocalServiceUtil;
 import com.liferay.segments.service.SegmentsExperienceServiceUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -70,6 +76,9 @@ public class ContentPageLayoutEditorDisplayContext
 			"defaultSegmentsExperienceId", _getDefaultSegmentsExperienceId()
 		).put(
 			"sidebarPanels", getSidebarPanelSoyContexts(false)
+		).put(
+			"layoutDataPersonalization",
+			_getLayoutDataPersonalizationSoyContext()
 		);
 
 		_editorSoyContext = soyContext;
@@ -97,6 +106,9 @@ public class ContentPageLayoutEditorDisplayContext
 			SegmentsConstants.SEGMENTS_ENTRY_ID_DEFAULT
 		).put(
 			"defaultSegmentsExperienceId", _getDefaultSegmentsExperienceId()
+		).put(
+			"layoutDataPersonalization",
+			_getLayoutDataPersonalizationSoyContext()
 		);
 
 		_fragmentsEditorToolbarSoyContext = soyContext;
@@ -209,6 +221,46 @@ public class ContentPageLayoutEditorDisplayContext
 		}
 
 		return _defaultSegmentsExperienceId;
+	}
+
+	private List<SoyContext> _getLayoutDataPersonalizationSoyContext()
+		throws PortalException {
+
+		List<SoyContext> soyContexts = new ArrayList<>();
+
+		LayoutPageTemplateStructure layoutPageTemplateStructure =
+			LayoutPageTemplateStructureLocalServiceUtil.
+				fetchLayoutPageTemplateStructure(
+					themeDisplay.getScopeGroupId(), classNameId, classPK, true);
+
+		if (layoutPageTemplateStructure == null) {
+			return soyContexts;
+		}
+
+		List<LayoutPageTemplateStructureRel> layoutPageTemplateStructureRels =
+			LayoutPageTemplateStructureRelLocalServiceUtil.
+				getLayoutPageTemplateStructureRels(
+					layoutPageTemplateStructure.
+						getLayoutPageTemplateStructureId());
+
+		for (LayoutPageTemplateStructureRel layoutPageTemplateStructureRel :
+				layoutPageTemplateStructureRels) {
+
+			SoyContext soyContext = SoyContextFactoryUtil.createSoyContext();
+
+			soyContext.put(
+				"layoutData",
+				JSONFactoryUtil.createJSONObject(
+					layoutPageTemplateStructureRel.getData())
+			).put(
+				"segmentsExperienceId",
+				layoutPageTemplateStructureRel.getSegmentsExperienceId()
+			);
+
+			soyContexts.add(soyContext);
+		}
+
+		return soyContexts;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
