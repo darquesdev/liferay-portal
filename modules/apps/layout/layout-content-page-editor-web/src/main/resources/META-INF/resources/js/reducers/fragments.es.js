@@ -104,7 +104,8 @@ function addFragmentEntryLinkReducer(state, actionType, payload) {
 					payload.fragmentName,
 					nextState.classNameId,
 					nextState.classPK,
-					nextState.portletNamespace
+					nextState.portletNamespace,
+					nextState.segmentsExperienceId
 				)
 					.then(
 						response => {
@@ -366,7 +367,8 @@ function removeFragmentEntryLinkReducer(state, actionType, payload) {
 					nextState.classNameId,
 					nextState.classPK,
 					fragmentEntryLinkId,
-					nextData
+					nextData,
+					nextState.segmentsExperienceId
 				)
 					.then(
 						() => {
@@ -595,13 +597,15 @@ function _addFragmentEntryLink(
 	fragmentName,
 	classNameId,
 	classPK,
-	portletNamespace
+	portletNamespace,
+	segmentsExperienceId
 ) {
 	const formData = new FormData();
 
 	formData.append(`${portletNamespace}fragmentKey`, fragmentEntryKey);
 	formData.append(`${portletNamespace}classNameId`, classNameId);
 	formData.append(`${portletNamespace}classPK`, classPK);
+	formData.append(`${portletNamespace}segmentsExperienceId`, segmentsExperienceId);
 
 	return fetch(
 		addFragmentEntryLinkURL,
@@ -830,13 +834,15 @@ function _removeFragmentEntryLink(
 	classNameId,
 	classPK,
 	fragmentEntryLinkId,
-	layoutData
+	layoutData,
+	segmentsExperienceId
 ) {
 	const formData = new FormData();
 
 	formData.append(`${portletNamespace}classNameId`, classNameId);
 	formData.append(`${portletNamespace}classPK`, classPK);
 	formData.append(`${portletNamespace}data`, JSON.stringify(layoutData));
+	formData.append(`${portletNamespace}segmentsExperienceId`, segmentsExperienceId);
 
 	formData.append(
 		`${portletNamespace}fragmentEntryLinkId`,
