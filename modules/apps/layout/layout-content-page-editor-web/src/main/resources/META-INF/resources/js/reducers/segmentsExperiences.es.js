@@ -1,5 +1,6 @@
 import {CREATE_SEGMENTS_EXPERIENCE, DELETE_SEGMENTS_EXPERIENCE, EDIT_SEGMENTS_EXPERIENCE, SELECT_SEGMENTS_EXPERIENCE, UPDATE_SEGMENTS_EXPERIENCE_PRIORITY} from '../actions/actions.es';
 import {setIn} from '../utils/utils.es';
+import {updateLayoutData} from '../utils/FragmentsEditorUpdateUtils.es';
 
 const CREATE_SEGMENTS_EXPERIENCE_URL = '/segments.segmentsexperience/add-segments-experience';
 
@@ -23,7 +24,7 @@ function setBaseLayoutData(state) {
 	if (state.layoutDataPersonalization.length === 0) {
 		state.layoutDataPersonalization.push(
 			{
-				layoutData: state.layoutData,
+				layoutData: Object.assign({} , state.layoutData),
 				segmentsExperienceId: state.defaultSegmentsExperienceId
 			}
 		);
@@ -43,7 +44,7 @@ function setBaseLayoutData(state) {
  * @returns
  */
 function storeLayoutData(state, segmentsExperienceId) {
-	const nextState = setBaseLayoutData(state);
+	const nextState = Object.assign({}, state);
 	const baseLayoutData = nextState.layoutDataPersonalization.find(segmentedLayout => segmentedLayout.segmentsExperienceId === nextState.defaultSegmentsExperienceId);
 
 	nextState.layoutDataPersonalization.push(
@@ -65,44 +66,66 @@ function storeLayoutData(state, segmentsExperienceId) {
  * @returns
  */
 function switchLayout(state, segmentsExperienceId) {
-	if(segmentsExperienceId === state.segmentsExperienceId) return state;
-
-	let nextState = state;
-	const prevSegmentsExperienceId = state.segmentsExperienceId || nextState.defaultSegmentsExperienceId;
-	const prevLayout = state.layoutData;
-
-	const { layoutData } = nextState.layoutDataPersonalization.find(segmentedLayout => {
-		return segmentedLayout.segmentsExperienceId === segmentsExperienceId;
-	});
-
-	nextState = setIn(
-		nextState,
-		['layoutData'],
-		layoutData
-	);
-
-	const newlayoutDataPersonalization = nextState.layoutDataPersonalization.map(
-		segmentedLayout => {
-			if (segmentedLayout.segmentsExperienceId === prevSegmentsExperienceId) {
-				return Object.assign(
-					{},
-					segmentedLayout,
-					{
-						layoutData: prevLayout
-					}
-				);
+	return new Promise((resolve, reject) => {
+		updateLayoutData(
+			{
+				updateLayoutPageTemplateDataURL: state.updateLayoutPageTemplateDataURL,
+				portletNamespace: state.portletNamespace,
+				classNameId: state.classNameId,
+				classPK: state.classPK,
+				data: state.layoutData,
+				segmentsExperienceId 
 			}
-			return segmentedLayout;
-		}
-	);
+		)
+			.then(
+				() => {
+					if(segmentsExperienceId === state.segmentsExperienceId) resolve(state);
 
-	nextState = setIn(
-		nextState,
-		['layoutDataPersonalization'],
-		newlayoutDataPersonalization
-	);
+					let nextState = state;
+					const prevSegmentsExperienceId = state.segmentsExperienceId || nextState.defaultSegmentsExperienceId;
+					const prevLayout = state.layoutData;
 
-	return nextState;
+					const { layoutData } = nextState.layoutDataPersonalization.find(segmentedLayout => {
+						return segmentedLayout.segmentsExperienceId === segmentsExperienceId;
+					});
+
+					nextState = setIn(
+						nextState,
+						['layoutData'],
+						layoutData
+					);
+
+					const newlayoutDataPersonalization = nextState.layoutDataPersonalization.map(
+						segmentedLayout => {
+							if (segmentedLayout.segmentsExperienceId === prevSegmentsExperienceId) {
+								return Object.assign(
+									{},
+									segmentedLayout,
+									{
+										layoutData: prevLayout
+									}
+								);
+							}
+							return segmentedLayout;
+						}
+					);
+
+					nextState = setIn(
+						nextState,
+						['layoutDataPersonalization'],
+						newlayoutDataPersonalization
+					);
+
+					return resolve(nextState);
+				}
+			)
+			.catch(
+				() => {
+					resolve(nextState);
+				}
+			);
+
+	})
 }
 
 /**
@@ -166,15 +189,15 @@ function createSegmentsExperienceReducer(state, actionType, payload) {
 							}
 						);
 						nextState = storeLayoutData(nextState, segmentsExperienceId);
-						nextState = switchLayout(nextState, segmentsExperienceId);
-
-						nextState = setIn(
-							nextState,
-							['segmentsExperienceId'],
-							segmentsExperienceId
-						);
-
-						resolve(nextState);
+						switchLayout(nextState, segmentsExperienceId)
+							.then((newState) => {
+								let nextNewState = setIn(
+									newState,
+									['segmentsExperienceId'],
+									segmentsExperienceId
+								);
+								resolve(nextNewState);
+							})
 					},
 					error => {
 						reject(error);
@@ -265,22 +288,24 @@ function deleteSegmentsExperienceReducer(state, actionType, payload) {
  * @returns
  */
 function selectSegmentsExperienceReducer(state, actionType, payload) {
-	let nextState = state;
-
-	if (actionType === SELECT_SEGMENTS_EXPERIENCE) {
-		nextState = switchLayout(nextState, payload.segmentsExperienceId);
-
-
-		nextState = setIn(
-			nextState,
-			['segmentsExperienceId'],
-			payload.segmentsExperienceId,
-		);
-
-
-	}
-
-	return nextState;
+	return new Promise((resolve, reject) => {
+		let nextState = state;
+		if (actionType === SELECT_SEGMENTS_EXPERIENCE) {
+			switchLayout(nextState, payload.segmentsExperienceId)
+			.then(
+				newState => {
+					let nextNewState = setIn(
+						newState,
+						['segmentsExperienceId'],
+						payload.segmentsExperienceId,
+					);
+					resolve(nextNewState);
+				}
+			)
+		} else {
+			resolve(nextState);
+		}
+	})
 }
 
 /**
