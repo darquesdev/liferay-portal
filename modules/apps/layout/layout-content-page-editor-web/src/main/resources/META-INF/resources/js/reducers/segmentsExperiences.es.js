@@ -18,38 +18,18 @@ const UPDATE_SEGMENTS_EXPERIENCE_PRIORITY_URL = '/segments.segmentsexperience/up
  * @param {!array} state.layoutDataPersonalization
  * @param {!object} state.layoutData
  * @param {!string} state.defaultSegmentsExperienceId
- * @returns
- */
-function setBaseLayoutData(state) {
-	if (state.layoutDataPersonalization.length === 0) {
-		state.layoutDataPersonalization.push(
-			{
-				layoutData: Object.assign({} , state.layoutData),
-				segmentsExperienceId: state.defaultSegmentsExperienceId
-			}
-		);
-	}
-	return state;
-}
-
-
-/**
- *
- *
- * @param {!object} state
- * @param {!array} state.layoutDataPersonalization
- * @param {!object} state.layoutData
- * @param {!string} state.defaultSegmentsExperienceId
  * @param {!string} segmentsExperienceId The segmentsExperience id that owns this LayoutData
  * @returns
  */
 function storeLayoutData(state, segmentsExperienceId) {
 	const nextState = Object.assign({}, state);
-	const baseLayoutData = nextState.layoutDataPersonalization.find(segmentedLayout => segmentedLayout.segmentsExperienceId === nextState.defaultSegmentsExperienceId);
+	const baseLayoutData = (nextState.segmentsExperienceId && nextState.segmentsExperienceId === nextState.defaultSegmentsExperienceId) ?
+		nextState.layoutDataPersonalization.find(segmentedLayout => segmentedLayout.segmentsExperienceId === nextState.defaultSegmentsExperienceId).layoutData :
+		nextState.layoutData;
 
 	nextState.layoutDataPersonalization.push(
 		{
-			layoutData: baseLayoutData.layoutData,
+			layoutData: baseLayoutData,
 			segmentsExperienceId
 		}
 	);
