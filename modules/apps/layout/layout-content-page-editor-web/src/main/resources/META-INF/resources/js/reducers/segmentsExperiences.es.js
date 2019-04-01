@@ -54,7 +54,7 @@ function switchLayout(state, segmentsExperienceId) {
 				classNameId: state.classNameId,
 				classPK: state.classPK,
 				data: state.layoutData,
-				segmentsExperienceId 
+				segmentsExperienceId: state.segmentsExperienceId || state.defaultSegmentsExperienceId
 			}
 		)
 			.then(
@@ -63,7 +63,7 @@ function switchLayout(state, segmentsExperienceId) {
 
 					let nextState = state;
 					const prevSegmentsExperienceId = state.segmentsExperienceId || nextState.defaultSegmentsExperienceId;
-					const prevLayout = state.layoutData;
+					const prevLayout = nextState.layoutData;
 
 					const { layoutData } = nextState.layoutDataPersonalization.find(segmentedLayout => {
 						return segmentedLayout.segmentsExperienceId === segmentsExperienceId;
@@ -96,7 +96,7 @@ function switchLayout(state, segmentsExperienceId) {
 						newlayoutDataPersonalization
 					);
 
-					return resolve(nextState);
+					resolve(nextState);
 				}
 			)
 			.catch(
