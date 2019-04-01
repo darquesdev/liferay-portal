@@ -52,7 +52,7 @@ class FragmentsEditor extends Component {
 		this._handleDocumentFocus = this._handleDocumentFocus.bind(this);
 		this._handleDocumentMouseOver = this._handleDocumentMouseOver.bind(this);
 
-		document.addEventListener('click', this._handleDocumentClick, true);
+		document.addEventListener('click', this._handleDocumentClick);
 		document.addEventListener('focusin', this._handleDocumentFocus);
 		document.addEventListener('mouseover', this._handleDocumentMouseOver);
 	}
