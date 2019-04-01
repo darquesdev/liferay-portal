@@ -2,6 +2,7 @@ import {ADD_SECTION, MOVE_SECTION, REMOVE_SECTION, UPDATE_SECTION_COLUMNS, UPDAT
 import {DEFAULT_CONFIG, MAX_COLUMNS} from '../utils/sectionConstants';
 import {add, remove, setIn, updateIn, updateLayoutData, updateWidgets} from '../utils/FragmentsEditorUpdateUtils.es';
 import {getDropSectionPosition, getSectionFragmentEntryLinkIds, getSectionIndex} from '../utils/FragmentsEditorGetUtils.es';
+import {confirmFragmentEntryLinkIdInLayoutDataPersonalization} from '../reducers/segmentsExperiences.es';
 
 /**
  * @param {!object} state
@@ -145,7 +146,15 @@ function removeSectionReducer(state, actionType, payload) {
 					section
 				);
 
-				fragmentEntryLinkIds.forEach(
+				const fragmentsToRemove = fragmentEntryLinkIds.filter(
+					id => !confirmFragmentEntryLinkIdInLayoutDataPersonalization(
+						nextState.layoutDataPersonalization,
+						id,
+						nextState.segmentsExperienceId
+					)
+				);
+				
+				fragmentsToRemove.forEach(
 					fragmentEntryLinkId => {
 						nextState = updateWidgets(nextState, fragmentEntryLinkId);
 					}
@@ -158,7 +167,7 @@ function removeSectionReducer(state, actionType, payload) {
 						classNameId: nextState.classNameId,
 						classPK: nextState.classPK,
 						data: nextData,
-						fragmentEntryLinkIds: fragmentEntryLinkIds,
+						fragmentEntryLinkIds: fragmentsToRemove,
 						segmentsExperienceId: nextState.segmentsExperienceId
 					}
 				)

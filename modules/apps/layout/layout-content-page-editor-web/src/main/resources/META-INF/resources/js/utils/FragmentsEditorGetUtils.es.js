@@ -150,17 +150,19 @@ function getItemPath(itemId, itemType, structure) {
 			const column = [].concat(
 				...structure.map(row => row.columns)
 			).find(
-				column => column.fragmentEntryLinkIds.indexOf(itemId) !== -1
+				c => {
+					return c.fragmentEntryLinkIds.indexOf(itemId) !== -1
+				}
 			);
 
-			itemPath = [
+			itemPath = column ? [
 				...itemPath,
 				...getItemPath(
 					column.columnId,
 					FRAGMENTS_EDITOR_ITEM_TYPES.column,
 					structure
 				)
-			];
+			] : itemPath;
 		}
 		else if (itemType === FRAGMENTS_EDITOR_ITEM_TYPES.column) {
 			const section = structure.find(

@@ -124,8 +124,6 @@ class Store extends State {
 
 						this.emit('change', this._state);
 
-						console.log(this._state);
-
 						return new Promise(
 							resolve => {
 								requestAnimationFrame(
