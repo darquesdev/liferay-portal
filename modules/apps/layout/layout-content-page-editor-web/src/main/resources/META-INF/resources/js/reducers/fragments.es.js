@@ -372,6 +372,7 @@ function removeFragmentEntryLinkReducer(state, actionType, payload) {
 				)
 					.then(
 						() => {
+							// I should get information about how the removal went
 							nextState = setIn(nextState, ['layoutData'], nextData);
 							nextState = updateWidgets(nextState, payload.fragmentEntryLinkId);
 
@@ -379,8 +380,11 @@ function removeFragmentEntryLinkReducer(state, actionType, payload) {
 								nextState,
 								['fragmentEntryLinks'],
 								nextState.fragmentEntryLinks.filter(
-									_fragmentEntryLink => _fragmentEntryLink.fragmentEntryLinkId !==
+									_fragmentEntryLink => {
+										// should conditionally remove the fragment entry
+										return _fragmentEntryLink.fragmentEntryLinkId !==
 										payload.fragmentEntryLinkId
+									}
 								)
 							);
 
