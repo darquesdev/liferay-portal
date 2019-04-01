@@ -3,6 +3,7 @@ import {add, addSection, remove, setIn, updateIn, updateLayoutData, updateWidget
 import {EDITABLE_FRAGMENT_ENTRY_PROCESSOR} from '../components/fragment_entry_link/FragmentEntryLinkContent.es';
 import {FRAGMENT_ENTRY_LINK_TYPES, FRAGMENTS_EDITOR_ITEM_BORDERS, FRAGMENTS_EDITOR_ITEM_TYPES, FRAGMENTS_EDITOR_ROW_TYPES} from '../utils/constants';
 import {getColumn, getDropSectionPosition, getFragmentColumn, getFragmentRowIndex} from '../utils/FragmentsEditorGetUtils.es';
+import { confirmFragmentEntryLinkIdInLayoutDataPersonalization } from './segmentsExperiences.es';
 
 /**
  * Adds a fragment at the corresponding container in the layout
@@ -384,7 +385,12 @@ function removeFragmentEntryLinkReducer(state, actionType, payload) {
 					fragmentEntryLinkType
 				);
 
-				_removeFragmentEntryLink(
+				const _shallRemove = !confirmFragmentEntryLinkIdInLayoutDataPersonalization(nextState.layoutDataPersonalization, fragmentEntryLinkId);
+
+				const remover = _shallRemove ?
+					_removeFragmentEntryLink : () => new Promise((resolve) => resolve());
+
+				remover(
 					nextState.deleteFragmentEntryLinkURL,
 					nextState.portletNamespace,
 					nextState.classNameId,
@@ -395,20 +401,18 @@ function removeFragmentEntryLinkReducer(state, actionType, payload) {
 				)
 					.then(
 						() => {
-							// I should get information about how the removal went
 							nextState = setIn(nextState, ['layoutData'], nextData);
-							nextState = updateWidgets(nextState, payload.fragmentEntryLinkId);
+							nextState = _shallRemove ? updateWidgets(nextState, payload.fragmentEntryLinkId) : nextState;
 
 							nextState.setIn(
 								nextState,
 								['fragmentEntryLinks'],
-								nextState.fragmentEntryLinks.filter(
+								_shallRemove ? nextState.fragmentEntryLinks.filter(
 									_fragmentEntryLink => {
-										// should conditionally remove the fragment entry
 										return _fragmentEntryLink.fragmentEntryLinkId !==
 										payload.fragmentEntryLinkId
 									}
-								)
+								) : nextState.fragmentEntryLinks
 							);
 
 							resolve(nextState);

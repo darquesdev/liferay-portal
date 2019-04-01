@@ -11,6 +11,34 @@ const EDIT_SEGMENTS_EXPERIENCE_URL = '/segments.segmentsexperience/update-segmen
 const UPDATE_SEGMENTS_EXPERIENCE_PRIORITY_URL = '/segments.segmentsexperience/update-segments-experience-priority';
 
 
+function _confirmFragmentEntryLinkIdInLayout(layoutData, fragmentEntryLinkId) {
+  const structure = layoutData.structure;
+  return structure.reduce((found, columnsWrapper) => {
+    if (found || !columnsWrapper.columns) return found;
+	const result = !!(
+      columnsWrapper.columns.reduce((found, column) => {
+		  if (found || !column.fragmentEntryLinkIds) return found;
+        return !!(
+          column.fragmentEntryLinkIds.find(id => id === fragmentEntryLinkId)
+        );
+      }, false)
+    );
+    return result;
+  }, false);
+}
+
+function confirmFragmentEntryLinkIdInLayoutDataPersonalization(LayoutDataPersonalization, fragmentEntryLinkId, currentExperienceId) {
+	const result = LayoutDataPersonalization.reduce((found, LayoutDataPersonalizationItem) => {
+		if(found || LayoutDataPersonalizationItem.segmentsExperienceId === currentExperienceId) return found;
+		return _confirmFragmentEntryLinkIdInLayout(
+			LayoutDataPersonalizationItem.layoutData,
+			fragmentEntryLinkId
+		);
+	}, false);
+
+	return result;
+}
+
 /**
  *
  *
@@ -46,6 +74,7 @@ function storeLayoutData(state, segmentsExperienceId) {
  * @returns
  */
 function switchLayout(state, segmentsExperienceId) {
+	let nextState = state;
 	return new Promise((resolve, reject) => {
 		updateLayoutData(
 			{
@@ -61,7 +90,6 @@ function switchLayout(state, segmentsExperienceId) {
 				() => {
 					if(segmentsExperienceId === state.segmentsExperienceId) resolve(state);
 
-					let nextState = state;
 					const prevSegmentsExperienceId = state.segmentsExperienceId || nextState.defaultSegmentsExperienceId;
 					const prevLayout = nextState.layoutData;
 
@@ -446,6 +474,7 @@ function updateSegmentsExperiencePriorityReducer(state, actionType, payload) {
 }
 
 export {
+	confirmFragmentEntryLinkIdInLayoutDataPersonalization,
 	createSegmentsExperienceReducer,
 	deleteSegmentsExperienceReducer,
 	editSegmentsExperienceReducer,
