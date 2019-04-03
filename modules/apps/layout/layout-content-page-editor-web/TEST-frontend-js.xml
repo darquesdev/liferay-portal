@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite hostname="" id="0" errors="0" failures="0" name="Jest" package="layout.layout-content-page-editor-web" skipped="0" tests="4" time="0" timestamp="1554294498248">
+  <testcase classname="layout.layout-content-page-editor-web.test.js.utils" name="confirmFragmnetEntryLinkIdLayoutDataPersonalization  should confirm fragmentEntryLinkId presence in a LayoutData different than the one selected" time="0.004">
+  </testcase>
+  <testcase classname="layout.layout-content-page-editor-web.test.js.utils" name="confirmFragmnetEntryLinkIdLayoutDataPersonalization  should confirm fragmentEntryLinkId presence in a LayoutData" time="0">
+  </testcase>
+  <testcase classname="layout.layout-content-page-editor-web.test.js.utils" name="confirmFragmnetEntryLinkIdLayoutDataPersonalization  should confirm fragmentEntryLinkId ausence in a LayoutData different than the one selected" time="0">
+  </testcase>
+  <testcase classname="layout.layout-content-page-editor-web.test.js.reducers" name="segments experiences reducers createSegmentsExperienceReducer communicates with API and updates the state" time="0.012">
+  </testcase>
+</testsuite>
