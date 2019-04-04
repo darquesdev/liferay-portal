@@ -2,6 +2,7 @@ import {ADD_SECTION, MOVE_SECTION, REMOVE_SECTION, UPDATE_SECTION_COLUMNS, UPDAT
 import {MAX_COLUMNS} from '../utils/sectionConstants';
 import {add, addSection, remove, setIn, updateIn, updateLayoutData, updateWidgets} from '../utils/FragmentsEditorUpdateUtils.es';
 import {getDropSectionPosition, getSectionFragmentEntryLinkIds, getSectionIndex} from '../utils/FragmentsEditorGetUtils.es';
+import {confirmFragmentEntryLinkIdInLayoutDataPersonalization} from '../reducers/segmentsExperiences.es';
 
 /**
  * @param {!object} state
@@ -30,11 +31,14 @@ function addSectionReducer(state, actionType, payload) {
 				);
 
 				updateLayoutData(
-					nextState.updateLayoutPageTemplateDataURL,
-					nextState.portletNamespace,
-					nextState.classNameId,
-					nextState.classPK,
-					nextData
+					{
+						updateLayoutPageTemplateDataURL: nextState.updateLayoutPageTemplateDataURL,
+						portletNamespace: nextState.portletNamespace,
+						classNameId: nextState.classNameId,
+						classPK: nextState.classPK,
+						data: nextData,
+						segmentsExperienceId: nextState.segmentsExperienceId
+					}
 				)
 					.then(
 						() => {
@@ -84,11 +88,14 @@ function moveSectionReducer(state, actionType, payload) {
 				);
 
 				updateLayoutData(
-					nextState.updateLayoutPageTemplateDataURL,
-					nextState.portletNamespace,
-					nextState.classNameId,
-					nextState.classPK,
-					nextData
+					{
+						updateLayoutPageTemplateDataURL: nextState.updateLayoutPageTemplateDataURL,
+						portletNamespace: nextState.portletNamespace,
+						classNameId: nextState.classNameId,
+						classPK: nextState.classPK,
+						data: nextData,
+						segmentsExperienceId: nextState.segmentsExperienceId 
+					}
 				)
 					.then(
 						() => {
@@ -139,19 +146,30 @@ function removeSectionReducer(state, actionType, payload) {
 					section
 				);
 
-				fragmentEntryLinkIds.forEach(
+				const fragmentsToRemove = fragmentEntryLinkIds.filter(
+					id => !confirmFragmentEntryLinkIdInLayoutDataPersonalization(
+						nextState.layoutDataPersonalization,
+						id,
+						nextState.segmentsExperienceId
+					)
+				);
+				
+				fragmentsToRemove.forEach(
 					fragmentEntryLinkId => {
 						nextState = updateWidgets(nextState, fragmentEntryLinkId);
 					}
 				);
 
 				updateLayoutData(
-					nextState.updateLayoutPageTemplateDataURL,
-					nextState.portletNamespace,
-					nextState.classNameId,
-					nextState.classPK,
-					nextData,
-					fragmentEntryLinkIds
+					{
+						updateLayoutPageTemplateDataURL: nextState.updateLayoutPageTemplateDataURL,
+						portletNamespace: nextState.portletNamespace,
+						classNameId: nextState.classNameId,
+						classPK: nextState.classPK,
+						data: nextData,
+						fragmentEntryLinkIds: fragmentsToRemove,
+						segmentsExperienceId: nextState.segmentsExperienceId
+					}
 				)
 					.then(
 						() => {
@@ -212,11 +230,14 @@ const updateSectionColumnsReducer = (state, actionType, payload) => new Promise(
 				);
 
 				updateLayoutData(
-					nextState.updateLayoutPageTemplateDataURL,
-					nextState.portletNamespace,
-					nextState.classNameId,
-					nextState.classPK,
-					nextState.layoutData
+					{
+						updateLayoutPageTemplateDataURL: nextState.updateLayoutPageTemplateDataURL,
+						portletNamespace: nextState.portletNamespace,
+						classNameId: nextState.classNameId,
+						classPK: nextState.classPK,
+						data: nextState.layoutData,
+						segmentsExperienceId: nextState.segmentsExperienceId
+					}
 				)
 					.then(
 						() => {
@@ -281,12 +302,15 @@ function updateSectionColumnsNumberReducer(state, actionType, payload) {
 				}
 
 				updateLayoutData(
-					nextState.updateLayoutPageTemplateDataURL,
-					nextState.portletNamespace,
-					nextState.classNameId,
-					nextState.classPK,
-					nextData,
-					fragmentEntryLinkIdsToRemove
+					{
+						updateLayoutPageTemplateDataURL: nextState.updateLayoutPageTemplateDataURL,
+						portletNamespace: nextState.portletNamespace,
+						classNameId: nextState.classNameId,
+						classPK: nextState.classPK,
+						data: nextData,
+						fragmentEntryLinkIds: fragmentEntryLinkIdsToRemove,
+						segmentsExperienceId: nextState.segmentsExperienceId
+					}
 				)
 					.then(
 						() => {
@@ -355,11 +379,14 @@ const updateSectionConfigReducer = (state, actionType, payload) => new Promise(
 				);
 
 				updateLayoutData(
-					nextState.updateLayoutPageTemplateDataURL,
-					nextState.portletNamespace,
-					nextState.classNameId,
-					nextState.classPK,
-					nextState.layoutData
+					{
+						updateLayoutPageTemplateDataURL: nextState.updateLayoutPageTemplateDataURL,
+						portletNamespace: nextState.portletNamespace,
+						classNameId: nextState.classNameId,
+						classPK: nextState.classPK,
+						data: nextState.layoutData,
+						segmentsExperienceId: nextState.segmentsExperienceId
+					}
 				)
 					.then(
 						() => {
