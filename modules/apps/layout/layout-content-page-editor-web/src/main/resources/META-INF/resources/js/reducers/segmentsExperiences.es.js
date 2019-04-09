@@ -1,6 +1,8 @@
 import {CREATE_SEGMENTS_EXPERIENCE, DELETE_SEGMENTS_EXPERIENCE, EDIT_SEGMENTS_EXPERIENCE, SELECT_SEGMENTS_EXPERIENCE, UPDATE_SEGMENTS_EXPERIENCE_PRIORITY} from '../actions/actions.es';
 import {setIn} from '../utils/utils.es';
 import {updateLayoutData} from '../utils/FragmentsEditorUpdateUtils.es';
+import { getRowFragmentEntryLinkIds } from '../utils/FragmentsEditorGetUtils.es';
+import { containsFragmentEntryLinkId } from '../utils/LayoutDataList.es';
 
 const CREATE_SEGMENTS_EXPERIENCE_URL = '/segments.segmentsexperience/add-segments-experience';
 
@@ -248,6 +250,35 @@ function createSegmentsExperienceReducer(state, actionType, payload) {
 	);
 }
 
+function _removeExperience(
+	{
+		fragmentEntryLinkIds,
+		portletNamespace,
+		segmentsExperienceId,
+		deleteSegmentsExperienceURL 
+	}
+) {
+	const formData = new FormData();
+
+	formData.append(`${portletNamespace}segmentsExperienceId`, segmentsExperienceId);
+
+	if (fragmentEntryLinkIds) {
+		formData.append(
+			`${portletNamespace}fragmentEntryLinkIds`,
+			JSON.stringify(fragmentEntryLinkIds)
+		);
+	}
+
+	return fetch(
+		deleteSegmentsExperienceURL,
+		{
+			body: formData,
+			credentials: 'include',
+			method: 'POST'
+		}
+	);
+}
+
 /**
  * @param {!object} state
  * @param {!string} actionType
@@ -262,51 +293,68 @@ function deleteSegmentsExperienceReducer(state, actionType, payload) {
 				let nextState = state;
 				if (actionType === DELETE_SEGMENTS_EXPERIENCE) {
 					const {segmentsExperienceId} = payload;
+					
+					const priority = nextState.availableSegmentsExperiences[segmentsExperienceId].priority;
 
-					Liferay.Service(
-						DELETE_SEGMENTS_EXPERIENCE_URL,
-						{
+					const fragmentEntryLinkIdsInCurrentLayout = nextState
+						.layoutData
+						.structure
+						.reduce(
+							(acc, row) => {
+								return [
+									...getRowFragmentEntryLinkIds(row),
+									...acc
+								];
+							},
+							[]
+						);
+					
+					const fragmentEntryLinkIds = fragmentEntryLinkIdsInCurrentLayout.filter(
+						fragmentId => !containsFragmentEntryLinkId(
+							nextState.layoutDataList,
+							fragmentId,
 							segmentsExperienceId
-						},
-						response => {
-							const priority = response.priority;
-
-							let availableSegmentsExperiences = Object.assign(
-								{},
-								nextState.availableSegmentsExperiences
-							);
-
-							delete availableSegmentsExperiences[response.segmentsExperienceId];
-							const experienceIdToSelect = (segmentsExperienceId === nextState.segmentsExperienceId) ? nextState.defaultSegmentsExperienceId : nextState.segmentsExperienceId;
-
-							Object.entries(availableSegmentsExperiences).forEach(
-								([key, experience]) => {
-									const segmentExperiencePriority = experience.priority;
-
-									if (segmentExperiencePriority > priority) {
-										experience.priority = segmentExperiencePriority - 1;
-									}
-								}
-							);
-
-							nextState = setIn(
-								nextState,
-								['availableSegmentsExperiences'],
-								availableSegmentsExperiences
-							);
-							nextState = setIn(
-								nextState,
-								['segmentsExperienceId'],
-								experienceIdToSelect
-							);
-							resolve(nextState);
-						},
-						(error, {exception}) => {
-
-							reject(exception);
-						}
+						)
 					);
 
+					_removeExperience({
+						deleteSegmentsExperienceURL: nextState.deleteSegmentsExperienceURL,
+						portletNamespace: nextState.portletNamespace,
+						classNameId: nextState.classNameId,
+						classPK: nextState.classPK,
+						fragmentEntryLinkIds: fragmentEntryLinkIds,
+						segmentsExperienceId
+					}).then(() => {
+						let availableSegmentsExperiences = Object.assign(
+							{},
+							nextState.availableSegmentsExperiences
+						);
+
+						delete availableSegmentsExperiences[segmentsExperienceId];
+						const experienceIdToSelect = (segmentsExperienceId === nextState.segmentsExperienceId) ? nextState.defaultSegmentsExperienceId : nextState.segmentsExperienceId;
+
+						Object.entries(availableSegmentsExperiences).forEach(
+							([key, experience]) => {
+								const segmentExperiencePriority = experience.priority;
+
+								if (segmentExperiencePriority > priority) {
+									experience.priority = segmentExperiencePriority - 1;
+								}
+							}
+						);
+
+						nextState = setIn(
+							nextState,
+							['availableSegmentsExperiences'],
+							availableSegmentsExperiences
+						);
+						nextState = setIn(
+							nextState,
+							['segmentsExperienceId'],
+							experienceIdToSelect
+						);
+						resolve(nextState);
+					})
 				}
 				else {
 					resolve(nextState);

@@ -215,6 +215,16 @@ const INITIAL_STATE = {
 		.value(''),
 
 	/**
+	 * URL for removing experiences with fragmentEntryLinks.
+	 * @default ''
+	 * @review
+	 * @type {string}
+	 */
+	deleteSegmentsExperienceURL: Config
+		.string()
+		.value(''),
+
+	/**
 	 * URL to discard draft changes and return to the latest published version.
 	 * @default ''
 	 * @review
