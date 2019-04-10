@@ -21,6 +21,8 @@ import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocal
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureRelLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.template.soy.util.SoyContext;
 import com.liferay.portal.template.soy.util.SoyContextFactoryUtil;
 import com.liferay.segments.constants.SegmentsConstants;
@@ -61,22 +63,25 @@ public class ContentPageLayoutEditorDisplayContext
 
 		SoyContext soyContext = super.getEditorSoyContext();
 
-		soyContext.put(
-			"availableSegmentsEntries", _getAvailableSegmentsEntriesSoyContext()
-		).put(
-			"availableSegmentsExperiences",
-			_getAvailableSegmentsExperiencesSoyContext()
-		).put(
-			"defaultSegmentsEntryId",
-			SegmentsConstants.SEGMENTS_ENTRY_ID_DEFAULT
-		).put(
-			"defaultSegmentsExperienceId",
-			String.valueOf(SegmentsConstants.SEGMENTS_EXPERIENCE_ID_DEFAULT)
-		).put(
-			"layoutDataList", _getLayoutDataListSoyContext()
-		).put(
-			"sidebarPanels", getSidebarPanelSoyContexts(false)
-		);
+		soyContext.put("sidebarPanels", getSidebarPanelSoyContexts(false));
+
+		if (_isPersonalizationEnabled()) {
+			soyContext.put(
+				"availableSegmentsEntries",
+				_getAvailableSegmentsEntriesSoyContext()
+			).put(
+				"availableSegmentsExperiences",
+				_getAvailableSegmentsExperiencesSoyContext()
+			).put(
+				"defaultSegmentsEntryId",
+				SegmentsConstants.SEGMENTS_ENTRY_ID_DEFAULT
+			).put(
+				"defaultSegmentsExperienceId",
+				String.valueOf(SegmentsConstants.SEGMENTS_EXPERIENCE_ID_DEFAULT)
+			).put(
+				"layoutDataList", _getLayoutDataListSoyContext()
+			);
+		}
 
 		_editorSoyContext = soyContext;
 
@@ -93,20 +98,23 @@ public class ContentPageLayoutEditorDisplayContext
 
 		SoyContext soyContext = super.getFragmentsEditorToolbarSoyContext();
 
-		soyContext.put(
-			"availableSegmentsEntries", _getAvailableSegmentsEntriesSoyContext()
-		).put(
-			"availableSegmentsExperiences",
-			_getAvailableSegmentsExperiencesSoyContext()
-		).put(
-			"defaultSegmentsEntryId",
-			SegmentsConstants.SEGMENTS_ENTRY_ID_DEFAULT
-		).put(
-			"defaultSegmentsExperienceId",
-			String.valueOf(SegmentsConstants.SEGMENTS_EXPERIENCE_ID_DEFAULT)
-		).put(
-			"layoutDataList", _getLayoutDataListSoyContext()
-		);
+		if (_isPersonalizationEnabled()) {
+			soyContext.put(
+				"availableSegmentsEntries",
+				_getAvailableSegmentsEntriesSoyContext()
+			).put(
+				"availableSegmentsExperiences",
+				_getAvailableSegmentsExperiencesSoyContext()
+			).put(
+				"defaultSegmentsEntryId",
+				SegmentsConstants.SEGMENTS_ENTRY_ID_DEFAULT
+			).put(
+				"defaultSegmentsExperienceId",
+				String.valueOf(SegmentsConstants.SEGMENTS_EXPERIENCE_ID_DEFAULT)
+			).put(
+				"layoutDataList", _getLayoutDataListSoyContext()
+			);
+		}
 
 		_fragmentsEditorToolbarSoyContext = soyContext;
 
@@ -247,7 +255,21 @@ public class ContentPageLayoutEditorDisplayContext
 		return soyContexts;
 	}
 
+	private boolean _isPersonalizationEnabled() throws PortalException {
+		if (_personalizationEnabled != null) {
+			return _personalizationEnabled;
+		}
+
+		Group group = GroupLocalServiceUtil.getGroup(getGroupId());
+
+		_personalizationEnabled =
+			!group.isLayoutSetPrototype() && !group.isUser();
+
+		return _personalizationEnabled;
+	}
+
 	private SoyContext _editorSoyContext;
 	private SoyContext _fragmentsEditorToolbarSoyContext;
+	private Boolean _personalizationEnabled;
 
 }
