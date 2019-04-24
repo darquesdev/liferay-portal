@@ -10,7 +10,7 @@ const altProps = {
 		{
 			conjunctionId: '',
 			conjunctionInputId: '_com_liferay_segments_web_internal_portlet_SegmentsPortlet_criterionConjunctionuser',
-			initialQuery: '(segmentationTeamMembers eq \'kevin\' and segmentationTeamMembers eq \'kevin\' and dateModified eq 2019-01-16T11:17:56.000Z)',
+			initialQuery: "(jobTitle eq 'hello')",
 			inputId: '_com_liferay_segments_web_internal_portlet_SegmentsPortlet_criterionFilteruser',
 			propertyKey: 'user'
 		},
@@ -22,10 +22,13 @@ const altProps = {
 			propertyKey: 'user-organization'
 		}
 	],
-	editing: false,
 	initialMembersCount: 0,
 	initialSegmentActive: false,
-	initialSegmentName: '',
+	initialSegmentName: {
+		'es_ES': 'cosas',
+		'en_US': 'things'
+	},
+	showInEditMode: false,
 	locale: 'en_US',
 	portletNamespace: '_com_liferay_segments_web_internal_portlet_SegmentsPortlet_',
 	propertyGroups: [
@@ -223,6 +226,11 @@ const altProps = {
 					type: 'id'
 				},
 				{
+					label: 'Tree Path',
+					name: 'treePath',
+					type: 'string'
+				},
+				{
 					label: 'Type',
 					name: 'type',
 					type: 'string'
@@ -239,6 +247,14 @@ const context = {
 	spritemap: '/o/admin-theme/images/lexicon/icons.svg'
 };
 
+window.Liferay = {
+	Language: {
+		available: {
+			'en_US': 'aosidopaisd',
+			'es_ES': 'aosidopaisd'
+		}
+	}
+}
 ReactDOM.render(
 	<ThemeContext.Provider value={context}>
 		<div className="segments-root">

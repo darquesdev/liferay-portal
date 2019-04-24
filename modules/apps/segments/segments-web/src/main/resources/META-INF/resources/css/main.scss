@@ -15,4 +15,28 @@
 	@import "empty_drop_zone";
 	@import "segment_edit";
 	@import "title_editor";
+	.form-control-inline {
+		background-color: transparent;
+		border-color: transparent;
+		font-size: 1.125rem;
+		font-weight: 700;
+		&:hover {
+			border-color: $mainLighten74;
+		}
+		&:focus {
+			border-color: $primaryL1;
+			background-color: $primaryLight;
+		}
+		&:read-only {
+			background-color: transparent;
+			&:focus {
+				box-shadow: none;
+				background-color: inherit;
+				border-color: transparent;
+			}
+			&:hover {
+				border-color: transparent;
+			}
+		}
+	}
 }
