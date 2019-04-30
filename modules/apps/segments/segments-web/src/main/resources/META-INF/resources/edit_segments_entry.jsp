@@ -33,6 +33,8 @@ if (Validator.isNotNull(backURL)) {
 }
 
 renderResponse.setTitle(editSegmentsEntryDisplayContext.getTitle(locale));
+
+JSONSerializer jsonSerializer = JSONFactoryUtil.createJSONSerializer();
 %>
 
 <liferay-ui:error embed="<%= false %>" exception="<%= SegmentsEntryCriteriaException.class %>" message="invalid-criteria" />
@@ -64,7 +66,7 @@ renderResponse.setTitle(editSegmentsEntryDisplayContext.getTitle(locale));
 
 	<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" id="getSegmentsEntryClassPKsCount" var="getSegmentsEntryClassPKsCountURL" />
 	<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" id="getSegmentsFieldValueName" var="getSegmentsFieldValueNameURL" />
-
+	
 	<aui:script require='<%= npmResolvedPackageName + "/js/index.es as SegmentEdit" %>'>
 		SegmentEdit.default(
 			'<%= segmentEditRootElementId %>',
@@ -73,7 +75,13 @@ renderResponse.setTitle(editSegmentsEntryDisplayContext.getTitle(locale));
 				formId: '<portlet:namespace />editSegmentFm',
 				initialMembersCount: <%= editSegmentsEntryDisplayContext.getSegmentsEntryClassPKsCount() %>,
 				initialSegmentActive: <%= (segmentsEntry == null) ? false : segmentsEntry.isActive() %>,
-				initialSegmentName: '<%= (segmentsEntry != null) ? HtmlUtil.escapeJS(segmentsEntry.getName(locale)) : StringPool.BLANK %>',
+				initialSegmentName: '<%= (segmentsEntry != null) ? 
+					JSONFactoryUtil.createJSONObject(
+						jsonSerializer.serializeDeep(
+							segmentsEntry.getNameMap()
+						)
+					)
+				 : null %>',
 				locale: '<%= locale %>',
 				portletNamespace: '<portlet:namespace />',
 				previewMembersURL: '<%= previewMembersURL %>',

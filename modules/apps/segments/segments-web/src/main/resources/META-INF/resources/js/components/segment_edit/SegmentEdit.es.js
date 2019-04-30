@@ -15,6 +15,7 @@ import {
 	SUPPORTED_OPERATORS,
 	SUPPORTED_PROPERTY_TYPES
 } from '../../utils/constants.es';
+import LocalizedInput from '../title_editor/LocalizedInput.es';
 
 const DEFAULT_SEGMENT_NAME = Liferay.Language.get('unnamed-segment');
 
@@ -39,7 +40,7 @@ class SegmentEdit extends Component {
 		handleChange: PropTypes.func,
 		initialMembersCount: PropTypes.number,
 		initialSegmentActive: PropTypes.bool,
-		initialSegmentName: PropTypes.string,
+		initialSegmentName: PropTypes.object,
 		locale: PropTypes.string.isRequired,
 		portletNamespace: PropTypes.string,
 		previewMembersURL: PropTypes.string,
@@ -69,6 +70,8 @@ class SegmentEdit extends Component {
 
 	constructor(props) {
 		super(props);
+
+		this.availableLanguages = Liferay && Liferay.Language.available;
 
 		this._debouncedFetchMembersCount = debounce(
 			this._fetchMembersCount,
@@ -256,7 +259,7 @@ class SegmentEdit extends Component {
 
 		return (
 			<div className="segment-edit-page-root">
-				<input
+				{/* <input
 					name={`${portletNamespace}name`}
 					type="hidden"
 					value={values.name}
@@ -266,13 +269,13 @@ class SegmentEdit extends Component {
 					name={`${portletNamespace}name_${locale}`}
 					type="hidden"
 					value={values.name}
-				/>
+				/> */}
 
-				<input
+				{/* <input
 					name={`${portletNamespace}key`}
 					type="hidden"
 					value={values.name}
-				/>
+				/> */}
 
 				<input
 					name={`${portletNamespace}active`}
@@ -283,12 +286,76 @@ class SegmentEdit extends Component {
 				<div className="form-header">
 					<div className="container-fluid container-fluid-max-xl form-header-container">
 						<div className="form-header-section-left">
-							<TitleEditor
-								inputName="name"
-								onBlur={this._handleSegmentNameBlur}
-								onChange={handleChange}
-								placeholder={DEFAULT_SEGMENT_NAME}
-								value={values.name}
+							{
+								/*
+									<TitleEditor
+										inputName="name"
+										onBlur={this._handleSegmentNameBlur}
+										onChange={handleChange}
+										placeholder={DEFAULT_SEGMENT_NAME}
+										value={values.name}
+									/>
+								*/
+							}
+							{/* {values.name} */}
+							<FieldArray
+								name="values.name"
+								render={
+									() => {
+										const langs = Object.entries(values.name);
+										return (
+											langs.map(([key, value]) => {
+												if (key === locale) {
+													return (
+														<React.Fragment key={key}>
+															<input
+																name={`${portletNamespace}name_${key}`}
+																type="hidden"
+																readOnly
+																value={value}
+															/>
+															<input
+																name={`${portletNamespace}key`}
+																type="hidden"
+																readOnly
+																value={values.name}
+															/>
+															<input
+																name={`${portletNamespace}name`}
+																type="hidden"
+																readOnly
+																value={value}
+															/>
+														</React.Fragment>
+													)
+												}
+												return (
+													<React.Fragment key={key}>
+														<input
+															name={`${portletNamespace}name_${key}`}
+															type="hidden"
+															readOnly
+															value={value}
+														/>
+													</React.Fragment>
+												);
+											})
+										)
+									}
+								}
+							/>
+
+							<LocalizedInput
+								disabled={!editing}
+								initialOpen={false}
+								availableLanguages={this.availableLanguages}
+								initialLang={locale}
+								defaultLang={locale}
+								onChange={(event, newValues) => {
+									this.props.setFieldValue(`name`, newValues)
+								}}
+								initialValues={values.name}
+								portletNamespace={portletNamespace}
 							/>
 
 							<img
@@ -310,7 +377,6 @@ class SegmentEdit extends Component {
 										loading={membersCountLoading}
 										size="sm"
 									/>
-
 									<ClayButton
 										label={getPluralMessage(
 											Liferay.Language.get('x-member'),
@@ -376,7 +442,7 @@ export default withFormik(
 			{
 				active: props.initialSegmentActive || true,
 				contributors: props.contributors || [],
-				name: props.initialSegmentName
+				name: props.initialSegmentName || {}
 			}
 		),
 		validate: values => {
