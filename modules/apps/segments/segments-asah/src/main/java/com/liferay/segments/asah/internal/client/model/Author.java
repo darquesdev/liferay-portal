@@ -12,23 +12,49 @@
  * details.
  */
 
-package com.liferay.segments.internal.asah.client;
+package com.liferay.segments.asah.internal.client.model;
 
-import java.util.Map;
-
-import javax.ws.rs.core.MultivaluedMap;
+import com.liferay.portal.kernel.util.StringBundler;
 
 /**
+ * @author Matthew Kong
  * @author David Arques
  */
-public interface JSONWebServiceClient {
+public class Author {
 
-	public String doGet(
-		String url, MultivaluedMap<String, Object> parameters,
-		Map<String, String> headers);
+	public Author() {
+	}
 
-	public String getBaseURI();
+	public String getId() {
+		return _id;
+	}
 
-	public void setBaseURI(String baseURI);
+	public String getName() {
+		return _name;
+	}
+
+	public void setId(String id) {
+		_id = id;
+	}
+
+	public void setName(String name) {
+		_name = name;
+	}
+
+	@Override
+	public String toString() {
+		StringBundler sb = new StringBundler(5);
+
+		sb.append("{id=");
+		sb.append(_id);
+		sb.append(", name=");
+		sb.append(_name);
+		sb.append("}");
+
+		return sb.toString();
+	}
+
+	private String _id;
+	private String _name;
 
 }
