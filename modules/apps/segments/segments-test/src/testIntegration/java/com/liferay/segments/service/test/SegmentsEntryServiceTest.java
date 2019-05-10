@@ -133,6 +133,20 @@ public class SegmentsEntryServiceTest {
 		}
 	}
 
+	@Test(expected = PrincipalException.MustHavePermission.class)
+	public void testDeleteSegmentsEntryFromExternalSource() throws Exception {
+		SegmentsEntry segmentsEntry = SegmentsTestUtil.addSegmentsEntry(
+			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+			SegmentsConstants.SOURCE_ASAH_FARO_BACKEND,
+			RandomTestUtil.randomString(),
+			ServiceContextTestUtil.getServiceContext(
+				_group, _companyAdminUser.getUserId()));
+
+		_segmentsEntryService.deleteSegmentsEntry(
+			segmentsEntry.getSegmentsEntryId());
+	}
+
 	@Test
 	public void testDeleteSegmentsEntryWithDeletePermission() throws Exception {
 		SegmentsEntry segmentsEntry = SegmentsTestUtil.addSegmentsEntry(
@@ -347,6 +361,25 @@ public class SegmentsEntryServiceTest {
 			_segmentsEntryService.getSegmentsEntry(
 				segmentsEntry.getSegmentsEntryId());
 		}
+	}
+
+	@Test(expected = PrincipalException.MustHavePermission.class)
+	public void testUpdateSegmentsEntryFromExternalSource() throws Exception {
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				_group, _companyAdminUser.getUserId());
+
+		SegmentsEntry segmentsEntry = SegmentsTestUtil.addSegmentsEntry(
+			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+			SegmentsConstants.SOURCE_ASAH_FARO_BACKEND,
+			RandomTestUtil.randomString(), serviceContext);
+
+		_segmentsEntryService.updateSegmentsEntry(
+			segmentsEntry.getSegmentsEntryId(),
+			segmentsEntry.getSegmentsEntryKey(), segmentsEntry.getNameMap(),
+			segmentsEntry.getDescriptionMap(), segmentsEntry.isActive(),
+			segmentsEntry.getCriteria(), serviceContext);
 	}
 
 	@Test(expected = PrincipalException.MustHavePermission.class)
