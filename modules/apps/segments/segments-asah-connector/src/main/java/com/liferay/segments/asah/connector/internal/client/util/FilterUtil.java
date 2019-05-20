@@ -53,6 +53,19 @@ public class FilterUtil {
 			value = StringUtil.quote(valueString, StringPool.APOSTROPHE);
 		}
 
+		if (FilterConstants.isStringFunction(operator)) {
+			StringBundler sb = new StringBundler(6);
+
+			sb.append(operator);
+			sb.append(StringPool.OPEN_PARENTHESIS);
+			sb.append(fieldName);
+			sb.append(StringPool.COMMA);
+			sb.append(value);
+			sb.append(StringPool.CLOSE_PARENTHESIS);
+
+			return sb.toString();
+		}
+
 		StringBundler sb = new StringBundler(3);
 
 		sb.append(fieldName);

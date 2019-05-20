@@ -37,6 +37,16 @@ public class FilterConstants {
 
 	public static final String LOGICAL_OPERATOR_OR = " or ";
 
+	public static final String STRING_FUNCTION_CONTAINS = "contains";
+
+	public static boolean isStringFunction(String operator) {
+		if (operator.equals(FilterConstants.STRING_FUNCTION_CONTAINS)) {
+			return true;
+		}
+
+		return false;
+	}
+
 	private FilterConstants() {
 	}
 
