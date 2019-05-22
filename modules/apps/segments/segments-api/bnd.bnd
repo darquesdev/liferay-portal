@@ -15,6 +15,7 @@ Export-Package:\
 	com.liferay.segments.odata.retriever,\
 	com.liferay.segments.odata.search,\
 	com.liferay.segments.provider,\
+	com.liferay.segments.provider.contributor,\
 	com.liferay.segments.service,\
 	com.liferay.segments.service.persistence,\
 	com.liferay.segments.simulator

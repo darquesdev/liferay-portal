@@ -35,6 +35,7 @@ import com.liferay.segments.model.SegmentsEntryRel;
 import com.liferay.segments.odata.matcher.ODataMatcher;
 import com.liferay.segments.odata.retriever.ODataRetriever;
 import com.liferay.segments.provider.SegmentsEntryProvider;
+import com.liferay.segments.provider.contributor.SegmentsEntryProviderContributor;
 import com.liferay.segments.service.SegmentsEntryLocalService;
 import com.liferay.segments.service.SegmentsEntryRelLocalService;
 
@@ -47,6 +48,7 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 
 /**
  * @author Eduardo García
@@ -163,7 +165,7 @@ public class SegmentsEntryProviderImpl implements SegmentsEntryProvider {
 
 		Stream<SegmentsEntry> stream = segmentsEntries.stream();
 
-		return stream.filter(
+		long[] segmentsEntryIds = stream.filter(
 			segmentsEntry -> _isMember(
 				className, classPK, context, segmentsEntry)
 		).sorted(
@@ -175,6 +177,8 @@ public class SegmentsEntryProviderImpl implements SegmentsEntryProvider {
 		).mapToLong(
 			SegmentsEntry::getSegmentsEntryId
 		).toArray();
+
+		return _getContributedSegmentEntryIds(segmentsEntryIds, context);
 	}
 
 	private Criteria.Conjunction _getConjunction(
@@ -187,6 +191,17 @@ public class SegmentsEntryProviderImpl implements SegmentsEntryProvider {
 		}
 
 		return existingCriteria.getTypeConjunction(type);
+	}
+
+	private long[] _getContributedSegmentEntryIds(
+		long[] segmentsEntryIds, Context context) {
+
+		if (_segmentsEntryProviderContributor != null) {
+			return _segmentsEntryProviderContributor.contribute(
+				segmentsEntryIds, context);
+		}
+
+		return segmentsEntryIds;
 	}
 
 	private String _getFilterString(
@@ -334,6 +349,9 @@ public class SegmentsEntryProviderImpl implements SegmentsEntryProvider {
 
 	@Reference
 	private SegmentsEntryLocalService _segmentsEntryLocalService;
+
+	@Reference(cardinality = ReferenceCardinality.OPTIONAL)
+	private SegmentsEntryProviderContributor _segmentsEntryProviderContributor;
 
 	@Reference
 	private SegmentsEntryRelLocalService _segmentsEntryRelLocalService;
