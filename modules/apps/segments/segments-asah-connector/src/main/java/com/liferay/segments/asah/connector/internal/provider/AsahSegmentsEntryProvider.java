@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.segments.asah.connector.internal.cache.SegmentsAsahCache;
 import com.liferay.segments.asah.connector.internal.constants.SegmentsAsahDestinationNames;
+import com.liferay.segments.asah.connector.internal.context.contributor.SegmentsAsahRequestContextContributor;
 import com.liferay.segments.constants.SegmentsConstants;
 import com.liferay.segments.context.Context;
 import com.liferay.segments.model.SegmentsEntryRel;
@@ -91,7 +92,8 @@ public class AsahSegmentsEntryProvider implements SegmentsEntryProvider {
 		}
 
 		String userId = GetterUtil.getString(
-			context.get(Context.AC_CLIENT_USER_ID));
+			context.get(
+				SegmentsAsahRequestContextContributor.AC_CLIENT_USER_ID));
 
 		if (Validator.isNull(userId)) {
 			return new long[0];

@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.messaging.MessageBus;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.segments.asah.connector.internal.cache.SegmentsAsahCache;
+import com.liferay.segments.asah.connector.internal.context.contributor.SegmentsAsahRequestContextContributor;
 import com.liferay.segments.context.Context;
 import com.liferay.segments.model.SegmentsEntryRel;
 import com.liferay.segments.service.SegmentsEntryRelLocalService;
@@ -124,7 +125,8 @@ public class AsahSegmentsEntryProviderTest {
 
 		Context context = new Context();
 
-		context.put(Context.AC_CLIENT_USER_ID, userId);
+		context.put(
+			SegmentsAsahRequestContextContributor.AC_CLIENT_USER_ID, userId);
 
 		Assert.assertArrayEquals(
 			segmentsEntryIds,
@@ -143,7 +145,9 @@ public class AsahSegmentsEntryProviderTest {
 	public void testGetSegmentsEntryIdsWithContextAndEmptyAcClientUserId() {
 		Context context = new Context();
 
-		context.put(Context.AC_CLIENT_USER_ID, StringPool.BLANK);
+		context.put(
+			SegmentsAsahRequestContextContributor.AC_CLIENT_USER_ID,
+			StringPool.BLANK);
 
 		Assert.assertArrayEquals(
 			new long[0],
@@ -184,7 +188,8 @@ public class AsahSegmentsEntryProviderTest {
 
 		Context context = new Context();
 
-		context.put(Context.AC_CLIENT_USER_ID, userId);
+		context.put(
+			SegmentsAsahRequestContextContributor.AC_CLIENT_USER_ID, userId);
 
 		Assert.assertArrayEquals(
 			new long[0],
