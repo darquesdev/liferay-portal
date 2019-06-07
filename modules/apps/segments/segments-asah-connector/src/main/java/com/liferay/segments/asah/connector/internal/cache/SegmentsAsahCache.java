@@ -54,7 +54,8 @@ public class SegmentsAsahCache {
 				SegmentsAsahConfiguration.class, properties);
 
 		_timeToLiveInSeconds =
-			segmentsAsahConfiguration.anonymousUserSegmentsLifespan();
+			segmentsAsahConfiguration.
+				anonymousUserSegmentsCacheExpirationTime();
 	}
 
 	@Reference(unbind = "-")

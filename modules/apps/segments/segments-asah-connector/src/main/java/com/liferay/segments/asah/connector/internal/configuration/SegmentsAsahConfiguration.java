@@ -31,13 +31,15 @@ import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClass
 @ProviderType
 public interface SegmentsAsahConfiguration {
 
-	@Meta.AD(deflt = "15", name = "check-interval", required = false)
-	public int checkInterval();
-
 	@Meta.AD(
-		deflt = "86400", name = "anonymous-user-segments-lifespan",
+		deflt = "86400",
+		description = "anonymous-user-segments-cache-expiration-time-description",
+		name = "anonymous-user-segments-cache-expiration-time-name",
 		required = false
 	)
-	public int anonymousUserSegmentsLifespan();
+	public int anonymousUserSegmentsCacheExpirationTime();
+
+	@Meta.AD(deflt = "15", name = "check-interval", required = false)
+	public int checkInterval();
 
 }
