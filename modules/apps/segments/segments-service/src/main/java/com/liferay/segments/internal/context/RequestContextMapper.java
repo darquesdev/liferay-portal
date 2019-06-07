@@ -35,6 +35,7 @@ import com.liferay.portal.odata.entity.DateTimeEntityField;
 import com.liferay.portal.odata.entity.DoubleEntityField;
 import com.liferay.portal.odata.entity.EntityField;
 import com.liferay.portal.odata.entity.EntityModel;
+import com.liferay.portal.odata.entity.IdEntityField;
 import com.liferay.portal.odata.entity.IntegerEntityField;
 import com.liferay.portal.odata.entity.StringEntityField;
 import com.liferay.segments.context.Context;
@@ -308,6 +309,12 @@ public class RequestContextMapper {
 			else if (contextFieldType.equals("double")) {
 				entityField = new DoubleEntityField(
 					contextFieldKey, locale -> contextFieldKey);
+			}
+			else if (contextFieldType.equals("id")) {
+				entityField = new IdEntityField(
+					contextFieldKey,
+					locale -> Field.getSortableFieldName(contextFieldKey),
+					locale -> contextFieldKey);
 			}
 			else if (contextFieldType.equals("integer")) {
 				entityField = new IntegerEntityField(
