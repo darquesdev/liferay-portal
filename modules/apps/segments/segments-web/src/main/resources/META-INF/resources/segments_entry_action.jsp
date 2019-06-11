@@ -42,6 +42,19 @@ SegmentsEntry segmentsEntry = (SegmentsEntry)row.getObject();
 		/>
 	</c:if>
 
+	<c:if test="<%= SegmentsEntryPermission.contains(permissionChecker, segmentsEntry, ActionKeys.VIEW) %>">
+		<portlet:renderURL var="previewMembersURL">
+			<portlet:param name="mvcRenderCommandName" value="previewSegmentsEntryUsers" />
+			<portlet:param name="redirect" value="<%= currentURL %>" />
+			<portlet:param name="segmentsEntryId" value="<%= String.valueOf(segmentsEntry.getSegmentsEntryId()) %>" />
+		</portlet:renderURL>
+
+		<liferay-ui:icon
+			message="preview-members"
+			url="<%= previewMembersURL %>"
+		/>
+	</c:if>
+
 	<c:if test="<%= SegmentsEntryPermission.contains(permissionChecker, segmentsEntry, ActionKeys.PERMISSIONS) %>">
 		<liferay-security:permissionsURL
 			modelResource="<%= SegmentsEntry.class.getName() %>"
