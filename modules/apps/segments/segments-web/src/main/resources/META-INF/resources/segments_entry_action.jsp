@@ -43,15 +43,15 @@ SegmentsEntry segmentsEntry = (SegmentsEntry)row.getObject();
 	</c:if>
 
 	<c:if test="<%= SegmentsEntryPermission.contains(permissionChecker, segmentsEntry, ActionKeys.VIEW) %>">
-		<portlet:renderURL var="previewMembersURL">
+		<portlet:renderURL var="previewMembersURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
 			<portlet:param name="mvcRenderCommandName" value="previewSegmentsEntryUsers" />
-			<portlet:param name="redirect" value="<%= currentURL %>" />
 			<portlet:param name="segmentsEntryId" value="<%= String.valueOf(segmentsEntry.getSegmentsEntryId()) %>" />
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			message="preview-members"
+			message="view-members"
 			url="<%= previewMembersURL %>"
+			useDialog="<%= true %>"
 		/>
 	</c:if>
 
