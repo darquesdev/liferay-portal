@@ -209,6 +209,21 @@ public interface SegmentsExperienceModel
 	public void setModifiedDate(Date modifiedDate);
 
 	/**
+	 * Returns the segments experience key of this segments experience.
+	 *
+	 * @return the segments experience key of this segments experience
+	 */
+	@AutoEscape
+	public String getSegmentsExperienceKey();
+
+	/**
+	 * Sets the segments experience key of this segments experience.
+	 *
+	 * @param segmentsExperienceKey the segments experience key of this segments experience
+	 */
+	public void setSegmentsExperienceKey(String segmentsExperienceKey);
+
+	/**
 	 * Returns the segments entry ID of this segments experience.
 	 *
 	 * @return the segments entry ID of this segments experience
@@ -397,6 +412,27 @@ public interface SegmentsExperienceModel
 	 * @param active the active of this segments experience
 	 */
 	public void setActive(boolean active);
+
+	/**
+	 * Returns the approved of this segments experience.
+	 *
+	 * @return the approved of this segments experience
+	 */
+	public boolean getApproved();
+
+	/**
+	 * Returns <code>true</code> if this segments experience is approved.
+	 *
+	 * @return <code>true</code> if this segments experience is approved; <code>false</code> otherwise
+	 */
+	public boolean isApproved();
+
+	/**
+	 * Sets whether this segments experience is approved.
+	 *
+	 * @param approved the approved of this segments experience
+	 */
+	public void setApproved(boolean approved);
 
 	/**
 	 * Returns the last publish date of this segments experience.

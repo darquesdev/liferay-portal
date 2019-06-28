@@ -54,12 +54,14 @@ public class SegmentsExperienceWrapper
 		attributes.put("userName", getUserName());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
+		attributes.put("segmentsExperienceKey", getSegmentsExperienceKey());
 		attributes.put("segmentsEntryId", getSegmentsEntryId());
 		attributes.put("classNameId", getClassNameId());
 		attributes.put("classPK", getClassPK());
 		attributes.put("name", getName());
 		attributes.put("priority", getPriority());
 		attributes.put("active", isActive());
+		attributes.put("approved", isApproved());
 		attributes.put("lastPublishDate", getLastPublishDate());
 
 		return attributes;
@@ -116,6 +118,13 @@ public class SegmentsExperienceWrapper
 			setModifiedDate(modifiedDate);
 		}
 
+		String segmentsExperienceKey = (String)attributes.get(
+			"segmentsExperienceKey");
+
+		if (segmentsExperienceKey != null) {
+			setSegmentsExperienceKey(segmentsExperienceKey);
+		}
+
 		Long segmentsEntryId = (Long)attributes.get("segmentsEntryId");
 
 		if (segmentsEntryId != null) {
@@ -152,6 +161,12 @@ public class SegmentsExperienceWrapper
 			setActive(active);
 		}
 
+		Boolean approved = (Boolean)attributes.get("approved");
+
+		if (approved != null) {
+			setApproved(approved);
+		}
+
 		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
 
 		if (lastPublishDate != null) {
@@ -167,6 +182,16 @@ public class SegmentsExperienceWrapper
 	@Override
 	public boolean getActive() {
 		return model.getActive();
+	}
+
+	/**
+	 * Returns the approved of this segments experience.
+	 *
+	 * @return the approved of this segments experience
+	 */
+	@Override
+	public boolean getApproved() {
+		return model.getApproved();
 	}
 
 	@Override
@@ -376,6 +401,16 @@ public class SegmentsExperienceWrapper
 	}
 
 	/**
+	 * Returns the segments experience key of this segments experience.
+	 *
+	 * @return the segments experience key of this segments experience
+	 */
+	@Override
+	public String getSegmentsExperienceKey() {
+		return model.getSegmentsExperienceKey();
+	}
+
+	/**
 	 * Returns the user ID of this segments experience.
 	 *
 	 * @return the user ID of this segments experience
@@ -425,6 +460,16 @@ public class SegmentsExperienceWrapper
 		return model.isActive();
 	}
 
+	/**
+	 * Returns <code>true</code> if this segments experience is approved.
+	 *
+	 * @return <code>true</code> if this segments experience is approved; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isApproved() {
+		return model.isApproved();
+	}
+
 	@Override
 	public void persist() {
 		model.persist();
@@ -453,6 +498,16 @@ public class SegmentsExperienceWrapper
 	@Override
 	public void setActive(boolean active) {
 		model.setActive(active);
+	}
+
+	/**
+	 * Sets whether this segments experience is approved.
+	 *
+	 * @param approved the approved of this segments experience
+	 */
+	@Override
+	public void setApproved(boolean approved) {
+		model.setApproved(approved);
 	}
 
 	@Override
@@ -631,6 +686,16 @@ public class SegmentsExperienceWrapper
 	@Override
 	public void setSegmentsExperienceId(long segmentsExperienceId) {
 		model.setSegmentsExperienceId(segmentsExperienceId);
+	}
+
+	/**
+	 * Sets the segments experience key of this segments experience.
+	 *
+	 * @param segmentsExperienceKey the segments experience key of this segments experience
+	 */
+	@Override
+	public void setSegmentsExperienceKey(String segmentsExperienceKey) {
+		model.setSegmentsExperienceKey(segmentsExperienceKey);
 	}
 
 	/**

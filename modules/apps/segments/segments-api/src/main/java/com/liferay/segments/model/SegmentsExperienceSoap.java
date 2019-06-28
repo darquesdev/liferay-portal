@@ -42,12 +42,14 @@ public class SegmentsExperienceSoap implements Serializable {
 		soapModel.setUserName(model.getUserName());
 		soapModel.setCreateDate(model.getCreateDate());
 		soapModel.setModifiedDate(model.getModifiedDate());
+		soapModel.setSegmentsExperienceKey(model.getSegmentsExperienceKey());
 		soapModel.setSegmentsEntryId(model.getSegmentsEntryId());
 		soapModel.setClassNameId(model.getClassNameId());
 		soapModel.setClassPK(model.getClassPK());
 		soapModel.setName(model.getName());
 		soapModel.setPriority(model.getPriority());
 		soapModel.setActive(model.isActive());
+		soapModel.setApproved(model.isApproved());
 		soapModel.setLastPublishDate(model.getLastPublishDate());
 
 		return soapModel;
@@ -175,6 +177,14 @@ public class SegmentsExperienceSoap implements Serializable {
 		_modifiedDate = modifiedDate;
 	}
 
+	public String getSegmentsExperienceKey() {
+		return _segmentsExperienceKey;
+	}
+
+	public void setSegmentsExperienceKey(String segmentsExperienceKey) {
+		_segmentsExperienceKey = segmentsExperienceKey;
+	}
+
 	public long getSegmentsEntryId() {
 		return _segmentsEntryId;
 	}
@@ -227,6 +237,18 @@ public class SegmentsExperienceSoap implements Serializable {
 		_active = active;
 	}
 
+	public boolean getApproved() {
+		return _approved;
+	}
+
+	public boolean isApproved() {
+		return _approved;
+	}
+
+	public void setApproved(boolean approved) {
+		_approved = approved;
+	}
+
 	public Date getLastPublishDate() {
 		return _lastPublishDate;
 	}
@@ -243,12 +265,14 @@ public class SegmentsExperienceSoap implements Serializable {
 	private String _userName;
 	private Date _createDate;
 	private Date _modifiedDate;
+	private String _segmentsExperienceKey;
 	private long _segmentsEntryId;
 	private long _classNameId;
 	private long _classPK;
 	private String _name;
 	private int _priority;
 	private boolean _active;
+	private boolean _approved;
 	private Date _lastPublishDate;
 
 }

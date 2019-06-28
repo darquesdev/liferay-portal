@@ -67,7 +67,7 @@ public class SegmentsExperienceCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(31);
+		StringBundler sb = new StringBundler(35);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -85,6 +85,8 @@ public class SegmentsExperienceCacheModel
 		sb.append(createDate);
 		sb.append(", modifiedDate=");
 		sb.append(modifiedDate);
+		sb.append(", segmentsExperienceKey=");
+		sb.append(segmentsExperienceKey);
 		sb.append(", segmentsEntryId=");
 		sb.append(segmentsEntryId);
 		sb.append(", classNameId=");
@@ -97,6 +99,8 @@ public class SegmentsExperienceCacheModel
 		sb.append(priority);
 		sb.append(", active=");
 		sb.append(active);
+		sb.append(", approved=");
+		sb.append(approved);
 		sb.append(", lastPublishDate=");
 		sb.append(lastPublishDate);
 		sb.append("}");
@@ -142,6 +146,14 @@ public class SegmentsExperienceCacheModel
 			segmentsExperienceImpl.setModifiedDate(new Date(modifiedDate));
 		}
 
+		if (segmentsExperienceKey == null) {
+			segmentsExperienceImpl.setSegmentsExperienceKey("");
+		}
+		else {
+			segmentsExperienceImpl.setSegmentsExperienceKey(
+				segmentsExperienceKey);
+		}
+
 		segmentsExperienceImpl.setSegmentsEntryId(segmentsEntryId);
 		segmentsExperienceImpl.setClassNameId(classNameId);
 		segmentsExperienceImpl.setClassPK(classPK);
@@ -155,6 +167,7 @@ public class SegmentsExperienceCacheModel
 
 		segmentsExperienceImpl.setPriority(priority);
 		segmentsExperienceImpl.setActive(active);
+		segmentsExperienceImpl.setApproved(approved);
 
 		if (lastPublishDate == Long.MIN_VALUE) {
 			segmentsExperienceImpl.setLastPublishDate(null);
@@ -183,6 +196,7 @@ public class SegmentsExperienceCacheModel
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
+		segmentsExperienceKey = objectInput.readUTF();
 
 		segmentsEntryId = objectInput.readLong();
 
@@ -194,6 +208,8 @@ public class SegmentsExperienceCacheModel
 		priority = objectInput.readInt();
 
 		active = objectInput.readBoolean();
+
+		approved = objectInput.readBoolean();
 		lastPublishDate = objectInput.readLong();
 	}
 
@@ -224,6 +240,13 @@ public class SegmentsExperienceCacheModel
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
 
+		if (segmentsExperienceKey == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(segmentsExperienceKey);
+		}
+
 		objectOutput.writeLong(segmentsEntryId);
 
 		objectOutput.writeLong(classNameId);
@@ -240,6 +263,8 @@ public class SegmentsExperienceCacheModel
 		objectOutput.writeInt(priority);
 
 		objectOutput.writeBoolean(active);
+
+		objectOutput.writeBoolean(approved);
 		objectOutput.writeLong(lastPublishDate);
 	}
 
@@ -251,12 +276,14 @@ public class SegmentsExperienceCacheModel
 	public String userName;
 	public long createDate;
 	public long modifiedDate;
+	public String segmentsExperienceKey;
 	public long segmentsEntryId;
 	public long classNameId;
 	public long classPK;
 	public String name;
 	public int priority;
 	public boolean active;
+	public boolean approved;
 	public long lastPublishDate;
 
 }

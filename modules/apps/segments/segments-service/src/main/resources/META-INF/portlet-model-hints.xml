@@ -44,12 +44,43 @@
 		<field name="userName" type="String" />
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
+		<field name="segmentsExperienceKey" type="String" />
 		<field name="segmentsEntryId" type="long" />
 		<field name="classNameId" type="long" />
 		<field name="classPK" type="long" />
 		<field localized="true" name="name" type="String" />
 		<field name="priority" type="int" />
 		<field name="active" type="boolean" />
+		<field name="approved" type="boolean" />
 		<field name="lastPublishDate" type="Date" />
+	</model>
+	<model name="com.liferay.segments.model.SegmentsExperiment">
+		<field name="uuid" type="String" />
+		<field name="segmentsExperimentId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="segmentsExperimentKey" type="String" />
+		<field name="segmentsExperienceId" type="long" />
+		<field name="segmentsEntryId" type="long" />
+		<field name="name" type="String" />
+		<field name="description" type="String" />
+		<field name="status" type="int" />
+		<field name="typeSettings" type="String" />
+	</model>
+	<model name="com.liferay.segments.model.SegmentsExperimentRel">
+		<field name="segmentsExperimentRelId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="segmentsExperimentId" type="long" />
+		<field name="segmentsExperienceId" type="long" />
+		<field name="split" type="double" />
 	</model>
 </model-hints>

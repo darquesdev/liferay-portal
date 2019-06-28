@@ -89,10 +89,11 @@ public class SegmentsExperienceModelImpl
 		{"groupId", Types.BIGINT}, {"companyId", Types.BIGINT},
 		{"userId", Types.BIGINT}, {"userName", Types.VARCHAR},
 		{"createDate", Types.TIMESTAMP}, {"modifiedDate", Types.TIMESTAMP},
+		{"segmentsExperienceKey", Types.VARCHAR},
 		{"segmentsEntryId", Types.BIGINT}, {"classNameId", Types.BIGINT},
 		{"classPK", Types.BIGINT}, {"name", Types.VARCHAR},
 		{"priority", Types.INTEGER}, {"active_", Types.BOOLEAN},
-		{"lastPublishDate", Types.TIMESTAMP}
+		{"approved", Types.BOOLEAN}, {"lastPublishDate", Types.TIMESTAMP}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -107,17 +108,19 @@ public class SegmentsExperienceModelImpl
 		TABLE_COLUMNS_MAP.put("userName", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
+		TABLE_COLUMNS_MAP.put("segmentsExperienceKey", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("segmentsEntryId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("classNameId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("classPK", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("name", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("priority", Types.INTEGER);
 		TABLE_COLUMNS_MAP.put("active_", Types.BOOLEAN);
+		TABLE_COLUMNS_MAP.put("approved", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("lastPublishDate", Types.TIMESTAMP);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table SegmentsExperience (uuid_ VARCHAR(75) null,segmentsExperienceId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,segmentsEntryId LONG,classNameId LONG,classPK LONG,name STRING null,priority INTEGER,active_ BOOLEAN,lastPublishDate DATE null)";
+		"create table SegmentsExperience (uuid_ VARCHAR(75) null,segmentsExperienceId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,segmentsExperienceKey VARCHAR(75) null,segmentsEntryId LONG,classNameId LONG,classPK LONG,name STRING null,priority INTEGER,active_ BOOLEAN,approved BOOLEAN,lastPublishDate DATE null)";
 
 	public static final String TABLE_SQL_DROP = "drop table SegmentsExperience";
 
@@ -150,19 +153,23 @@ public class SegmentsExperienceModelImpl
 
 	public static final long ACTIVE_COLUMN_BITMASK = 1L;
 
-	public static final long CLASSNAMEID_COLUMN_BITMASK = 2L;
+	public static final long APPROVED_COLUMN_BITMASK = 2L;
 
-	public static final long CLASSPK_COLUMN_BITMASK = 4L;
+	public static final long CLASSNAMEID_COLUMN_BITMASK = 4L;
 
-	public static final long COMPANYID_COLUMN_BITMASK = 8L;
+	public static final long CLASSPK_COLUMN_BITMASK = 8L;
 
-	public static final long GROUPID_COLUMN_BITMASK = 16L;
+	public static final long COMPANYID_COLUMN_BITMASK = 16L;
 
-	public static final long PRIORITY_COLUMN_BITMASK = 32L;
+	public static final long GROUPID_COLUMN_BITMASK = 32L;
 
-	public static final long SEGMENTSENTRYID_COLUMN_BITMASK = 64L;
+	public static final long PRIORITY_COLUMN_BITMASK = 64L;
 
-	public static final long UUID_COLUMN_BITMASK = 128L;
+	public static final long SEGMENTSENTRYID_COLUMN_BITMASK = 128L;
+
+	public static final long SEGMENTSEXPERIENCEKEY_COLUMN_BITMASK = 256L;
+
+	public static final long UUID_COLUMN_BITMASK = 512L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -185,12 +192,14 @@ public class SegmentsExperienceModelImpl
 		model.setUserName(soapModel.getUserName());
 		model.setCreateDate(soapModel.getCreateDate());
 		model.setModifiedDate(soapModel.getModifiedDate());
+		model.setSegmentsExperienceKey(soapModel.getSegmentsExperienceKey());
 		model.setSegmentsEntryId(soapModel.getSegmentsEntryId());
 		model.setClassNameId(soapModel.getClassNameId());
 		model.setClassPK(soapModel.getClassPK());
 		model.setName(soapModel.getName());
 		model.setPriority(soapModel.getPriority());
 		model.setActive(soapModel.isActive());
+		model.setApproved(soapModel.isApproved());
 		model.setLastPublishDate(soapModel.getLastPublishDate());
 
 		return model;
@@ -398,6 +407,13 @@ public class SegmentsExperienceModelImpl
 			(BiConsumer<SegmentsExperience, Date>)
 				SegmentsExperience::setModifiedDate);
 		attributeGetterFunctions.put(
+			"segmentsExperienceKey",
+			SegmentsExperience::getSegmentsExperienceKey);
+		attributeSetterBiConsumers.put(
+			"segmentsExperienceKey",
+			(BiConsumer<SegmentsExperience, String>)
+				SegmentsExperience::setSegmentsExperienceKey);
+		attributeGetterFunctions.put(
 			"segmentsEntryId", SegmentsExperience::getSegmentsEntryId);
 		attributeSetterBiConsumers.put(
 			"segmentsEntryId",
@@ -430,6 +446,12 @@ public class SegmentsExperienceModelImpl
 			"active",
 			(BiConsumer<SegmentsExperience, Boolean>)
 				SegmentsExperience::setActive);
+		attributeGetterFunctions.put(
+			"approved", SegmentsExperience::getApproved);
+		attributeSetterBiConsumers.put(
+			"approved",
+			(BiConsumer<SegmentsExperience, Boolean>)
+				SegmentsExperience::setApproved);
 		attributeGetterFunctions.put(
 			"lastPublishDate", SegmentsExperience::getLastPublishDate);
 		attributeSetterBiConsumers.put(
@@ -595,6 +617,32 @@ public class SegmentsExperienceModelImpl
 		_setModifiedDate = true;
 
 		_modifiedDate = modifiedDate;
+	}
+
+	@JSON
+	@Override
+	public String getSegmentsExperienceKey() {
+		if (_segmentsExperienceKey == null) {
+			return "";
+		}
+		else {
+			return _segmentsExperienceKey;
+		}
+	}
+
+	@Override
+	public void setSegmentsExperienceKey(String segmentsExperienceKey) {
+		_columnBitmask |= SEGMENTSEXPERIENCEKEY_COLUMN_BITMASK;
+
+		if (_originalSegmentsExperienceKey == null) {
+			_originalSegmentsExperienceKey = _segmentsExperienceKey;
+		}
+
+		_segmentsExperienceKey = segmentsExperienceKey;
+	}
+
+	public String getOriginalSegmentsExperienceKey() {
+		return GetterUtil.getString(_originalSegmentsExperienceKey);
 	}
 
 	@JSON
@@ -843,6 +891,35 @@ public class SegmentsExperienceModelImpl
 
 	@JSON
 	@Override
+	public boolean getApproved() {
+		return _approved;
+	}
+
+	@JSON
+	@Override
+	public boolean isApproved() {
+		return _approved;
+	}
+
+	@Override
+	public void setApproved(boolean approved) {
+		_columnBitmask |= APPROVED_COLUMN_BITMASK;
+
+		if (!_setOriginalApproved) {
+			_setOriginalApproved = true;
+
+			_originalApproved = _approved;
+		}
+
+		_approved = approved;
+	}
+
+	public boolean getOriginalApproved() {
+		return _originalApproved;
+	}
+
+	@JSON
+	@Override
 	public Date getLastPublishDate() {
 		return _lastPublishDate;
 	}
@@ -972,12 +1049,15 @@ public class SegmentsExperienceModelImpl
 		segmentsExperienceImpl.setUserName(getUserName());
 		segmentsExperienceImpl.setCreateDate(getCreateDate());
 		segmentsExperienceImpl.setModifiedDate(getModifiedDate());
+		segmentsExperienceImpl.setSegmentsExperienceKey(
+			getSegmentsExperienceKey());
 		segmentsExperienceImpl.setSegmentsEntryId(getSegmentsEntryId());
 		segmentsExperienceImpl.setClassNameId(getClassNameId());
 		segmentsExperienceImpl.setClassPK(getClassPK());
 		segmentsExperienceImpl.setName(getName());
 		segmentsExperienceImpl.setPriority(getPriority());
 		segmentsExperienceImpl.setActive(isActive());
+		segmentsExperienceImpl.setApproved(isApproved());
 		segmentsExperienceImpl.setLastPublishDate(getLastPublishDate());
 
 		segmentsExperienceImpl.resetOriginalValues();
@@ -1064,6 +1144,9 @@ public class SegmentsExperienceModelImpl
 
 		segmentsExperienceModelImpl._setModifiedDate = false;
 
+		segmentsExperienceModelImpl._originalSegmentsExperienceKey =
+			segmentsExperienceModelImpl._segmentsExperienceKey;
+
 		segmentsExperienceModelImpl._originalSegmentsEntryId =
 			segmentsExperienceModelImpl._segmentsEntryId;
 
@@ -1088,6 +1171,11 @@ public class SegmentsExperienceModelImpl
 			segmentsExperienceModelImpl._active;
 
 		segmentsExperienceModelImpl._setOriginalActive = false;
+
+		segmentsExperienceModelImpl._originalApproved =
+			segmentsExperienceModelImpl._approved;
+
+		segmentsExperienceModelImpl._setOriginalApproved = false;
 
 		segmentsExperienceModelImpl._columnBitmask = 0;
 	}
@@ -1140,6 +1228,18 @@ public class SegmentsExperienceModelImpl
 			segmentsExperienceCacheModel.modifiedDate = Long.MIN_VALUE;
 		}
 
+		segmentsExperienceCacheModel.segmentsExperienceKey =
+			getSegmentsExperienceKey();
+
+		String segmentsExperienceKey =
+			segmentsExperienceCacheModel.segmentsExperienceKey;
+
+		if ((segmentsExperienceKey != null) &&
+			(segmentsExperienceKey.length() == 0)) {
+
+			segmentsExperienceCacheModel.segmentsExperienceKey = null;
+		}
+
 		segmentsExperienceCacheModel.segmentsEntryId = getSegmentsEntryId();
 
 		segmentsExperienceCacheModel.classNameId = getClassNameId();
@@ -1157,6 +1257,8 @@ public class SegmentsExperienceModelImpl
 		segmentsExperienceCacheModel.priority = getPriority();
 
 		segmentsExperienceCacheModel.active = isActive();
+
+		segmentsExperienceCacheModel.approved = isApproved();
 
 		Date lastPublishDate = getLastPublishDate();
 
@@ -1255,6 +1357,8 @@ public class SegmentsExperienceModelImpl
 	private Date _createDate;
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
+	private String _segmentsExperienceKey;
+	private String _originalSegmentsExperienceKey;
 	private long _segmentsEntryId;
 	private long _originalSegmentsEntryId;
 	private boolean _setOriginalSegmentsEntryId;
@@ -1272,6 +1376,9 @@ public class SegmentsExperienceModelImpl
 	private boolean _active;
 	private boolean _originalActive;
 	private boolean _setOriginalActive;
+	private boolean _approved;
+	private boolean _originalApproved;
+	private boolean _setOriginalApproved;
 	private Date _lastPublishDate;
 	private long _columnBitmask;
 	private SegmentsExperience _escapedModel;

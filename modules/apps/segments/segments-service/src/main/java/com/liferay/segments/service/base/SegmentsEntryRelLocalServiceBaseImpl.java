@@ -44,6 +44,8 @@ import com.liferay.segments.service.SegmentsEntryRelLocalService;
 import com.liferay.segments.service.persistence.SegmentsEntryPersistence;
 import com.liferay.segments.service.persistence.SegmentsEntryRelPersistence;
 import com.liferay.segments.service.persistence.SegmentsExperiencePersistence;
+import com.liferay.segments.service.persistence.SegmentsExperimentPersistence;
+import com.liferay.segments.service.persistence.SegmentsExperimentRelPersistence;
 
 import java.io.Serializable;
 
@@ -468,6 +470,96 @@ public abstract class SegmentsEntryRelLocalServiceBaseImpl
 	}
 
 	/**
+	 * Returns the segments experiment local service.
+	 *
+	 * @return the segments experiment local service
+	 */
+	public com.liferay.segments.service.SegmentsExperimentLocalService
+		getSegmentsExperimentLocalService() {
+
+		return segmentsExperimentLocalService;
+	}
+
+	/**
+	 * Sets the segments experiment local service.
+	 *
+	 * @param segmentsExperimentLocalService the segments experiment local service
+	 */
+	public void setSegmentsExperimentLocalService(
+		com.liferay.segments.service.SegmentsExperimentLocalService
+			segmentsExperimentLocalService) {
+
+		this.segmentsExperimentLocalService = segmentsExperimentLocalService;
+	}
+
+	/**
+	 * Returns the segments experiment persistence.
+	 *
+	 * @return the segments experiment persistence
+	 */
+	public SegmentsExperimentPersistence getSegmentsExperimentPersistence() {
+		return segmentsExperimentPersistence;
+	}
+
+	/**
+	 * Sets the segments experiment persistence.
+	 *
+	 * @param segmentsExperimentPersistence the segments experiment persistence
+	 */
+	public void setSegmentsExperimentPersistence(
+		SegmentsExperimentPersistence segmentsExperimentPersistence) {
+
+		this.segmentsExperimentPersistence = segmentsExperimentPersistence;
+	}
+
+	/**
+	 * Returns the segments experiment rel local service.
+	 *
+	 * @return the segments experiment rel local service
+	 */
+	public com.liferay.segments.service.SegmentsExperimentRelLocalService
+		getSegmentsExperimentRelLocalService() {
+
+		return segmentsExperimentRelLocalService;
+	}
+
+	/**
+	 * Sets the segments experiment rel local service.
+	 *
+	 * @param segmentsExperimentRelLocalService the segments experiment rel local service
+	 */
+	public void setSegmentsExperimentRelLocalService(
+		com.liferay.segments.service.SegmentsExperimentRelLocalService
+			segmentsExperimentRelLocalService) {
+
+		this.segmentsExperimentRelLocalService =
+			segmentsExperimentRelLocalService;
+	}
+
+	/**
+	 * Returns the segments experiment rel persistence.
+	 *
+	 * @return the segments experiment rel persistence
+	 */
+	public SegmentsExperimentRelPersistence
+		getSegmentsExperimentRelPersistence() {
+
+		return segmentsExperimentRelPersistence;
+	}
+
+	/**
+	 * Sets the segments experiment rel persistence.
+	 *
+	 * @param segmentsExperimentRelPersistence the segments experiment rel persistence
+	 */
+	public void setSegmentsExperimentRelPersistence(
+		SegmentsExperimentRelPersistence segmentsExperimentRelPersistence) {
+
+		this.segmentsExperimentRelPersistence =
+			segmentsExperimentRelPersistence;
+	}
+
+	/**
 	 * Returns the counter local service.
 	 *
 	 * @return the counter local service
@@ -672,6 +764,24 @@ public abstract class SegmentsEntryRelLocalServiceBaseImpl
 
 	@BeanReference(type = SegmentsExperiencePersistence.class)
 	protected SegmentsExperiencePersistence segmentsExperiencePersistence;
+
+	@BeanReference(
+		type = com.liferay.segments.service.SegmentsExperimentLocalService.class
+	)
+	protected com.liferay.segments.service.SegmentsExperimentLocalService
+		segmentsExperimentLocalService;
+
+	@BeanReference(type = SegmentsExperimentPersistence.class)
+	protected SegmentsExperimentPersistence segmentsExperimentPersistence;
+
+	@BeanReference(
+		type = com.liferay.segments.service.SegmentsExperimentRelLocalService.class
+	)
+	protected com.liferay.segments.service.SegmentsExperimentRelLocalService
+		segmentsExperimentRelLocalService;
+
+	@BeanReference(type = SegmentsExperimentRelPersistence.class)
+	protected SegmentsExperimentRelPersistence segmentsExperimentRelPersistence;
 
 	@ServiceReference(
 		type = com.liferay.counter.kernel.service.CounterLocalService.class
