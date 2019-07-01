@@ -297,6 +297,30 @@ const INITIAL_STATE = {
 	).value([]),
 
 	/**
+	 * The list of Experiments available for this Content Page
+	 *
+	 * @default []
+	 * @review
+	 * @type {array}
+	 */
+	segmentsExperiments: Config.arrayOf(
+		Config.shapeOf({
+			segmentsExperimentId: Config.string().required(),
+			name: Config.string().required(),
+			description: Config.string(),
+			segmentsExperienceId: Config.string().required(),
+			status: Config.string().required()
+		})
+	).value([
+		{
+			segmentsExperimentId: '0',
+			name: 'Best experiment ever',
+			segmentsExperienceId: '0',
+			status: 'draft'
+		}
+	]),
+
+	/**
 	 * Fragment id to indicate if that fragment editor has to be cleared.
 	 * @default ''
 	 * @review

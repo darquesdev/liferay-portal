@@ -11,6 +11,7 @@
 	{@param? _handleToggleContextualSidebarButtonClick: any}
 	{@param? classPK: ?}
 	{@param? defaultSegmentsExperienceId: string }
+	{@param? experimentsMode: bool}
 	{@param? discardDraftRedirectURL: string}
 	{@param? discardDraftURL: string}
 	{@param? draft: bool}
@@ -56,6 +57,16 @@
 						{param store: $store /}
 					{/call}
 				</li>
+
+				{if $defaultSegmentsExperienceId and $experimentsMode }
+					<li class="nav-item">
+						{call com.liferay.layout.content.page.editor.web.Experiments.render}
+							{param portletNamespace: $portletNamespace ?: '' /}
+							{param spritemap: $spritemap ?: '' /}
+							{param store: $store /}
+						{/call}
+					</li>
+				{/if}
 			</ul>
 
 			{let $spanClasses kind="text"}
