@@ -51,7 +51,7 @@ function _renderExperimentsApp(id, store, context) {
 				activeExperience:
 					myState.segmentsExperienceId ||
 					myState.defaultSegmentsExperienceId,
-				experiments: myState.segmentsExperiments
+				experiments: myState.availableSegmentsExperiments
 			};
 		},
 		function mapDispatchToProps(dispatch) {

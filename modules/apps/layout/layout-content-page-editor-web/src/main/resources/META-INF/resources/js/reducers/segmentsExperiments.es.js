@@ -7,16 +7,16 @@ export function createSegmentsExperimentsReducer(state, action) {
 			const segmentsExperienceId =
 				state.segmentsExperienceId || state.defaultSegmentsExperienceId;
 
-			_fakeCreateExperiment({
+			_createExperiment({
 				name,
 				description,
 				segmentsExperienceId
 			}).then(experiment => {
 				resolve({
 					...state,
-					segmentsExperiments: [
+					availableSegmentsExperiments: [
 						experiment,
-						...state.segmentsExperiments
+						...state.availableSegmentsExperiments
 					]
 				});
 			});
@@ -26,16 +26,32 @@ export function createSegmentsExperimentsReducer(state, action) {
 	});
 }
 
-function _fakeCreateExperiment({name, description, segmentsExperienceId}) {
+function _createExperiment({name, description, segmentsExperienceId}) {
 	return new Promise(function(resolve, reject) {
-		setTimeout(function() {
-			resolve({
-				segmentsExperiementId: Math.random().toPrecision(),
-				name,
-				description,
+		Liferay.Service(
+			'/segments.segmentsexperiment/add-segments-experience',
+			{
 				segmentsExperienceId,
-				status: 'draft'
-			});
-		}, 2000);
+				name,
+				description
+			},
+			obj => {
+				const {name, description, segmentsExperienceId, status} = obj;
+				resolve({
+					name,
+					description,
+					segmentsExperienceId,
+					status: _mapExperimentsStatus(status)
+				});
+			}
+		);
 	});
+}
+
+export function _mapExperimentsStatus(statusInt) {
+	switch (statusInt) {
+		case 0:
+		default:
+			return 'draft';
+	}
 }

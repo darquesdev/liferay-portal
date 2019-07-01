@@ -303,22 +303,15 @@ const INITIAL_STATE = {
 	 * @review
 	 * @type {array}
 	 */
-	segmentsExperiments: Config.arrayOf(
+	availableSegmentsExperiments: Config.arrayOf(
 		Config.shapeOf({
 			segmentsExperimentId: Config.string().required(),
 			name: Config.string().required(),
 			description: Config.string(),
 			segmentsExperienceId: Config.string().required(),
-			status: Config.string().required()
+			status: Config.number().required()
 		})
-	).value([
-		{
-			segmentsExperimentId: '0',
-			name: 'Best experiment ever',
-			segmentsExperienceId: '0',
-			status: 'draft'
-		}
-	]),
+	).value([]),
 
 	/**
 	 * Fragment id to indicate if that fragment editor has to be cleared.

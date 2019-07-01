@@ -5,6 +5,7 @@ import ClayIcon from '@clayui/icon';
 import ClayButton from '@clayui/button';
 import ClayLabel from '@clayui/label';
 import CreateExperimentModal from './CreateExperimentModal.es';
+import {_mapExperimentsStatus} from '../../../reducers/segmentsExperiments.es';
 
 function ExperimentsDropdown(props) {
 	const [active, setActive] = useState(false);
@@ -17,7 +18,7 @@ function ExperimentsDropdown(props) {
 	);
 
 	const canCreateExperiment = !filteredExperiments.some(
-		experiment => experiment.status === 'draft'
+		experiment => experiment.status === 0
 	);
 
 	return (
@@ -51,7 +52,9 @@ function ExperimentsDropdown(props) {
 											{experiment.name}
 										</span>
 										<ClayLabel displayType='secondary'>
-											{experiment.status}
+											{_mapExperimentsStatus(
+												experiment.status
+											)}
 										</ClayLabel>
 									</ClayDropDown.Item>
 								);
@@ -92,7 +95,7 @@ ExperimentsDropdown.propTypes = {
 			name: PropTypes.string.isRequired,
 			description: PropTypes.string,
 			segmentsExperienceId: PropTypes.string.isRequired,
-			status: PropTypes.string.isRequired
+			status: PropTypes.number.isRequired
 		})
 	)
 };
