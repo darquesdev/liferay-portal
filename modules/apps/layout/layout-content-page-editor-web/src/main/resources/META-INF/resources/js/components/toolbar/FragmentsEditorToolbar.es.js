@@ -17,6 +17,7 @@ import Soy from 'metal-soy';
 
 import './TranslationStatus.es';
 import './SegmentsExperienceSelector.es';
+import './Experiments.es';
 import getConnectedComponent from '../../store/ConnectedComponent.es';
 import templates from './FragmentsEditorToolbar.soy';
 import {TOGGLE_SIDEBAR} from '../../actions/actions.es';
