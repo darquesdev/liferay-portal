@@ -245,12 +245,13 @@
 		<finder name="GroupId" return-type="Collection">
 			<finder-column name="groupId" />
 		</finder>
-		<finder name="SegmentsExperienceId" return-type="Collection">
-			<finder-column name="segmentsExperienceId" />
-		</finder>
-		<finder name="G_S" return-type="SegmentsExperiment" unique="true">
+		<finder name="G_SE" return-type="SegmentsExperiment" unique="true">
 			<finder-column name="groupId" />
 			<finder-column name="segmentsExperimentKey" />
+		</finder>
+		<finder name="G_S" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column arrayable-operator="OR" name="segmentsExperienceId" />
 		</finder>
 	</entity>
 	<entity local-service="true" name="SegmentsExperimentRel" remote-service="true">
