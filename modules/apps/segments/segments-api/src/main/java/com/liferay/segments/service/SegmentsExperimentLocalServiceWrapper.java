@@ -36,6 +36,16 @@ public class SegmentsExperimentLocalServiceWrapper
 		_segmentsExperimentLocalService = segmentsExperimentLocalService;
 	}
 
+	@Override
+	public com.liferay.segments.model.SegmentsExperiment addSegmentsExperiment(
+			long segmentsExperienceId, String name, String description,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _segmentsExperimentLocalService.addSegmentsExperiment(
+			segmentsExperienceId, name, description, serviceContext);
+	}
+
 	/**
 	 * Adds the segments experiment to the database. Also notifies the appropriate model listeners.
 	 *
@@ -314,6 +324,15 @@ public class SegmentsExperimentLocalServiceWrapper
 
 		return _segmentsExperimentLocalService.getSegmentsExperiments(
 			start, end);
+	}
+
+	@Override
+	public java.util.List<com.liferay.segments.model.SegmentsExperiment>
+			getSegmentsExperiments(long groupId, long classNameId, long classPK)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _segmentsExperimentLocalService.getSegmentsExperiments(
+			groupId, classNameId, classPK);
 	}
 
 	/**

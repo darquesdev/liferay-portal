@@ -692,6 +692,73 @@ public class SegmentsExperimentUtil {
 	}
 
 	/**
+	 * Returns all the segments experiments that the user has permission to view where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the matching segments experiments that the user has permission to view
+	 */
+	public static List<SegmentsExperiment> filterFindByGroupId(long groupId) {
+		return getPersistence().filterFindByGroupId(groupId);
+	}
+
+	/**
+	 * Returns a range of all the segments experiments that the user has permission to view where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SegmentsExperimentModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of segments experiments
+	 * @param end the upper bound of the range of segments experiments (not inclusive)
+	 * @return the range of matching segments experiments that the user has permission to view
+	 */
+	public static List<SegmentsExperiment> filterFindByGroupId(
+		long groupId, int start, int end) {
+
+		return getPersistence().filterFindByGroupId(groupId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the segments experiments that the user has permissions to view where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SegmentsExperimentModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of segments experiments
+	 * @param end the upper bound of the range of segments experiments (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching segments experiments that the user has permission to view
+	 */
+	public static List<SegmentsExperiment> filterFindByGroupId(
+		long groupId, int start, int end,
+		OrderByComparator<SegmentsExperiment> orderByComparator) {
+
+		return getPersistence().filterFindByGroupId(
+			groupId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns the segments experiments before and after the current segments experiment in the ordered set of segments experiments that the user has permission to view where groupId = &#63;.
+	 *
+	 * @param segmentsExperimentId the primary key of the current segments experiment
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next segments experiment
+	 * @throws NoSuchExperimentException if a segments experiment with the primary key could not be found
+	 */
+	public static SegmentsExperiment[] filterFindByGroupId_PrevAndNext(
+			long segmentsExperimentId, long groupId,
+			OrderByComparator<SegmentsExperiment> orderByComparator)
+		throws com.liferay.segments.exception.NoSuchExperimentException {
+
+		return getPersistence().filterFindByGroupId_PrevAndNext(
+			segmentsExperimentId, groupId, orderByComparator);
+	}
+
+	/**
 	 * Removes all the segments experiments where groupId = &#63; from the database.
 	 *
 	 * @param groupId the group ID
@@ -711,182 +778,13 @@ public class SegmentsExperimentUtil {
 	}
 
 	/**
-	 * Returns all the segments experiments where segmentsExperienceId = &#63;.
+	 * Returns the number of segments experiments that the user has permission to view where groupId = &#63;.
 	 *
-	 * @param segmentsExperienceId the segments experience ID
-	 * @return the matching segments experiments
+	 * @param groupId the group ID
+	 * @return the number of matching segments experiments that the user has permission to view
 	 */
-	public static List<SegmentsExperiment> findBySegmentsExperienceId(
-		long segmentsExperienceId) {
-
-		return getPersistence().findBySegmentsExperienceId(
-			segmentsExperienceId);
-	}
-
-	/**
-	 * Returns a range of all the segments experiments where segmentsExperienceId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SegmentsExperimentModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
-	 *
-	 * @param segmentsExperienceId the segments experience ID
-	 * @param start the lower bound of the range of segments experiments
-	 * @param end the upper bound of the range of segments experiments (not inclusive)
-	 * @return the range of matching segments experiments
-	 */
-	public static List<SegmentsExperiment> findBySegmentsExperienceId(
-		long segmentsExperienceId, int start, int end) {
-
-		return getPersistence().findBySegmentsExperienceId(
-			segmentsExperienceId, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the segments experiments where segmentsExperienceId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SegmentsExperimentModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
-	 *
-	 * @param segmentsExperienceId the segments experience ID
-	 * @param start the lower bound of the range of segments experiments
-	 * @param end the upper bound of the range of segments experiments (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching segments experiments
-	 */
-	public static List<SegmentsExperiment> findBySegmentsExperienceId(
-		long segmentsExperienceId, int start, int end,
-		OrderByComparator<SegmentsExperiment> orderByComparator) {
-
-		return getPersistence().findBySegmentsExperienceId(
-			segmentsExperienceId, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns an ordered range of all the segments experiments where segmentsExperienceId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SegmentsExperimentModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
-	 *
-	 * @param segmentsExperienceId the segments experience ID
-	 * @param start the lower bound of the range of segments experiments
-	 * @param end the upper bound of the range of segments experiments (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
-	 * @return the ordered range of matching segments experiments
-	 */
-	public static List<SegmentsExperiment> findBySegmentsExperienceId(
-		long segmentsExperienceId, int start, int end,
-		OrderByComparator<SegmentsExperiment> orderByComparator,
-		boolean retrieveFromCache) {
-
-		return getPersistence().findBySegmentsExperienceId(
-			segmentsExperienceId, start, end, orderByComparator,
-			retrieveFromCache);
-	}
-
-	/**
-	 * Returns the first segments experiment in the ordered set where segmentsExperienceId = &#63;.
-	 *
-	 * @param segmentsExperienceId the segments experience ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching segments experiment
-	 * @throws NoSuchExperimentException if a matching segments experiment could not be found
-	 */
-	public static SegmentsExperiment findBySegmentsExperienceId_First(
-			long segmentsExperienceId,
-			OrderByComparator<SegmentsExperiment> orderByComparator)
-		throws com.liferay.segments.exception.NoSuchExperimentException {
-
-		return getPersistence().findBySegmentsExperienceId_First(
-			segmentsExperienceId, orderByComparator);
-	}
-
-	/**
-	 * Returns the first segments experiment in the ordered set where segmentsExperienceId = &#63;.
-	 *
-	 * @param segmentsExperienceId the segments experience ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching segments experiment, or <code>null</code> if a matching segments experiment could not be found
-	 */
-	public static SegmentsExperiment fetchBySegmentsExperienceId_First(
-		long segmentsExperienceId,
-		OrderByComparator<SegmentsExperiment> orderByComparator) {
-
-		return getPersistence().fetchBySegmentsExperienceId_First(
-			segmentsExperienceId, orderByComparator);
-	}
-
-	/**
-	 * Returns the last segments experiment in the ordered set where segmentsExperienceId = &#63;.
-	 *
-	 * @param segmentsExperienceId the segments experience ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching segments experiment
-	 * @throws NoSuchExperimentException if a matching segments experiment could not be found
-	 */
-	public static SegmentsExperiment findBySegmentsExperienceId_Last(
-			long segmentsExperienceId,
-			OrderByComparator<SegmentsExperiment> orderByComparator)
-		throws com.liferay.segments.exception.NoSuchExperimentException {
-
-		return getPersistence().findBySegmentsExperienceId_Last(
-			segmentsExperienceId, orderByComparator);
-	}
-
-	/**
-	 * Returns the last segments experiment in the ordered set where segmentsExperienceId = &#63;.
-	 *
-	 * @param segmentsExperienceId the segments experience ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching segments experiment, or <code>null</code> if a matching segments experiment could not be found
-	 */
-	public static SegmentsExperiment fetchBySegmentsExperienceId_Last(
-		long segmentsExperienceId,
-		OrderByComparator<SegmentsExperiment> orderByComparator) {
-
-		return getPersistence().fetchBySegmentsExperienceId_Last(
-			segmentsExperienceId, orderByComparator);
-	}
-
-	/**
-	 * Returns the segments experiments before and after the current segments experiment in the ordered set where segmentsExperienceId = &#63;.
-	 *
-	 * @param segmentsExperimentId the primary key of the current segments experiment
-	 * @param segmentsExperienceId the segments experience ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next segments experiment
-	 * @throws NoSuchExperimentException if a segments experiment with the primary key could not be found
-	 */
-	public static SegmentsExperiment[] findBySegmentsExperienceId_PrevAndNext(
-			long segmentsExperimentId, long segmentsExperienceId,
-			OrderByComparator<SegmentsExperiment> orderByComparator)
-		throws com.liferay.segments.exception.NoSuchExperimentException {
-
-		return getPersistence().findBySegmentsExperienceId_PrevAndNext(
-			segmentsExperimentId, segmentsExperienceId, orderByComparator);
-	}
-
-	/**
-	 * Removes all the segments experiments where segmentsExperienceId = &#63; from the database.
-	 *
-	 * @param segmentsExperienceId the segments experience ID
-	 */
-	public static void removeBySegmentsExperienceId(long segmentsExperienceId) {
-		getPersistence().removeBySegmentsExperienceId(segmentsExperienceId);
-	}
-
-	/**
-	 * Returns the number of segments experiments where segmentsExperienceId = &#63;.
-	 *
-	 * @param segmentsExperienceId the segments experience ID
-	 * @return the number of matching segments experiments
-	 */
-	public static int countBySegmentsExperienceId(long segmentsExperienceId) {
-		return getPersistence().countBySegmentsExperienceId(
-			segmentsExperienceId);
+	public static int filterCountByGroupId(long groupId) {
+		return getPersistence().filterCountByGroupId(groupId);
 	}
 
 	/**
@@ -897,11 +795,11 @@ public class SegmentsExperimentUtil {
 	 * @return the matching segments experiment
 	 * @throws NoSuchExperimentException if a matching segments experiment could not be found
 	 */
-	public static SegmentsExperiment findByG_S(
+	public static SegmentsExperiment findByG_SE(
 			long groupId, String segmentsExperimentKey)
 		throws com.liferay.segments.exception.NoSuchExperimentException {
 
-		return getPersistence().findByG_S(groupId, segmentsExperimentKey);
+		return getPersistence().findByG_SE(groupId, segmentsExperimentKey);
 	}
 
 	/**
@@ -911,10 +809,10 @@ public class SegmentsExperimentUtil {
 	 * @param segmentsExperimentKey the segments experiment key
 	 * @return the matching segments experiment, or <code>null</code> if a matching segments experiment could not be found
 	 */
-	public static SegmentsExperiment fetchByG_S(
+	public static SegmentsExperiment fetchByG_SE(
 		long groupId, String segmentsExperimentKey) {
 
-		return getPersistence().fetchByG_S(groupId, segmentsExperimentKey);
+		return getPersistence().fetchByG_SE(groupId, segmentsExperimentKey);
 	}
 
 	/**
@@ -925,10 +823,10 @@ public class SegmentsExperimentUtil {
 	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the matching segments experiment, or <code>null</code> if a matching segments experiment could not be found
 	 */
-	public static SegmentsExperiment fetchByG_S(
+	public static SegmentsExperiment fetchByG_SE(
 		long groupId, String segmentsExperimentKey, boolean retrieveFromCache) {
 
-		return getPersistence().fetchByG_S(
+		return getPersistence().fetchByG_SE(
 			groupId, segmentsExperimentKey, retrieveFromCache);
 	}
 
@@ -939,11 +837,11 @@ public class SegmentsExperimentUtil {
 	 * @param segmentsExperimentKey the segments experiment key
 	 * @return the segments experiment that was removed
 	 */
-	public static SegmentsExperiment removeByG_S(
+	public static SegmentsExperiment removeByG_SE(
 			long groupId, String segmentsExperimentKey)
 		throws com.liferay.segments.exception.NoSuchExperimentException {
 
-		return getPersistence().removeByG_S(groupId, segmentsExperimentKey);
+		return getPersistence().removeByG_SE(groupId, segmentsExperimentKey);
 	}
 
 	/**
@@ -953,8 +851,449 @@ public class SegmentsExperimentUtil {
 	 * @param segmentsExperimentKey the segments experiment key
 	 * @return the number of matching segments experiments
 	 */
-	public static int countByG_S(long groupId, String segmentsExperimentKey) {
-		return getPersistence().countByG_S(groupId, segmentsExperimentKey);
+	public static int countByG_SE(long groupId, String segmentsExperimentKey) {
+		return getPersistence().countByG_SE(groupId, segmentsExperimentKey);
+	}
+
+	/**
+	 * Returns all the segments experiments where groupId = &#63; and segmentsExperienceId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param segmentsExperienceId the segments experience ID
+	 * @return the matching segments experiments
+	 */
+	public static List<SegmentsExperiment> findByG_S(
+		long groupId, long segmentsExperienceId) {
+
+		return getPersistence().findByG_S(groupId, segmentsExperienceId);
+	}
+
+	/**
+	 * Returns a range of all the segments experiments where groupId = &#63; and segmentsExperienceId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SegmentsExperimentModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param segmentsExperienceId the segments experience ID
+	 * @param start the lower bound of the range of segments experiments
+	 * @param end the upper bound of the range of segments experiments (not inclusive)
+	 * @return the range of matching segments experiments
+	 */
+	public static List<SegmentsExperiment> findByG_S(
+		long groupId, long segmentsExperienceId, int start, int end) {
+
+		return getPersistence().findByG_S(
+			groupId, segmentsExperienceId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the segments experiments where groupId = &#63; and segmentsExperienceId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SegmentsExperimentModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param segmentsExperienceId the segments experience ID
+	 * @param start the lower bound of the range of segments experiments
+	 * @param end the upper bound of the range of segments experiments (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching segments experiments
+	 */
+	public static List<SegmentsExperiment> findByG_S(
+		long groupId, long segmentsExperienceId, int start, int end,
+		OrderByComparator<SegmentsExperiment> orderByComparator) {
+
+		return getPersistence().findByG_S(
+			groupId, segmentsExperienceId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns an ordered range of all the segments experiments where groupId = &#63; and segmentsExperienceId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SegmentsExperimentModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param segmentsExperienceId the segments experience ID
+	 * @param start the lower bound of the range of segments experiments
+	 * @param end the upper bound of the range of segments experiments (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching segments experiments
+	 */
+	public static List<SegmentsExperiment> findByG_S(
+		long groupId, long segmentsExperienceId, int start, int end,
+		OrderByComparator<SegmentsExperiment> orderByComparator,
+		boolean retrieveFromCache) {
+
+		return getPersistence().findByG_S(
+			groupId, segmentsExperienceId, start, end, orderByComparator,
+			retrieveFromCache);
+	}
+
+	/**
+	 * Returns the first segments experiment in the ordered set where groupId = &#63; and segmentsExperienceId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param segmentsExperienceId the segments experience ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching segments experiment
+	 * @throws NoSuchExperimentException if a matching segments experiment could not be found
+	 */
+	public static SegmentsExperiment findByG_S_First(
+			long groupId, long segmentsExperienceId,
+			OrderByComparator<SegmentsExperiment> orderByComparator)
+		throws com.liferay.segments.exception.NoSuchExperimentException {
+
+		return getPersistence().findByG_S_First(
+			groupId, segmentsExperienceId, orderByComparator);
+	}
+
+	/**
+	 * Returns the first segments experiment in the ordered set where groupId = &#63; and segmentsExperienceId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param segmentsExperienceId the segments experience ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching segments experiment, or <code>null</code> if a matching segments experiment could not be found
+	 */
+	public static SegmentsExperiment fetchByG_S_First(
+		long groupId, long segmentsExperienceId,
+		OrderByComparator<SegmentsExperiment> orderByComparator) {
+
+		return getPersistence().fetchByG_S_First(
+			groupId, segmentsExperienceId, orderByComparator);
+	}
+
+	/**
+	 * Returns the last segments experiment in the ordered set where groupId = &#63; and segmentsExperienceId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param segmentsExperienceId the segments experience ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching segments experiment
+	 * @throws NoSuchExperimentException if a matching segments experiment could not be found
+	 */
+	public static SegmentsExperiment findByG_S_Last(
+			long groupId, long segmentsExperienceId,
+			OrderByComparator<SegmentsExperiment> orderByComparator)
+		throws com.liferay.segments.exception.NoSuchExperimentException {
+
+		return getPersistence().findByG_S_Last(
+			groupId, segmentsExperienceId, orderByComparator);
+	}
+
+	/**
+	 * Returns the last segments experiment in the ordered set where groupId = &#63; and segmentsExperienceId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param segmentsExperienceId the segments experience ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching segments experiment, or <code>null</code> if a matching segments experiment could not be found
+	 */
+	public static SegmentsExperiment fetchByG_S_Last(
+		long groupId, long segmentsExperienceId,
+		OrderByComparator<SegmentsExperiment> orderByComparator) {
+
+		return getPersistence().fetchByG_S_Last(
+			groupId, segmentsExperienceId, orderByComparator);
+	}
+
+	/**
+	 * Returns the segments experiments before and after the current segments experiment in the ordered set where groupId = &#63; and segmentsExperienceId = &#63;.
+	 *
+	 * @param segmentsExperimentId the primary key of the current segments experiment
+	 * @param groupId the group ID
+	 * @param segmentsExperienceId the segments experience ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next segments experiment
+	 * @throws NoSuchExperimentException if a segments experiment with the primary key could not be found
+	 */
+	public static SegmentsExperiment[] findByG_S_PrevAndNext(
+			long segmentsExperimentId, long groupId, long segmentsExperienceId,
+			OrderByComparator<SegmentsExperiment> orderByComparator)
+		throws com.liferay.segments.exception.NoSuchExperimentException {
+
+		return getPersistence().findByG_S_PrevAndNext(
+			segmentsExperimentId, groupId, segmentsExperienceId,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the segments experiments that the user has permission to view where groupId = &#63; and segmentsExperienceId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param segmentsExperienceId the segments experience ID
+	 * @return the matching segments experiments that the user has permission to view
+	 */
+	public static List<SegmentsExperiment> filterFindByG_S(
+		long groupId, long segmentsExperienceId) {
+
+		return getPersistence().filterFindByG_S(groupId, segmentsExperienceId);
+	}
+
+	/**
+	 * Returns a range of all the segments experiments that the user has permission to view where groupId = &#63; and segmentsExperienceId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SegmentsExperimentModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param segmentsExperienceId the segments experience ID
+	 * @param start the lower bound of the range of segments experiments
+	 * @param end the upper bound of the range of segments experiments (not inclusive)
+	 * @return the range of matching segments experiments that the user has permission to view
+	 */
+	public static List<SegmentsExperiment> filterFindByG_S(
+		long groupId, long segmentsExperienceId, int start, int end) {
+
+		return getPersistence().filterFindByG_S(
+			groupId, segmentsExperienceId, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the segments experiments that the user has permissions to view where groupId = &#63; and segmentsExperienceId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SegmentsExperimentModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param segmentsExperienceId the segments experience ID
+	 * @param start the lower bound of the range of segments experiments
+	 * @param end the upper bound of the range of segments experiments (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching segments experiments that the user has permission to view
+	 */
+	public static List<SegmentsExperiment> filterFindByG_S(
+		long groupId, long segmentsExperienceId, int start, int end,
+		OrderByComparator<SegmentsExperiment> orderByComparator) {
+
+		return getPersistence().filterFindByG_S(
+			groupId, segmentsExperienceId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns the segments experiments before and after the current segments experiment in the ordered set of segments experiments that the user has permission to view where groupId = &#63; and segmentsExperienceId = &#63;.
+	 *
+	 * @param segmentsExperimentId the primary key of the current segments experiment
+	 * @param groupId the group ID
+	 * @param segmentsExperienceId the segments experience ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next segments experiment
+	 * @throws NoSuchExperimentException if a segments experiment with the primary key could not be found
+	 */
+	public static SegmentsExperiment[] filterFindByG_S_PrevAndNext(
+			long segmentsExperimentId, long groupId, long segmentsExperienceId,
+			OrderByComparator<SegmentsExperiment> orderByComparator)
+		throws com.liferay.segments.exception.NoSuchExperimentException {
+
+		return getPersistence().filterFindByG_S_PrevAndNext(
+			segmentsExperimentId, groupId, segmentsExperienceId,
+			orderByComparator);
+	}
+
+	/**
+	 * Returns all the segments experiments that the user has permission to view where groupId = &#63; and segmentsExperienceId = any &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param segmentsExperienceIds the segments experience IDs
+	 * @return the matching segments experiments that the user has permission to view
+	 */
+	public static List<SegmentsExperiment> filterFindByG_S(
+		long groupId, long[] segmentsExperienceIds) {
+
+		return getPersistence().filterFindByG_S(groupId, segmentsExperienceIds);
+	}
+
+	/**
+	 * Returns a range of all the segments experiments that the user has permission to view where groupId = &#63; and segmentsExperienceId = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SegmentsExperimentModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param segmentsExperienceIds the segments experience IDs
+	 * @param start the lower bound of the range of segments experiments
+	 * @param end the upper bound of the range of segments experiments (not inclusive)
+	 * @return the range of matching segments experiments that the user has permission to view
+	 */
+	public static List<SegmentsExperiment> filterFindByG_S(
+		long groupId, long[] segmentsExperienceIds, int start, int end) {
+
+		return getPersistence().filterFindByG_S(
+			groupId, segmentsExperienceIds, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the segments experiments that the user has permission to view where groupId = &#63; and segmentsExperienceId = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SegmentsExperimentModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param segmentsExperienceIds the segments experience IDs
+	 * @param start the lower bound of the range of segments experiments
+	 * @param end the upper bound of the range of segments experiments (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching segments experiments that the user has permission to view
+	 */
+	public static List<SegmentsExperiment> filterFindByG_S(
+		long groupId, long[] segmentsExperienceIds, int start, int end,
+		OrderByComparator<SegmentsExperiment> orderByComparator) {
+
+		return getPersistence().filterFindByG_S(
+			groupId, segmentsExperienceIds, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns all the segments experiments where groupId = &#63; and segmentsExperienceId = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SegmentsExperimentModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param segmentsExperienceIds the segments experience IDs
+	 * @return the matching segments experiments
+	 */
+	public static List<SegmentsExperiment> findByG_S(
+		long groupId, long[] segmentsExperienceIds) {
+
+		return getPersistence().findByG_S(groupId, segmentsExperienceIds);
+	}
+
+	/**
+	 * Returns a range of all the segments experiments where groupId = &#63; and segmentsExperienceId = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SegmentsExperimentModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param segmentsExperienceIds the segments experience IDs
+	 * @param start the lower bound of the range of segments experiments
+	 * @param end the upper bound of the range of segments experiments (not inclusive)
+	 * @return the range of matching segments experiments
+	 */
+	public static List<SegmentsExperiment> findByG_S(
+		long groupId, long[] segmentsExperienceIds, int start, int end) {
+
+		return getPersistence().findByG_S(
+			groupId, segmentsExperienceIds, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the segments experiments where groupId = &#63; and segmentsExperienceId = any &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SegmentsExperimentModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param segmentsExperienceIds the segments experience IDs
+	 * @param start the lower bound of the range of segments experiments
+	 * @param end the upper bound of the range of segments experiments (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching segments experiments
+	 */
+	public static List<SegmentsExperiment> findByG_S(
+		long groupId, long[] segmentsExperienceIds, int start, int end,
+		OrderByComparator<SegmentsExperiment> orderByComparator) {
+
+		return getPersistence().findByG_S(
+			groupId, segmentsExperienceIds, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns an ordered range of all the segments experiments where groupId = &#63; and segmentsExperienceId = &#63;, optionally using the finder cache.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SegmentsExperimentModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param segmentsExperienceId the segments experience ID
+	 * @param start the lower bound of the range of segments experiments
+	 * @param end the upper bound of the range of segments experiments (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching segments experiments
+	 */
+	public static List<SegmentsExperiment> findByG_S(
+		long groupId, long[] segmentsExperienceIds, int start, int end,
+		OrderByComparator<SegmentsExperiment> orderByComparator,
+		boolean retrieveFromCache) {
+
+		return getPersistence().findByG_S(
+			groupId, segmentsExperienceIds, start, end, orderByComparator,
+			retrieveFromCache);
+	}
+
+	/**
+	 * Removes all the segments experiments where groupId = &#63; and segmentsExperienceId = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 * @param segmentsExperienceId the segments experience ID
+	 */
+	public static void removeByG_S(long groupId, long segmentsExperienceId) {
+		getPersistence().removeByG_S(groupId, segmentsExperienceId);
+	}
+
+	/**
+	 * Returns the number of segments experiments where groupId = &#63; and segmentsExperienceId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param segmentsExperienceId the segments experience ID
+	 * @return the number of matching segments experiments
+	 */
+	public static int countByG_S(long groupId, long segmentsExperienceId) {
+		return getPersistence().countByG_S(groupId, segmentsExperienceId);
+	}
+
+	/**
+	 * Returns the number of segments experiments where groupId = &#63; and segmentsExperienceId = any &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param segmentsExperienceIds the segments experience IDs
+	 * @return the number of matching segments experiments
+	 */
+	public static int countByG_S(long groupId, long[] segmentsExperienceIds) {
+		return getPersistence().countByG_S(groupId, segmentsExperienceIds);
+	}
+
+	/**
+	 * Returns the number of segments experiments that the user has permission to view where groupId = &#63; and segmentsExperienceId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param segmentsExperienceId the segments experience ID
+	 * @return the number of matching segments experiments that the user has permission to view
+	 */
+	public static int filterCountByG_S(
+		long groupId, long segmentsExperienceId) {
+
+		return getPersistence().filterCountByG_S(groupId, segmentsExperienceId);
+	}
+
+	/**
+	 * Returns the number of segments experiments that the user has permission to view where groupId = &#63; and segmentsExperienceId = any &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param segmentsExperienceIds the segments experience IDs
+	 * @return the number of matching segments experiments that the user has permission to view
+	 */
+	public static int filterCountByG_S(
+		long groupId, long[] segmentsExperienceIds) {
+
+		return getPersistence().filterCountByG_S(
+			groupId, segmentsExperienceIds);
 	}
 
 	/**
