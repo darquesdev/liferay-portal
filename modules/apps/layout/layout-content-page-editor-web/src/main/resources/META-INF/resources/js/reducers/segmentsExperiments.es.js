@@ -41,7 +41,7 @@ function _createExperiment({name, description, segmentsExperienceId}) {
 					name,
 					description,
 					segmentsExperienceId,
-					status: _mapExperimentsStatus(status)
+					status
 				});
 			}
 		);
