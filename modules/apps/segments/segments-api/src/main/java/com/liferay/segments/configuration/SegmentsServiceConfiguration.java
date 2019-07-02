@@ -33,6 +33,12 @@ import org.osgi.annotation.versioning.ProviderType;
 public interface SegmentsServiceConfiguration {
 
 	@Meta.AD(
+		deflt = "false", description = "ab-testing-enabled-description",
+		name = "ab-testing-enabled-name", required = false
+	)
+	public boolean abTestingEnabled();
+
+	@Meta.AD(
 		deflt = "true", description = "segmentation-enabled-description",
 		name = "segmentation-enabled-name", required = false
 	)

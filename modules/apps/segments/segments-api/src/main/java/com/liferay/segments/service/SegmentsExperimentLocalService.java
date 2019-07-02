@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
@@ -62,6 +63,10 @@ public interface SegmentsExperimentLocalService
 	 *
 	 * Never modify or reference this interface directly. Always use {@link SegmentsExperimentLocalServiceUtil} to access the segments experiment local service. Add custom service methods to <code>com.liferay.segments.service.impl.SegmentsExperimentLocalServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public SegmentsExperiment addSegmentsExperiment(
+			long segmentsExperienceId, String name, String description,
+			ServiceContext serviceContext)
+		throws PortalException;
 
 	/**
 	 * Adds the segments experiment to the database. Also notifies the appropriate model listeners.
@@ -252,6 +257,11 @@ public interface SegmentsExperimentLocalService
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<SegmentsExperiment> getSegmentsExperiments(int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<SegmentsExperiment> getSegmentsExperiments(
+			long groupId, long classNameId, long classPK)
+		throws PortalException;
 
 	/**
 	 * Returns all the segments experiments matching the UUID and company.
