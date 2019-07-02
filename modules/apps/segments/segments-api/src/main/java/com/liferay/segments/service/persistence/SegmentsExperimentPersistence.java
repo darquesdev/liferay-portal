@@ -604,7 +604,7 @@ public interface SegmentsExperimentPersistence
 	 * @return the matching segments experiment
 	 * @throws NoSuchExperimentException if a matching segments experiment could not be found
 	 */
-	public SegmentsExperiment findByG_SEK(
+	public SegmentsExperiment findByG_SE(
 			long groupId, String segmentsExperimentKey)
 		throws NoSuchExperimentException;
 
@@ -615,7 +615,7 @@ public interface SegmentsExperimentPersistence
 	 * @param segmentsExperimentKey the segments experiment key
 	 * @return the matching segments experiment, or <code>null</code> if a matching segments experiment could not be found
 	 */
-	public SegmentsExperiment fetchByG_SEK(
+	public SegmentsExperiment fetchByG_SE(
 		long groupId, String segmentsExperimentKey);
 
 	/**
@@ -626,7 +626,7 @@ public interface SegmentsExperimentPersistence
 	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the matching segments experiment, or <code>null</code> if a matching segments experiment could not be found
 	 */
-	public SegmentsExperiment fetchByG_SEK(
+	public SegmentsExperiment fetchByG_SE(
 		long groupId, String segmentsExperimentKey, boolean retrieveFromCache);
 
 	/**
@@ -636,7 +636,7 @@ public interface SegmentsExperimentPersistence
 	 * @param segmentsExperimentKey the segments experiment key
 	 * @return the segments experiment that was removed
 	 */
-	public SegmentsExperiment removeByG_SEK(
+	public SegmentsExperiment removeByG_SE(
 			long groupId, String segmentsExperimentKey)
 		throws NoSuchExperimentException;
 
@@ -647,7 +647,7 @@ public interface SegmentsExperimentPersistence
 	 * @param segmentsExperimentKey the segments experiment key
 	 * @return the number of matching segments experiments
 	 */
-	public int countByG_SEK(long groupId, String segmentsExperimentKey);
+	public int countByG_SE(long groupId, String segmentsExperimentKey);
 
 	/**
 	 * Returns all the segments experiments where groupId = &#63; and segmentsExperienceId = &#63;.

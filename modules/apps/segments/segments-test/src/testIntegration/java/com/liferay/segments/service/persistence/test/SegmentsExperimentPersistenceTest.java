@@ -244,19 +244,27 @@ public class SegmentsExperimentPersistenceTest {
 	}
 
 	@Test
-	public void testCountBySegmentsExperienceId() throws Exception {
-		_persistence.countBySegmentsExperienceId(RandomTestUtil.nextLong());
+	public void testCountByG_SE() throws Exception {
+		_persistence.countByG_SE(RandomTestUtil.nextLong(), "");
 
-		_persistence.countBySegmentsExperienceId(0L);
+		_persistence.countByG_SE(0L, "null");
+
+		_persistence.countByG_SE(0L, (String)null);
 	}
 
 	@Test
 	public void testCountByG_S() throws Exception {
-		_persistence.countByG_S(RandomTestUtil.nextLong(), "");
+		_persistence.countByG_S(
+			RandomTestUtil.nextLong(), RandomTestUtil.nextLong());
 
-		_persistence.countByG_S(0L, "null");
+		_persistence.countByG_S(0L, 0L);
+	}
 
-		_persistence.countByG_S(0L, (String)null);
+	@Test
+	public void testCountByG_SArrayable() throws Exception {
+		_persistence.countByG_S(
+			RandomTestUtil.nextLong(),
+			new long[] {RandomTestUtil.nextLong(), 0L});
 	}
 
 	@Test
@@ -281,6 +289,12 @@ public class SegmentsExperimentPersistenceTest {
 	public void testFindAll() throws Exception {
 		_persistence.findAll(
 			QueryUtil.ALL_POS, QueryUtil.ALL_POS, getOrderByComparator());
+	}
+
+	@Test
+	public void testFilterFindByGroupId() throws Exception {
+		_persistence.filterFindByGroupId(
+			0, QueryUtil.ALL_POS, QueryUtil.ALL_POS, getOrderByComparator());
 	}
 
 	protected OrderByComparator<SegmentsExperiment> getOrderByComparator() {

@@ -795,11 +795,11 @@ public class SegmentsExperimentUtil {
 	 * @return the matching segments experiment
 	 * @throws NoSuchExperimentException if a matching segments experiment could not be found
 	 */
-	public static SegmentsExperiment findByG_SEK(
+	public static SegmentsExperiment findByG_SE(
 			long groupId, String segmentsExperimentKey)
 		throws com.liferay.segments.exception.NoSuchExperimentException {
 
-		return getPersistence().findByG_SEK(groupId, segmentsExperimentKey);
+		return getPersistence().findByG_SE(groupId, segmentsExperimentKey);
 	}
 
 	/**
@@ -809,10 +809,10 @@ public class SegmentsExperimentUtil {
 	 * @param segmentsExperimentKey the segments experiment key
 	 * @return the matching segments experiment, or <code>null</code> if a matching segments experiment could not be found
 	 */
-	public static SegmentsExperiment fetchByG_SEK(
+	public static SegmentsExperiment fetchByG_SE(
 		long groupId, String segmentsExperimentKey) {
 
-		return getPersistence().fetchByG_SEK(groupId, segmentsExperimentKey);
+		return getPersistence().fetchByG_SE(groupId, segmentsExperimentKey);
 	}
 
 	/**
@@ -823,10 +823,10 @@ public class SegmentsExperimentUtil {
 	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the matching segments experiment, or <code>null</code> if a matching segments experiment could not be found
 	 */
-	public static SegmentsExperiment fetchByG_SEK(
+	public static SegmentsExperiment fetchByG_SE(
 		long groupId, String segmentsExperimentKey, boolean retrieveFromCache) {
 
-		return getPersistence().fetchByG_SEK(
+		return getPersistence().fetchByG_SE(
 			groupId, segmentsExperimentKey, retrieveFromCache);
 	}
 
@@ -837,11 +837,11 @@ public class SegmentsExperimentUtil {
 	 * @param segmentsExperimentKey the segments experiment key
 	 * @return the segments experiment that was removed
 	 */
-	public static SegmentsExperiment removeByG_SEK(
+	public static SegmentsExperiment removeByG_SE(
 			long groupId, String segmentsExperimentKey)
 		throws com.liferay.segments.exception.NoSuchExperimentException {
 
-		return getPersistence().removeByG_SEK(groupId, segmentsExperimentKey);
+		return getPersistence().removeByG_SE(groupId, segmentsExperimentKey);
 	}
 
 	/**
@@ -851,8 +851,8 @@ public class SegmentsExperimentUtil {
 	 * @param segmentsExperimentKey the segments experiment key
 	 * @return the number of matching segments experiments
 	 */
-	public static int countByG_SEK(long groupId, String segmentsExperimentKey) {
-		return getPersistence().countByG_SEK(groupId, segmentsExperimentKey);
+	public static int countByG_SE(long groupId, String segmentsExperimentKey) {
+		return getPersistence().countByG_SE(groupId, segmentsExperimentKey);
 	}
 
 	/**
