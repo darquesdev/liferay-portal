@@ -11,7 +11,6 @@
 	{@param? _handleToggleContextualSidebarButtonClick: any}
 	{@param? classPK: ?}
 	{@param? defaultSegmentsExperienceId: string }
-	{@param? experimentsMode: bool}
 	{@param? discardDraftRedirectURL: string}
 	{@param? discardDraftURL: string}
 	{@param? draft: bool}
@@ -24,6 +23,7 @@
 	{@param? spritemap: string}
 	{@param? store: ?}
 	{@param? _lastSaveText: string}
+	{@param? availableSegmentsExperiments: any}
 
 	{let $toolbarClasses kind="text"}
 		fragments-editor-toolbar
@@ -58,7 +58,7 @@
 					{/call}
 				</li>
 
-				{if $defaultSegmentsExperienceId and $experimentsMode }
+				{if $defaultSegmentsExperienceId and $availableSegmentsExperiments != null }
 					<li class="nav-item">
 						{call com.liferay.layout.content.page.editor.web.Experiments.render}
 							{param portletNamespace: $portletNamespace ?: '' /}
