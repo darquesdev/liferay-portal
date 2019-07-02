@@ -14,7 +14,23 @@
 
 package com.liferay.segments.service.impl;
 
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
+import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermissionFactory;
+import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
+import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermissionFactory;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.segments.constants.SegmentsActionKeys;
+import com.liferay.segments.constants.SegmentsConstants;
+import com.liferay.segments.model.SegmentsExperience;
+import com.liferay.segments.model.SegmentsExperienceModel;
+import com.liferay.segments.model.SegmentsExperiment;
 import com.liferay.segments.service.base.SegmentsExperimentServiceBaseImpl;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * The implementation of the segments experiment remote service.
@@ -32,10 +48,72 @@ import com.liferay.segments.service.base.SegmentsExperimentServiceBaseImpl;
 public class SegmentsExperimentServiceImpl
 	extends SegmentsExperimentServiceBaseImpl {
 
-	/**
-	 * NOTE FOR DEVELOPERS:
-	 *
-	 * Never reference this class directly. Always use <code>com.liferay.segments.service.SegmentsExperimentServiceUtil</code> to access the segments experiment remote service.
-	 */
+	@Override
+	public SegmentsExperiment addSegmentsExperiment(
+			long segmentsExperienceId, String name, String description,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		_portletResourcePermission.check(
+			getPermissionChecker(), serviceContext.getScopeGroupId(),
+			SegmentsActionKeys.MANAGE_SEGMENTS_ENTRIES);
+
+		return segmentsExperimentLocalService.addSegmentsExperiment(
+			segmentsExperienceId, name, description, serviceContext);
+	}
+
+	@Override
+	public SegmentsExperiment getSegmentsExperiment(long segmentsExperimentId)
+		throws PortalException {
+
+		SegmentsExperiment segmentsExperiment =
+			segmentsExperimentLocalService.getSegmentsExperiment(
+				segmentsExperimentId);
+
+		_segmentsExperimentResourcePermission.check(
+			getPermissionChecker(), segmentsExperiment, ActionKeys.VIEW);
+
+		return segmentsExperiment;
+	}
+
+	@Override
+	public List<SegmentsExperiment> getSegmentsExperiments(
+			long groupId, long classNameId, long classPK)
+		throws PortalException {
+
+		long[] segmentsExperienceIds = ArrayUtil.append(
+			_getSegmentsExperienceIds(groupId, classNameId, classPK),
+			SegmentsConstants.SEGMENTS_EXPERIENCE_ID_DEFAULT);
+
+		return segmentsExperimentPersistence.filterFindByG_S(
+			groupId, segmentsExperienceIds);
+	}
+
+	private long[] _getSegmentsExperienceIds(
+			long groupId, long classNameId, long classPK)
+		throws PortalException {
+
+		List<SegmentsExperience> segmentsExperiences =
+			segmentsExperienceService.getSegmentsExperiences(
+				groupId, classNameId, classPK, true);
+
+		Stream<SegmentsExperience> stream = segmentsExperiences.stream();
+
+		return stream.mapToLong(
+			SegmentsExperienceModel::getSegmentsExperienceId
+		).toArray();
+	}
+
+	private static volatile PortletResourcePermission
+		_portletResourcePermission =
+			PortletResourcePermissionFactory.getInstance(
+				SegmentsExperimentServiceImpl.class,
+				"_portletResourcePermission", SegmentsConstants.RESOURCE_NAME);
+	private static volatile ModelResourcePermission<SegmentsExperiment>
+		_segmentsExperimentResourcePermission =
+			ModelResourcePermissionFactory.getInstance(
+				SegmentsExperimentServiceImpl.class,
+				"_segmentsExperimentResourcePermission",
+				SegmentsExperiment.class);
 
 }
