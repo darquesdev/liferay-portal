@@ -20,25 +20,33 @@ import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeCon
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.layout.util.LayoutCopyHelper;
+import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.segments.configuration.SegmentsServiceConfiguration;
 
+import java.util.Map;
 import java.util.Objects;
 
 import javax.portlet.RenderResponse;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ConfigurationPolicy;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Pavel Savinov
  */
 @Component(
-	immediate = true, service = ContentPageEditorDisplayContextProvider.class
+	configurationPid = "com.liferay.segments.configuration.SegmentsServiceConfiguration",
+	configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
+	service = ContentPageEditorDisplayContextProvider.class
 )
 public class ContentPageEditorDisplayContextProvider {
 
@@ -54,7 +62,7 @@ public class ContentPageEditorDisplayContextProvider {
 		if (Objects.equals(className, Layout.class.getName())) {
 			return new ContentPageLayoutEditorDisplayContext(
 				httpServletRequest, renderResponse, className, classPK,
-				_fragmentRendererController);
+				_fragmentRendererController, _segmentsServiceConfiguration);
 		}
 
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
@@ -79,6 +87,13 @@ public class ContentPageEditorDisplayContextProvider {
 			draftLayout.getPlid(), showMapping, _fragmentRendererController);
 	}
 
+	@Activate
+	@Modified
+	protected void activate(Map<String, Object> properties) {
+		_segmentsServiceConfiguration = ConfigurableUtil.createConfigurable(
+			SegmentsServiceConfiguration.class, properties);
+	}
+
 	@Reference
 	private FragmentRendererController _fragmentRendererController;
 
@@ -94,5 +109,7 @@ public class ContentPageEditorDisplayContextProvider {
 
 	@Reference
 	private Portal _portal;
+
+	private volatile SegmentsServiceConfiguration _segmentsServiceConfiguration;
 
 }
