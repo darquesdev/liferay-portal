@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.segments.internal.configuration;
+package com.liferay.segments.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
@@ -25,7 +25,7 @@ import org.osgi.annotation.versioning.ProviderType;
  */
 @ExtendedObjectClassDefinition(category = "segments")
 @Meta.OCD(
-	id = "com.liferay.segments.internal.configuration.SegmentsServiceConfiguration",
+	id = "com.liferay.segments.configuration.SegmentsServiceConfiguration",
 	localization = "content/Language",
 	name = "segments-service-configuration-name"
 )
