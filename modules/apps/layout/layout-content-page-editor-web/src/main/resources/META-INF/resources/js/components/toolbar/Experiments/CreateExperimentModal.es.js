@@ -14,7 +14,7 @@ const _inputValueGetter = listener => event => listener(event.target.value);
  * Wrapper for the modal to create an Experiments
  */
 function CreateExperimentModal({setVisible, visible, onCreateExperiment}) {
-	const [name, setName] = useState('');
+	const [name, setName] = useState(Liferay.Language.get('new-test'));
 	const [description, setDescription] = useState('');
 	const {portletNamespace} = useContext(ExperimentsContext);
 
@@ -26,13 +26,18 @@ function CreateExperimentModal({setVisible, visible, onCreateExperiment}) {
 				<ClayModal onClose={_closeModal} size='lg'>
 					{onClose => (
 						<>
-							<ClayModal.Header>{'Title'}</ClayModal.Header>
+							<ClayModal.Header>
+								{Liferay.Language.get('experiment-settings')}
+							</ClayModal.Header>
 							<ClayModal.Body>
 								<form id={formId} onSubmit={_handleSaveAction}>
 									<div className='form-group'>
-										<label>Name:</label>
+										<label>
+											{Liferay.Language.get('name')}
+										</label>
 										<input
 											className='form-control'
+											data-testid='create-experiment-name-input'
 											value={name}
 											onChange={_inputValueGetter(
 												setName
@@ -41,9 +46,14 @@ function CreateExperimentModal({setVisible, visible, onCreateExperiment}) {
 									</div>
 
 									<div className='form-group'>
-										<label>Description:</label>
+										<label>
+											{Liferay.Language.get(
+												'description'
+											)}
+										</label>
 										<textarea
 											className='form-control'
+											data-testid='create-experiment-description-input'
 											value={description}
 											onChange={_inputValueGetter(
 												setDescription
@@ -56,19 +66,21 @@ function CreateExperimentModal({setVisible, visible, onCreateExperiment}) {
 								first={
 									<ClayButton.Group spaced>
 										<ClayButton
+											data-testid='create-experiment-cancel'
 											onClick={onClose}
 											displayType='secondary'
 										>
-											{'Cancel'}
+											{Liferay.Language.get('cancel')}
 										</ClayButton>
 									</ClayButton.Group>
 								}
 								last={
 									<ClayButton
+										data-testid='create-experiment-save'
 										form={formId}
 										onClick={_handleSaveAction}
 									>
-										{'Save'}
+										{Liferay.Language.get('save')}
 									</ClayButton>
 								}
 							/>
