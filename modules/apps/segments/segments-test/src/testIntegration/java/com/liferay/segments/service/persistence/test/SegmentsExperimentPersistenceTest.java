@@ -145,6 +145,10 @@ public class SegmentsExperimentPersistenceTest {
 		newSegmentsExperiment.setSegmentsExperienceId(
 			RandomTestUtil.nextLong());
 
+		newSegmentsExperiment.setClassNameId(RandomTestUtil.nextLong());
+
+		newSegmentsExperiment.setClassPK(RandomTestUtil.nextLong());
+
 		newSegmentsExperiment.setSegmentsEntryId(RandomTestUtil.nextLong());
 
 		newSegmentsExperiment.setName(RandomTestUtil.randomString());
@@ -192,6 +196,12 @@ public class SegmentsExperimentPersistenceTest {
 		Assert.assertEquals(
 			existingSegmentsExperiment.getSegmentsExperienceId(),
 			newSegmentsExperiment.getSegmentsExperienceId());
+		Assert.assertEquals(
+			existingSegmentsExperiment.getClassNameId(),
+			newSegmentsExperiment.getClassNameId());
+		Assert.assertEquals(
+			existingSegmentsExperiment.getClassPK(),
+			newSegmentsExperiment.getClassPK());
 		Assert.assertEquals(
 			existingSegmentsExperiment.getSegmentsEntryId(),
 			newSegmentsExperiment.getSegmentsEntryId());
@@ -244,27 +254,56 @@ public class SegmentsExperimentPersistenceTest {
 	}
 
 	@Test
-	public void testCountByG_SE() throws Exception {
-		_persistence.countByG_SE(RandomTestUtil.nextLong(), "");
+	public void testCountByG_S() throws Exception {
+		_persistence.countByG_S(RandomTestUtil.nextLong(), "");
 
-		_persistence.countByG_SE(0L, "null");
+		_persistence.countByG_S(0L, "null");
 
-		_persistence.countByG_SE(0L, (String)null);
+		_persistence.countByG_S(0L, (String)null);
 	}
 
 	@Test
-	public void testCountByG_S() throws Exception {
-		_persistence.countByG_S(
+	public void testCountByG_C_C() throws Exception {
+		_persistence.countByG_C_C(
+			RandomTestUtil.nextLong(), RandomTestUtil.nextLong(),
+			RandomTestUtil.nextLong());
+
+		_persistence.countByG_C_C(0L, 0L, 0L);
+	}
+
+	@Test
+	public void testCountByS_C_C() throws Exception {
+		_persistence.countByS_C_C(
+			RandomTestUtil.nextLong(), RandomTestUtil.nextLong(),
+			RandomTestUtil.nextLong());
+
+		_persistence.countByS_C_C(0L, 0L, 0L);
+	}
+
+	@Test
+	public void testCountByG_S_C_C() throws Exception {
+		_persistence.countByG_S_C_C(
+			RandomTestUtil.nextLong(), RandomTestUtil.nextLong(),
 			RandomTestUtil.nextLong(), RandomTestUtil.nextLong());
 
-		_persistence.countByG_S(0L, 0L);
+		_persistence.countByG_S_C_C(0L, 0L, 0L, 0L);
 	}
 
 	@Test
-	public void testCountByG_SArrayable() throws Exception {
-		_persistence.countByG_S(
+	public void testCountByG_S_C_CArrayable() throws Exception {
+		_persistence.countByG_S_C_C(
 			RandomTestUtil.nextLong(),
-			new long[] {RandomTestUtil.nextLong(), 0L});
+			new long[] {RandomTestUtil.nextLong(), 0L},
+			RandomTestUtil.nextLong(), RandomTestUtil.nextLong());
+	}
+
+	@Test
+	public void testCountByS_C_C_S() throws Exception {
+		_persistence.countByS_C_C_S(
+			RandomTestUtil.nextLong(), RandomTestUtil.nextLong(),
+			RandomTestUtil.nextLong(), RandomTestUtil.nextInt());
+
+		_persistence.countByS_C_C_S(0L, 0L, 0L, 0);
 	}
 
 	@Test
@@ -303,8 +342,8 @@ public class SegmentsExperimentPersistenceTest {
 			"groupId", true, "companyId", true, "userId", true, "userName",
 			true, "createDate", true, "modifiedDate", true,
 			"segmentsExperimentKey", true, "segmentsExperienceId", true,
-			"segmentsEntryId", true, "name", true, "description", true,
-			"status", true);
+			"classNameId", true, "classPK", true, "segmentsEntryId", true,
+			"name", true, "description", true, "status", true);
 	}
 
 	@Test
@@ -588,6 +627,10 @@ public class SegmentsExperimentPersistenceTest {
 			RandomTestUtil.randomString());
 
 		segmentsExperiment.setSegmentsExperienceId(RandomTestUtil.nextLong());
+
+		segmentsExperiment.setClassNameId(RandomTestUtil.nextLong());
+
+		segmentsExperiment.setClassPK(RandomTestUtil.nextLong());
 
 		segmentsExperiment.setSegmentsEntryId(RandomTestUtil.nextLong());
 

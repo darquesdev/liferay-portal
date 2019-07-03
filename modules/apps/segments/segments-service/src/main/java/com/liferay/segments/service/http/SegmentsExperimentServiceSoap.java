@@ -66,14 +66,16 @@ public class SegmentsExperimentServiceSoap {
 
 	public static com.liferay.segments.model.SegmentsExperimentSoap
 			addSegmentsExperiment(
-				long segmentsExperienceId, String name, String description,
+				long segmentsExperienceId, long classNameId, long classPK,
+				String name, String description,
 				com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 
 		try {
 			com.liferay.segments.model.SegmentsExperiment returnValue =
 				SegmentsExperimentServiceUtil.addSegmentsExperiment(
-					segmentsExperienceId, name, description, serviceContext);
+					segmentsExperienceId, classNameId, classPK, name,
+					description, serviceContext);
 
 			return com.liferay.segments.model.SegmentsExperimentSoap.
 				toSoapModel(returnValue);

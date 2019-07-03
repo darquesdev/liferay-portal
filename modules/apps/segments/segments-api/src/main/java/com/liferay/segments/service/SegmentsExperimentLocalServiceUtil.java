@@ -41,12 +41,14 @@ public class SegmentsExperimentLocalServiceUtil {
 	 */
 	public static com.liferay.segments.model.SegmentsExperiment
 			addSegmentsExperiment(
-				long segmentsExperienceId, String name, String description,
+				long segmentsExperienceId, long classNameId, long classPK,
+				String name, String description,
 				com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().addSegmentsExperiment(
-			segmentsExperienceId, name, description, serviceContext);
+			segmentsExperienceId, classNameId, classPK, name, description,
+			serviceContext);
 	}
 
 	/**
@@ -104,12 +106,23 @@ public class SegmentsExperimentLocalServiceUtil {
 	 *
 	 * @param segmentsExperiment the segments experiment
 	 * @return the segments experiment that was removed
+	 * @throws PortalException
 	 */
 	public static com.liferay.segments.model.SegmentsExperiment
-		deleteSegmentsExperiment(
-			com.liferay.segments.model.SegmentsExperiment segmentsExperiment) {
+			deleteSegmentsExperiment(
+				com.liferay.segments.model.SegmentsExperiment
+					segmentsExperiment)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().deleteSegmentsExperiment(segmentsExperiment);
+	}
+
+	public static void deleteSegmentsExperiments(
+			long segmentsExperienceId, long classNameId, long classPK)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		getService().deleteSegmentsExperiments(
+			segmentsExperienceId, classNameId, classPK);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.DynamicQuery
@@ -307,6 +320,14 @@ public class SegmentsExperimentLocalServiceUtil {
 
 		return getService().getSegmentsExperiments(
 			groupId, classNameId, classPK);
+	}
+
+	public static java.util.List<com.liferay.segments.model.SegmentsExperiment>
+		getSegmentsExperimentsByExperience(
+			long segmentsExperienceId, long classNameId, long classPK) {
+
+		return getService().getSegmentsExperimentsByExperience(
+			segmentsExperienceId, classNameId, classPK);
 	}
 
 	/**

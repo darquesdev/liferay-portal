@@ -38,12 +38,14 @@ public class SegmentsExperimentServiceWrapper
 
 	@Override
 	public com.liferay.segments.model.SegmentsExperiment addSegmentsExperiment(
-			long segmentsExperienceId, String name, String description,
+			long segmentsExperienceId, long classNameId, long classPK,
+			String name, String description,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _segmentsExperimentService.addSegmentsExperiment(
-			segmentsExperienceId, name, description, serviceContext);
+			segmentsExperienceId, classNameId, classPK, name, description,
+			serviceContext);
 	}
 
 	/**

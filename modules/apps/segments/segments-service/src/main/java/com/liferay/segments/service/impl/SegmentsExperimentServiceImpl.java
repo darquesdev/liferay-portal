@@ -21,16 +21,12 @@ import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermi
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermissionFactory;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.segments.constants.SegmentsActionKeys;
 import com.liferay.segments.constants.SegmentsConstants;
-import com.liferay.segments.model.SegmentsExperience;
-import com.liferay.segments.model.SegmentsExperienceModel;
 import com.liferay.segments.model.SegmentsExperiment;
 import com.liferay.segments.service.base.SegmentsExperimentServiceBaseImpl;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * The implementation of the segments experiment remote service.
@@ -50,8 +46,8 @@ public class SegmentsExperimentServiceImpl
 
 	@Override
 	public SegmentsExperiment addSegmentsExperiment(
-			long segmentsExperienceId, String name, String description,
-			ServiceContext serviceContext)
+			long segmentsExperienceId, long classNameId, long classPK,
+			String name, String description, ServiceContext serviceContext)
 		throws PortalException {
 
 		_portletResourcePermission.check(
@@ -59,7 +55,8 @@ public class SegmentsExperimentServiceImpl
 			SegmentsActionKeys.MANAGE_SEGMENTS_ENTRIES);
 
 		return segmentsExperimentLocalService.addSegmentsExperiment(
-			segmentsExperienceId, name, description, serviceContext);
+			segmentsExperienceId, classNameId, classPK, name, description,
+			serviceContext);
 	}
 
 	@Override
@@ -81,27 +78,8 @@ public class SegmentsExperimentServiceImpl
 			long groupId, long classNameId, long classPK)
 		throws PortalException {
 
-		long[] segmentsExperienceIds = ArrayUtil.append(
-			_getSegmentsExperienceIds(groupId, classNameId, classPK),
-			SegmentsConstants.SEGMENTS_EXPERIENCE_ID_DEFAULT);
-
-		return segmentsExperimentPersistence.filterFindByG_S(
-			groupId, segmentsExperienceIds);
-	}
-
-	private long[] _getSegmentsExperienceIds(
-			long groupId, long classNameId, long classPK)
-		throws PortalException {
-
-		List<SegmentsExperience> segmentsExperiences =
-			segmentsExperienceService.getSegmentsExperiences(
-				groupId, classNameId, classPK, true);
-
-		Stream<SegmentsExperience> stream = segmentsExperiences.stream();
-
-		return stream.mapToLong(
-			SegmentsExperienceModel::getSegmentsExperienceId
-		).toArray();
+		return segmentsExperimentPersistence.filterFindByG_C_C(
+			groupId, classNameId, classPK);
 	}
 
 	private static volatile PortletResourcePermission
