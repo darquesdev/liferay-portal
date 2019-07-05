@@ -4,13 +4,16 @@ export function createSegmentsExperimentsReducer(state, action) {
 	return new Promise((resolve, reject) => {
 		if (action.type === CREATE_SEGMENTS_EXPERIMENT) {
 			const {name, description} = action.payload;
+			const {classPK, classNameId} = state;
 			const segmentsExperienceId =
 				state.segmentsExperienceId || state.defaultSegmentsExperienceId;
 
 			_createExperiment({
 				name,
 				description,
-				segmentsExperienceId
+				segmentsExperienceId,
+				classPK,
+				classNameId
 			}).then(experiment => {
 				resolve({
 					...state,
@@ -26,16 +29,34 @@ export function createSegmentsExperimentsReducer(state, action) {
 	});
 }
 
-function _createExperiment({name, description, segmentsExperienceId}) {
+/**
+ *
+ *
+ * @param {object} experimentData
+ * @param {string} experimentData.name
+ * @param {string} experimentData.description
+ * @param {string} experimentData.segmentsExperienceId
+ * @param {string} experimentData.classPK
+ * @returns {Promise}
+ */
+function _createExperiment({
+	name,
+	description,
+	segmentsExperienceId,
+	classPK,
+	classNameId
+}) {
 	return new Promise(function(resolve, reject) {
 		Liferay.Service(
 			'/segments.segmentsexperiment/add-segments-experiment',
 			{
 				segmentsExperienceId,
 				name,
-				description
+				description,
+				classPK,
+				classNameId
 			},
-			obj => {
+			function _successCallback(obj) {
 				const {name, description, segmentsExperienceId, status} = obj;
 				resolve({
 					name,
@@ -43,6 +64,9 @@ function _createExperiment({name, description, segmentsExperienceId}) {
 					segmentsExperienceId,
 					status
 				});
+			},
+			function _errorCallback(error) {
+				console.log(error);
 			}
 		);
 	});
