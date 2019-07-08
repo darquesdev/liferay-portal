@@ -66,9 +66,7 @@ describe('ExperimentsDropdown', () => {
 		const dropdownMenu = document.body.querySelector('.dropdown-menu');
 
 		// the dropdown offers a button to create an Experiment
-		const newExperimentButton = dropdownMenu.querySelector(
-			'[data-testid="create-experiment-button"]'
-		);
+		const newExperimentButton = dropdownMenu.querySelector('button');
 		expect(newExperimentButton.textContent).toBe(
 			'experiements-create-new-test'
 		);
@@ -151,9 +149,7 @@ describe('ExperimentsDropdown', () => {
 		expect(experimentName.textContent).toBe('Existing Experience');
 		expect(experimentStatus.textContent).toBe('experiment-draft');
 
-		const newExperimentButton = dropdownMenu.querySelector(
-			'[data-testid="create-experiment-button"]'
-		);
+		const newExperimentButton = dropdownMenu.querySelector('button');
 
 		expect(newExperimentButton).toBe(null);
 	});
@@ -166,18 +162,15 @@ describe('ExperimentsDropdown', () => {
  * @returns {object}
  */
 function _getExperimentsModalUIElements(body) {
-	const experimentNameInput = body.querySelector(
-		'[data-testid=create-experiment-name-input]'
+	const form = body.querySelector('#_createExperiement');
+	const experimentNameInput = form.querySelector('[name="name"]');
+	const experimentDescriptionInput = form.querySelector(
+		'[name="description"]'
 	);
-	const experimentDescriptionInput = body.querySelector(
-		'[data-testid="create-experiment-description-input"]'
-	);
-	const saveButton = body.querySelector(
-		'[data-testid="create-experiment-save"'
-	);
-	const cancelButton = body.querySelector(
-		'[data-testid="create-experiment-cancel"'
-	);
+
+	const saveButton = body.querySelector('button[name="save"]');
+	const cancelButton = body.querySelector('button[name="cancel"]');
+
 	return {
 		experimentNameInput,
 		experimentDescriptionInput,
@@ -193,12 +186,8 @@ function _getExperimentsModalUIElements(body) {
  * @returns {object}
  */
 function _getExperimentsUIElements(experimentItemElement) {
-	const experimentName = experimentItemElement.querySelector(
-		`[data-testid="experiment-name"]`
-	);
-	const experimentStatus = experimentItemElement.querySelector(
-		`[data-testid="experiment-status"]`
-	);
+	const experimentName = experimentItemElement.querySelector(`span`);
+	const experimentStatus = experimentName.nextSibling;
 
 	return {
 		experimentName,

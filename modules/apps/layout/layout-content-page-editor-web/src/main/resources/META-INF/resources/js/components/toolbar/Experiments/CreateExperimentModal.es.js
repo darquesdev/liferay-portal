@@ -53,7 +53,7 @@ function CreateExperimentModal({setVisible, visible, onCreateExperiment}) {
 										</label>
 										<input
 											className='form-control'
-											data-testid='create-experiment-name-input'
+											name='name'
 											value={name}
 											onChange={_inputValueGetter(
 												setName
@@ -69,7 +69,7 @@ function CreateExperimentModal({setVisible, visible, onCreateExperiment}) {
 										</label>
 										<textarea
 											className='form-control'
-											data-testid='create-experiment-description-input'
+											name='description'
 											value={description}
 											onChange={_inputValueGetter(
 												setDescription
@@ -82,7 +82,7 @@ function CreateExperimentModal({setVisible, visible, onCreateExperiment}) {
 								first={
 									<ClayButton.Group spaced>
 										<ClayButton
-											data-testid='create-experiment-cancel'
+											name='cancel'
 											onClick={onClose}
 											displayType='secondary'
 										>
@@ -92,7 +92,7 @@ function CreateExperimentModal({setVisible, visible, onCreateExperiment}) {
 								}
 								last={
 									<ClayButton
-										data-testid='create-experiment-save'
+										name='save'
 										form={formId}
 										onClick={_handleSaveAction}
 									>
