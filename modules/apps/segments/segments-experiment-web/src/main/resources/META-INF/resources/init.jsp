@@ -14,11 +14,10 @@
  */
 --%>
 
-<%@ taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
-taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
+<%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
-<liferay-frontend:defineObjects />
+<%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 
 <liferay-theme:defineObjects />
 
-<%@ include file="/init-ext.jsp" %>
+<portlet:defineObjects />

@@ -15,3 +15,5 @@
 --%>
 
 <%@ include file="/init.jsp" %>
+
+<h1>HOLI</h1>
