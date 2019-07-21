@@ -38,15 +38,26 @@ import com.liferay.segments.model.SegmentsExperiment;
 import com.liferay.segments.service.SegmentsEntryLocalService;
 import com.liferay.segments.service.SegmentsExperienceLocalService;
 
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-
 /**
  * @author Sarai Díaz
  * @author David Arques
  */
-@Component(immediate = true, service = ExperimentDTOConverter.class)
 public class ExperimentDTOConverter {
+
+	public ExperimentDTOConverter(
+		Portal portal, CompanyLocalService companyLocalService,
+		GroupLocalService groupLocalService,
+		LayoutLocalService layoutLocalService,
+		SegmentsEntryLocalService segmentsEntryLocalService,
+		SegmentsExperienceLocalService segmentsExperienceLocalService) {
+
+		_portal = portal;
+		_companyLocalService = companyLocalService;
+		_groupLocalService = groupLocalService;
+		_layoutLocalService = layoutLocalService;
+		_segmentsEntryLocalService = segmentsEntryLocalService;
+		_segmentsExperienceLocalService = segmentsExperienceLocalService;
+	}
 
 	public ExperimentStatus toDTO(int status) {
 		if (status == SegmentsConstants.SEGMENTS_EXPERIMENT_STATUS_DRAFT) {
@@ -155,22 +166,12 @@ public class ExperimentDTOConverter {
 		return sb.toString();
 	}
 
-	@Reference
-	private CompanyLocalService _companyLocalService;
-
-	@Reference
-	private GroupLocalService _groupLocalService;
-
-	@Reference
-	private LayoutLocalService _layoutLocalService;
-
-	@Reference
-	private Portal _portal;
-
-	@Reference
-	private SegmentsEntryLocalService _segmentsEntryLocalService;
-
-	@Reference
-	private SegmentsExperienceLocalService _segmentsExperienceLocalService;
+	private final CompanyLocalService _companyLocalService;
+	private final GroupLocalService _groupLocalService;
+	private final LayoutLocalService _layoutLocalService;
+	private final Portal _portal;
+	private final SegmentsEntryLocalService _segmentsEntryLocalService;
+	private final SegmentsExperienceLocalService
+		_segmentsExperienceLocalService;
 
 }

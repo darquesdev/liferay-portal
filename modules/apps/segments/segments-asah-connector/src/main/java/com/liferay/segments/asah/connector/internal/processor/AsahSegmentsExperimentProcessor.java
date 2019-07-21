@@ -15,24 +15,42 @@
 package com.liferay.segments.asah.connector.internal.processor;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.segments.asah.connector.internal.client.AsahFaroBackendClient;
 import com.liferay.segments.asah.connector.internal.client.AsahFaroBackendClientFactory;
 import com.liferay.segments.asah.connector.internal.client.converter.ExperimentDTOConverter;
 import com.liferay.segments.asah.connector.internal.client.model.Experiment;
 import com.liferay.segments.model.SegmentsExperiment;
+import com.liferay.segments.service.SegmentsEntryLocalService;
+import com.liferay.segments.service.SegmentsExperienceLocalService;
 import com.liferay.segments.service.SegmentsExperimentLocalService;
 
 import java.util.Optional;
-
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Sarai Díaz
  * @author David Arques
  */
-@Component(immediate = true, service = AsahSegmentsExperimentProcessor.class)
 public class AsahSegmentsExperimentProcessor {
+
+	public AsahSegmentsExperimentProcessor(
+		Portal portal, CompanyLocalService companyLocalService,
+		GroupLocalService groupLocalService,
+		AsahFaroBackendClientFactory asahFaroBackendClientFactory,
+		LayoutLocalService layoutLocalService,
+		SegmentsEntryLocalService segmentsEntryLocalService,
+		SegmentsExperienceLocalService segmentsExperienceLocalService,
+		SegmentsExperimentLocalService segmentsExperimentLocalService) {
+
+		_asahFaroBackendClientFactory = asahFaroBackendClientFactory;
+		_experimentDTOConverter = new ExperimentDTOConverter(
+			portal, companyLocalService, groupLocalService, layoutLocalService,
+			segmentsEntryLocalService, segmentsExperienceLocalService);
+		_segmentsExperimentLocalService = segmentsExperimentLocalService;
+	}
 
 	public void processAddSegmentsExperiment(
 			SegmentsExperiment segmentsExperiment)
@@ -62,14 +80,9 @@ public class AsahSegmentsExperimentProcessor {
 	}
 
 	private AsahFaroBackendClient _asahFaroBackendClient;
-
-	@Reference
-	private AsahFaroBackendClientFactory _asahFaroBackendClientFactory;
-
-	@Reference
-	private ExperimentDTOConverter _experimentDTOConverter;
-
-	@Reference
-	private SegmentsExperimentLocalService _segmentsExperimentLocalService;
+	private final AsahFaroBackendClientFactory _asahFaroBackendClientFactory;
+	private final ExperimentDTOConverter _experimentDTOConverter;
+	private final SegmentsExperimentLocalService
+		_segmentsExperimentLocalService;
 
 }
