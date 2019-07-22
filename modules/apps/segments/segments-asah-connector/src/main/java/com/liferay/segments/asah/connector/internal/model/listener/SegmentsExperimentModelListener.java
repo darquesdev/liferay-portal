@@ -19,9 +19,18 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.ModelListener;
+import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.util.Portal;
+import com.liferay.segments.asah.connector.internal.client.AsahFaroBackendClientFactory;
 import com.liferay.segments.asah.connector.internal.processor.AsahSegmentsExperimentProcessor;
 import com.liferay.segments.model.SegmentsExperiment;
+import com.liferay.segments.service.SegmentsEntryLocalService;
+import com.liferay.segments.service.SegmentsExperienceLocalService;
+import com.liferay.segments.service.SegmentsExperimentLocalService;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -51,10 +60,42 @@ public class SegmentsExperimentModelListener
 		}
 	}
 
+	@Activate
+	protected void activate() {
+		_asahSegmentsExperimentProcessor = new AsahSegmentsExperimentProcessor(
+			_asahFaroBackendClientFactory, _companyLocalService,
+			_groupLocalService, _layoutLocalService, _portal,
+			_segmentsEntryLocalService, _segmentsExperienceLocalService,
+			_segmentsExperimentLocalService);
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		SegmentsExperimentModelListener.class);
 
 	@Reference
+	private AsahFaroBackendClientFactory _asahFaroBackendClientFactory;
+
 	private AsahSegmentsExperimentProcessor _asahSegmentsExperimentProcessor;
+
+	@Reference
+	private CompanyLocalService _companyLocalService;
+
+	@Reference
+	private GroupLocalService _groupLocalService;
+
+	@Reference
+	private LayoutLocalService _layoutLocalService;
+
+	@Reference
+	private Portal _portal;
+
+	@Reference
+	private SegmentsEntryLocalService _segmentsEntryLocalService;
+
+	@Reference
+	private SegmentsExperienceLocalService _segmentsExperienceLocalService;
+
+	@Reference
+	private SegmentsExperimentLocalService _segmentsExperimentLocalService;
 
 }
