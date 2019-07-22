@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.segments.asah.connector.internal.client.converter;
+package com.liferay.segments.asah.connector.internal.client.model.util;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Company;
@@ -38,26 +38,35 @@ import com.liferay.segments.model.SegmentsExperiment;
 import com.liferay.segments.service.SegmentsEntryLocalService;
 import com.liferay.segments.service.SegmentsExperienceLocalService;
 
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-
 /**
  * @author Sarai Díaz
  * @author David Arques
  */
-@Component(immediate = true, service = ExperimentDTOConverter.class)
-public class ExperimentDTOConverter {
+public class ExperimentUtil {
 
-	public ExperimentStatus toDTO(int status) {
-		if (status == SegmentsConstants.SEGMENTS_EXPERIMENT_STATUS_DRAFT) {
-			return ExperimentStatus.DRAFT;
-		}
+	public static Experiment toExperiment(
+			CompanyLocalService companyLocalService, String dataSourceId,
+			GroupLocalService groupLocalService,
+			LayoutLocalService layoutLocalService, Portal portal,
+			SegmentsEntryLocalService segmentsEntryLocalService,
+			SegmentsExperienceLocalService segmentsExperienceLocalService,
+			SegmentsExperiment segmentsExperiment)
+		throws PortalException {
 
-		return ExperimentStatus.DRAFT;
+		return toExperiment(
+			dataSourceId, layoutLocalService,
+			_getLayoutFullURL(
+				portal, companyLocalService, groupLocalService,
+				layoutLocalService.getLayout(segmentsExperiment.getClassPK())),
+			segmentsEntryLocalService, segmentsExperienceLocalService,
+			segmentsExperiment);
 	}
 
-	public Experiment toDTO(
-			SegmentsExperiment segmentsExperiment, String dataSourceId)
+	protected static Experiment toExperiment(
+			String dataSourceId, LayoutLocalService layoutLocalService,
+			String pageURL, SegmentsEntryLocalService segmentsEntryLocalService,
+			SegmentsExperienceLocalService segmentsExperienceLocalService,
+			SegmentsExperiment segmentsExperiment)
 		throws PortalException {
 
 		Experiment experiment = new Experiment();
@@ -84,7 +93,7 @@ public class ExperimentDTOConverter {
 		}
 		else {
 			SegmentsExperience segmentsExperience =
-				_segmentsExperienceLocalService.getSegmentsExperience(
+				segmentsExperienceLocalService.getSegmentsExperience(
 					segmentsExperiment.getSegmentsExperienceId());
 
 			experiment.setDXPExperienceId(
@@ -93,7 +102,7 @@ public class ExperimentDTOConverter {
 				segmentsExperience.getName(LocaleUtil.getDefault()));
 
 			SegmentsEntry segmentsEntry =
-				_segmentsEntryLocalService.getSegmentsEntry(
+				segmentsEntryLocalService.getSegmentsEntry(
 					segmentsExperience.getSegmentsEntryId());
 
 			experiment.setDXPSegmentId(segmentsEntry.getSegmentsEntryKey());
@@ -101,27 +110,32 @@ public class ExperimentDTOConverter {
 				segmentsEntry.getName(LocaleUtil.getDefault()));
 		}
 
-		experiment.setExperimentStatus(toDTO(segmentsExperiment.getStatus()));
+		experiment.setExperimentStatus(
+			_toExperimentStatus(segmentsExperiment.getStatus()));
 
-		Layout layout = _layoutLocalService.getLayout(
+		Layout layout = layoutLocalService.getLayout(
 			segmentsExperiment.getClassPK());
 
-		experiment.setPageURL(getLayoutFullURL(layout));
+		experiment.setPageURL(pageURL);
 		experiment.setPageTitle(layout.getTitle(LocaleUtil.getDefault()));
 
 		return experiment;
 	}
 
-	protected String getLayoutFullURL(Layout layout) throws PortalException {
+	private static String _getLayoutFullURL(
+			Portal portal, CompanyLocalService companyLocalService,
+			GroupLocalService groupLocalService, Layout layout)
+		throws PortalException {
+
 		StringBundler sb = new StringBundler(4);
 
-		Group group = _groupLocalService.getGroup(layout.getGroupId());
+		Group group = groupLocalService.getGroup(layout.getGroupId());
 
 		if (group.isLayout()) {
 			long parentGroupId = group.getParentGroupId();
 
 			if (parentGroupId > 0) {
-				group = _groupLocalService.getGroup(parentGroupId);
+				group = groupLocalService.getGroup(parentGroupId);
 			}
 		}
 
@@ -133,7 +147,7 @@ public class ExperimentDTOConverter {
 			virtualHostname = layoutSet.getVirtualHostname();
 		}
 		else {
-			Company company = _companyLocalService.getCompany(
+			Company company = companyLocalService.getCompany(
 				layout.getCompanyId());
 
 			virtualHostname = company.getVirtualHostname();
@@ -142,12 +156,12 @@ public class ExperimentDTOConverter {
 		boolean secure = StringUtil.equalsIgnoreCase(
 			Http.HTTPS, PropsValues.WEB_SERVER_PROTOCOL);
 
-		String portalURL = _portal.getPortalURL(
-			virtualHostname, _portal.getPortalServerPort(secure), secure);
+		String portalURL = portal.getPortalURL(
+			virtualHostname, portal.getPortalServerPort(secure), secure);
 
 		sb.append(portalURL);
 
-		sb.append(_portal.getPathFriendlyURLPublic());
+		sb.append(portal.getPathFriendlyURLPublic());
 
 		sb.append(group.getFriendlyURL());
 		sb.append(layout.getFriendlyURL());
@@ -155,22 +169,12 @@ public class ExperimentDTOConverter {
 		return sb.toString();
 	}
 
-	@Reference
-	private CompanyLocalService _companyLocalService;
+	private static ExperimentStatus _toExperimentStatus(int status) {
+		if (status == SegmentsConstants.SEGMENTS_EXPERIMENT_STATUS_DRAFT) {
+			return ExperimentStatus.DRAFT;
+		}
 
-	@Reference
-	private GroupLocalService _groupLocalService;
-
-	@Reference
-	private LayoutLocalService _layoutLocalService;
-
-	@Reference
-	private Portal _portal;
-
-	@Reference
-	private SegmentsEntryLocalService _segmentsEntryLocalService;
-
-	@Reference
-	private SegmentsExperienceLocalService _segmentsExperienceLocalService;
+		return ExperimentStatus.DRAFT;
+	}
 
 }
