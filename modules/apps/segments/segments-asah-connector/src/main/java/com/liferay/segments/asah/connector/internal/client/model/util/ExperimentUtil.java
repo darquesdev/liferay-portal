@@ -121,6 +121,7 @@ public class ExperimentUtil {
 		experiment.setPageRelativePath(
 			layout.getFriendlyURL(LocaleUtil.getDefault()));
 		experiment.setPageTitle(layout.getTitle(LocaleUtil.getDefault()));
+
 		experiment.setPageURL(pageURL);
 
 		return experiment;
