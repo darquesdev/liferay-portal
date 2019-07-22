@@ -80,9 +80,6 @@ public class AsahSegmentsExperimentProcessor {
 				segmentsExperiment));
 
 		segmentsExperiment.setSegmentsExperimentKey(experiment.getId());
-
-		_segmentsExperimentLocalService.updateSegmentsExperiment(
-			segmentsExperiment);
 	}
 
 	private AsahFaroBackendClient _asahFaroBackendClient;
