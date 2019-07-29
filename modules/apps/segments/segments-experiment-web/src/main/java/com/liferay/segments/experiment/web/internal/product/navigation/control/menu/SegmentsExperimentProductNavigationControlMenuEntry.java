@@ -200,21 +200,21 @@ public class SegmentsExperimentProductNavigationControlMenuEntry
 			return false;
 		}
 
-		if (Validator.isNull(
-				PrefsPropsUtil.getString(
-					themeDisplay.getCompanyId(),
-					"liferayAnalyticsDataSourceId")) ||
-			Validator.isNull(
-				PrefsPropsUtil.getString(
-					themeDisplay.getCompanyId(),
-					"liferayAnalyticsFaroBackendSecuritySignature")) ||
-			Validator.isNull(
-				PrefsPropsUtil.getString(
-					themeDisplay.getCompanyId(),
-					"liferayAnalyticsFaroBackendURL"))) {
+		// if (Validator.isNull(
+		// 		PrefsPropsUtil.getString(
+		// 			themeDisplay.getCompanyId(),
+		// 			"liferayAnalyticsDataSourceId")) ||
+		// 	Validator.isNull(
+		// 		PrefsPropsUtil.getString(
+		// 			themeDisplay.getCompanyId(),
+		// 			"liferayAnalyticsFaroBackendSecuritySignature")) ||
+		// 	Validator.isNull(
+		// 		PrefsPropsUtil.getString(
+		// 			themeDisplay.getCompanyId(),
+		// 			"liferayAnalyticsFaroBackendURL"))) {
 
-			return false;
-		}
+		// 	return false;
+		// }
 
 		Layout layout = themeDisplay.getLayout();
 
