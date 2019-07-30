@@ -20,6 +20,7 @@ import {
 	UPDATE_SEGMENTS_EXPERIENCE_PRIORITY
 } from '../actions/actions.es';
 import {
+	addExperience,
 	getExperienceUsedPortletIds,
 	removeExperience,
 	updateEditableValues,
@@ -42,9 +43,6 @@ import {
 } from '../utils/constants';
 import {getFragmentEntryLinkContent} from './fragments.es';
 import {prefixSegmentsExperienceId} from '../utils/prefixSegmentsExperienceId.es';
-
-const CREATE_SEGMENTS_EXPERIENCE_URL =
-	'/segments.segmentsexperience/add-segments-experience';
 
 const EDIT_SEGMENTS_EXPERIENCE_URL =
 	'/segments.segmentsexperience/update-segments-experience';
@@ -289,41 +287,28 @@ function createSegmentsExperienceReducer(state, action) {
 		let nextState = state;
 
 		if (action.type === CREATE_SEGMENTS_EXPERIENCE) {
-			const {classNameId, classPK} = nextState;
 			const {name, segmentsEntryId} = action;
 
-			const nameMap = JSON.stringify({
-				[state.defaultLanguageId]: name
-			});
-
-			Liferay.Service(
-				CREATE_SEGMENTS_EXPERIENCE_URL,
-				{
-					active: true,
-					classNameId,
-					classPK,
-					nameMap,
-					segmentsEntryId,
-					serviceContext: JSON.stringify({
-						scopeGroupId: themeDisplay.getScopeGroupId(),
-						userId: themeDisplay.getUserId()
-					})
-				},
-				obj => {
+			addExperience({
+				name,
+				segmentsEntryId
+			})
+				.then(response => response.json())
+				.then(function _success(segmentsExperience) {
 					const {
 						active,
-						nameCurrentValue,
+						name,
 						priority,
 						segmentsEntryId,
 						segmentsExperienceId
-					} = obj;
+					} = segmentsExperience;
 
 					nextState = setIn(
 						nextState,
 						['availableSegmentsExperiences', segmentsExperienceId],
 						{
 							active,
-							name: nameCurrentValue,
+							name,
 							priority,
 							segmentsEntryId,
 							segmentsExperienceId
@@ -369,11 +354,10 @@ function createSegmentsExperienceReducer(state, action) {
 								});
 						}
 					);
-				},
-				error => {
+				})
+				.catch(function _fail(error) {
 					reject(error);
-				}
-			);
+				});
 		} else {
 			resolve(nextState);
 		}
