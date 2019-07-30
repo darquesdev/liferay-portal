@@ -293,6 +293,7 @@ function createSegmentsExperienceReducer(state, action) {
 				name,
 				segmentsEntryId
 			})
+				.then(response => response.json())
 				.then(function _success(obj) {
 					const {
 						active,
