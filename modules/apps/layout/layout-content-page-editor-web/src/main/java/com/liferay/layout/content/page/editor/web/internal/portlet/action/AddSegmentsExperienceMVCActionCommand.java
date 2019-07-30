@@ -94,8 +94,17 @@ public class AddSegmentsExperienceMVCActionCommand
 				TransactionInvokerUtil.invoke(_transactionConfig, callable);
 
 			jsonObject.put(
+				"active", segmentsExperience.isActive()
+			).put(
+				"name", segmentsExperience.getNameCurrentValue()
+			).put(
+				"priority", segmentsExperience.getPriority()
+			).put(
+				"segmentsEntryId", segmentsExperience.getSegmentsEntryId()
+			).put(
 				"segmentsExperienceId",
-				segmentsExperience.getSegmentsExperienceId());
+				segmentsExperience.getSegmentsExperienceId()
+			);
 
 			SessionMessages.add(actionRequest, "segmentsExperienceAdded");
 		}
