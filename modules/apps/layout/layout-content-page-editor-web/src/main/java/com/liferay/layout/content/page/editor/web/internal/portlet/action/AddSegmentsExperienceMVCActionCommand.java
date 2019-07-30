@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
+import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.TransactionConfig;
@@ -32,6 +33,7 @@ import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.segments.model.SegmentsExperience;
 import com.liferay.segments.service.SegmentsExperienceService;
 
 import java.util.HashMap;
@@ -59,10 +61,11 @@ import org.osgi.service.component.annotations.Reference;
 public class AddSegmentsExperienceMVCActionCommand
 	extends BaseMVCActionCommand {
 
-	protected void addSegmentsExperience(ActionRequest actionRequest)
+	protected SegmentsExperience addSegmentsExperience(
+			ActionRequest actionRequest)
 		throws PortalException {
 
-		_segmentsExperienceService.addSegmentsExperience(
+		return _segmentsExperienceService.addSegmentsExperience(
 			ParamUtil.getLong(actionRequest, "segmentsEntryId"),
 			ParamUtil.getLong(actionRequest, "classNameId"),
 			ParamUtil.getLong(actionRequest, "classPK"),
@@ -81,13 +84,20 @@ public class AddSegmentsExperienceMVCActionCommand
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		Callable<Void> callable = new AddSegmentsExperienceCallable(
-			actionRequest);
+		Callable<SegmentsExperience> callable =
+			new AddSegmentsExperienceCallable(actionRequest);
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
 		try {
-			TransactionInvokerUtil.invoke(_transactionConfig, callable);
+			SegmentsExperience segmentsExperience =
+				TransactionInvokerUtil.invoke(_transactionConfig, callable);
+
+			jsonObject.put(
+				"segmentsExperienceId",
+				segmentsExperience.getSegmentsExperienceId());
+
+			SessionMessages.add(actionRequest, "segmentsExperienceAdded");
 		}
 		catch (Throwable t) {
 			_log.error(t, t);
@@ -122,13 +132,12 @@ public class AddSegmentsExperienceMVCActionCommand
 	@Reference
 	private SegmentsExperienceService _segmentsExperienceService;
 
-	private class AddSegmentsExperienceCallable implements Callable<Void> {
+	private class AddSegmentsExperienceCallable
+		implements Callable<SegmentsExperience> {
 
 		@Override
-		public Void call() throws Exception {
-			addSegmentsExperience(_actionRequest);
-
-			return null;
+		public SegmentsExperience call() throws Exception {
+			return addSegmentsExperience(_actionRequest);
 		}
 
 		private AddSegmentsExperienceCallable(ActionRequest actionRequest) {
