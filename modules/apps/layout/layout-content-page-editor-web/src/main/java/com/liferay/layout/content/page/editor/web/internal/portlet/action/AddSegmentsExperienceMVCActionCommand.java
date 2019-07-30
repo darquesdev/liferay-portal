@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.transaction.TransactionConfig;
 import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.segments.model.SegmentsExperience;
 import com.liferay.segments.service.SegmentsExperienceService;
@@ -43,6 +44,8 @@ import java.util.concurrent.Callable;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -90,6 +93,10 @@ public class AddSegmentsExperienceMVCActionCommand
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
 		try {
+			if (true)
+
+				throw new PortalException("Hooooooolaaaaaaaaaa!");
+
 			SegmentsExperience segmentsExperience =
 				TransactionInvokerUtil.invoke(_transactionConfig, callable);
 
@@ -105,11 +112,15 @@ public class AddSegmentsExperienceMVCActionCommand
 				"segmentsExperienceId",
 				segmentsExperience.getSegmentsExperienceId()
 			);
-
-			SessionMessages.add(actionRequest, "segmentsExperienceAdded");
 		}
 		catch (Throwable t) {
 			_log.error(t, t);
+
+			HttpServletResponse httpServletResponse =
+				_portal.getHttpServletResponse(actionResponse);
+
+			httpServletResponse.setStatus(
+				HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
 			jsonObject.put(
 				"error",
@@ -137,6 +148,9 @@ public class AddSegmentsExperienceMVCActionCommand
 	private static final TransactionConfig _transactionConfig =
 		TransactionConfig.Factory.create(
 			Propagation.REQUIRED, new Class<?>[] {Exception.class});
+
+	@Reference
+	private Portal _portal;
 
 	@Reference
 	private SegmentsExperienceService _segmentsExperienceService;
