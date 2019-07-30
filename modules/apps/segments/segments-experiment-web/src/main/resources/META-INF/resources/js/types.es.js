@@ -28,4 +28,10 @@ const SegmentsExperienceType = PropTypes.shape({
 	segmentsExperiment: SegmentsExperimentType
 });
 
-export {SegmentsExperienceType, SegmentsExperimentType};
+const SegmentsVariantType = PropTypes.shape({
+	name: PropTypes.string.isRequired,
+	segmentsExperienceId: PropTypes.string.isRequired,
+	segmentsExperimentRelId: PropTypes.string.isRequired
+});
+
+export {SegmentsExperienceType, SegmentsExperimentType, SegmentsVariantType};

@@ -27,7 +27,8 @@
 }
 
 .lfr-segments-experiment-panel {
-	.btn-secondary {
+	.btn-secondary, .btn-outline-secondary {
+		color: #6B6C7E;
 		svg.lexicon-icon-ellipsis-v {
 			fill: #6b6c7e;
 		}
