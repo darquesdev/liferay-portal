@@ -20,7 +20,7 @@ import {
 	UPDATE_SEGMENTS_EXPERIENCE_PRIORITY
 } from '../actions/actions.es';
 import {
-	addExperience,
+	addSegmentsExperience,
 	getExperienceUsedPortletIds,
 	removeExperience,
 	updateEditableValues,
@@ -289,7 +289,7 @@ function createSegmentsExperienceReducer(state, action) {
 		if (action.type === CREATE_SEGMENTS_EXPERIENCE) {
 			const {name, segmentsEntryId} = action;
 
-			addExperience({
+			addSegmentsExperience({
 				name,
 				segmentsEntryId
 			})

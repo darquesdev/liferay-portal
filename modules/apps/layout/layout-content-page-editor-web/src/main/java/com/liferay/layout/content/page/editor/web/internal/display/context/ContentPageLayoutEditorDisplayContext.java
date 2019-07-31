@@ -288,7 +288,7 @@ public class ContentPageLayoutEditorDisplayContext
 		throws PortalException {
 
 		soyContext.put(
-			"addSegmentsExperience",
+			"addSegmentsExperienceURL",
 			getFragmentEntryActionURL("/content_layout/add_segments_experience")
 		).put(
 			"availableSegmentsEntries", _getAvailableSegmentsEntriesSoyContext()
