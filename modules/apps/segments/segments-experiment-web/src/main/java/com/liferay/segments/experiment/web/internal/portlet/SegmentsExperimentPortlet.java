@@ -79,7 +79,7 @@ public class SegmentsExperimentPortlet extends MVCPortlet {
 
 		SegmentsExperimentDisplayContext segmentsExperimentDisplayContext =
 			new SegmentsExperimentDisplayContext(
-				httpServletRequest, _segmentsExperienceService,
+				httpServletRequest, renderResponse, _segmentsExperienceService,
 				_segmentsExperimentService);
 
 		renderRequest.setAttribute(
