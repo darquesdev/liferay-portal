@@ -36,6 +36,17 @@ public class SegmentsExperimentRelServiceWrapper
 		_segmentsExperimentRelService = segmentsExperimentRelService;
 	}
 
+	@Override
+	public com.liferay.segments.model.SegmentsExperimentRel
+			addSegmentsExperimentRel(
+				long segmentsExperimentId, long segmentsExperienceId,
+				com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _segmentsExperimentRelService.addSegmentsExperimentRel(
+			segmentsExperimentId, segmentsExperienceId, serviceContext);
+	}
+
 	/**
 	 * Returns the OSGi service identifier.
 	 *

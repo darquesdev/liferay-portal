@@ -14,11 +14,17 @@
 
 package com.liferay.segments.service.http;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.segments.service.SegmentsExperimentRelServiceUtil;
+
+import java.rmi.RemoteException;
+
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * Provides the SOAP utility for the
- * <code>com.liferay.segments.service.SegmentsExperimentRelServiceUtil</code> service
+ * <code>SegmentsExperimentRelServiceUtil</code> service
  * utility. The static methods of this class call the same methods of the
  * service utility. However, the signatures are different because it is
  * difficult for SOAP to support certain types.
@@ -57,4 +63,29 @@ import org.osgi.annotation.versioning.ProviderType;
  */
 @ProviderType
 public class SegmentsExperimentRelServiceSoap {
+
+	public static com.liferay.segments.model.SegmentsExperimentRelSoap
+			addSegmentsExperimentRel(
+				long segmentsExperimentId, long segmentsExperienceId,
+				com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+
+		try {
+			com.liferay.segments.model.SegmentsExperimentRel returnValue =
+				SegmentsExperimentRelServiceUtil.addSegmentsExperimentRel(
+					segmentsExperimentId, segmentsExperienceId, serviceContext);
+
+			return com.liferay.segments.model.SegmentsExperimentRelSoap.
+				toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	private static Log _log = LogFactoryUtil.getLog(
+		SegmentsExperimentRelServiceSoap.class);
+
 }

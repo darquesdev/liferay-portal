@@ -36,6 +36,17 @@ public class SegmentsExperimentRelLocalServiceWrapper
 		_segmentsExperimentRelLocalService = segmentsExperimentRelLocalService;
 	}
 
+	@Override
+	public com.liferay.segments.model.SegmentsExperimentRel
+			addSegmentsExperimentRel(
+				long segmentsExperimentId, long segmentsExperienceId,
+				com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _segmentsExperimentRelLocalService.addSegmentsExperimentRel(
+			segmentsExperimentId, segmentsExperienceId, serviceContext);
+	}
+
 	/**
 	 * Adds the segments experiment rel to the database. Also notifies the appropriate model listeners.
 	 *
