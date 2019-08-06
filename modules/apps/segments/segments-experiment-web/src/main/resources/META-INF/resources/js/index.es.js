@@ -32,13 +32,7 @@ export default function segmentsExperimentsApp(id, props, context) {
 				<SegmentsExperimentsSidebar
 					initialSegmentsExperiences={props.segmentsExperiences}
 					initialSegmentsExperiment={props.segmentsExperiment}
-					initialSegmentsVariants={[
-						{
-							name: 'Variant 1',
-							segmentsExperienceId: '0',
-							segmentsExperimentRelId: '123'
-						}
-					]}
+					initialSegmentsVariants={[]}
 					initialSelectedSegmentsExperienceId={
 						props.selectedSegmentsExperienceId
 					}

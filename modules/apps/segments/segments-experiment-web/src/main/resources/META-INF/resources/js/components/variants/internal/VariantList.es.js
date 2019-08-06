@@ -20,25 +20,37 @@ import {SegmentsVariantType} from '../../../types.es';
 
 function VariantList({variants}) {
 	return (
-		<ClayTable bordered={false}>
-			<ClayTable.Body>
-				<Variant
-					active={true}
-					control={true}
-					name={Liferay.Language.get('variant-control')}
-				/>
+		<React.Fragment>
+			<ClayTable bordered={false}>
+				<ClayTable.Body>
+					<Variant
+						active={true}
+						control={true}
+						name={Liferay.Language.get('variant-control')}
+					/>
 
-				{variants.map(variant => {
-					return (
-						<Variant
-							active={false}
-							key={variant.segmentsExperienceId}
-							name={variant.name}
-						/>
-					);
-				})}
-			</ClayTable.Body>
-		</ClayTable>
+					{variants.length > 0
+						? variants.map(variant => {
+								return (
+									<Variant
+										active={false}
+										key={variant.segmentsExperienceId}
+										name={variant.name}
+									/>
+								);
+						  })
+						: null}
+				</ClayTable.Body>
+			</ClayTable>
+			{variants.length === 0 ? (
+				<React.Fragment>
+					<h4>{Liferay.Language.get('no-variants-message')}</h4>
+					<p className="text-secondary small">
+						{Liferay.Language.get('no-variants-tip')}
+					</p>
+				</React.Fragment>
+			) : null}
+		</React.Fragment>
 	);
 }
 

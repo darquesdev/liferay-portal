@@ -195,18 +195,39 @@ function SegmentsExperimentsSidebar({
 	}
 
 	function _handleVariantCreation(name) {
-		return new Promise(resolve => {
-			setTimeout(() => {
-				setVariants([
-					...variants,
-					{
-						name,
-						segmentsExperienceId: JSON.stringify(Math.random()),
-						segmentsExperimentRelId: JSON.stringify(Math.random())
-					}
-				]);
-				resolve();
-			}, 2000);
+		return new Promise((resolve, reject) => {
+			const body = {
+				name,
+				classPK: page.classPK,
+				classNameId: page.classNameId,
+				segmentsExperimentId: segmentsExperiment.segmentsExperimentId
+			};
+			fetch(endpoints.createSegmentsVariantURL, {
+				body: getFormData(body),
+				credentials: 'include',
+				method: 'POST'
+			})
+				.then(response => response.json())
+				.then(objectResponse => {
+					if (objectResponse.error) throw objectResponse.error;
+					return objectResponse;
+				})
+				.then(response => {
+					console.log(response);
+					/* TODO add the variant to the list */
+					setVariants([
+						...variants,
+						{
+							name,
+							segmentsExperienceId: JSON.stringify(Math.random()),
+							segmentsExperimentRelId: JSON.stringify(
+								Math.random()
+							)
+						}
+					]);
+					resolve();
+				})
+				.catch(error => reject(error));
 		});
 	}
 }
@@ -215,7 +236,15 @@ SegmentsExperimentsSidebar.propTypes = {
 	initialSelectedSegmentsExperienceId: PropTypes.string,
 	initialSegmentsExperiment: SegmentsExperimentType,
 	initialSegmentsExperiences: PropTypes.arrayOf(SegmentsExperienceType),
-	initialSegmentsVariants: PropTypes.arrayOf(SegmentsVariantType)
+	initialSegmentsVariants: PropTypes.arrayOf(SegmentsVariantType).isRequired
 };
 
 export default SegmentsExperimentsSidebar;
+
+function getFormData(body, _formData = new FormData()) {
+	Object.entries(body).forEach(([key, value]) => {
+		_formData.append(key, value);
+	});
+
+	return _formData;
+}

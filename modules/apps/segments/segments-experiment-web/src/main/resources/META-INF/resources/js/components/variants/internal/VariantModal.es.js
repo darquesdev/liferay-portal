@@ -16,6 +16,7 @@ import React, {useState} from 'react';
 import ClayModal from '@clayui/modal';
 import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
+import ClayAlert from '@clayui/alert';
 import BusyButton from '../../busyButton/BusyButton.es';
 
 function VariantModal({
@@ -26,15 +27,27 @@ function VariantModal({
 }) {
 	const [inputName, setInputName] = useState(name);
 	const [busy, setBusy] = useState(false);
+	const [error, setError] = useState(false);
+
 	return active ? (
 		<ClayModal onClose={_handleClose} size="md">
 			{onClose => (
 				<>
-					<ClayModal.Header>{'Create New Variant'}</ClayModal.Header>
+					<ClayModal.Header>
+						{Liferay.Language.get('create-new-variant')}
+					</ClayModal.Header>
 					<ClayModal.Body>
+						{error && (
+							<ClayAlert
+								displayType="danger"
+								title={Liferay.Language.get('error')}
+							>
+								{error}
+							</ClayAlert>
+						)}
 						<label className="form-group d-block">
 							<span className="d-inline-block mb-2">
-								Name your Variant
+								{Liferay.Language.get('name')}
 								<ClayIcon
 									className="reference-mark text-warning ml-1"
 									symbol="asterisk"
@@ -60,14 +73,14 @@ function VariantModal({
 									displayType="primary"
 									onClick={_handleSave}
 								>
-									{'Save'}
+									{Liferay.Language.get('save')}
 								</BusyButton>
 								<ClayButton
 									disabled={busy}
 									displayType="secondary"
 									onClick={onClose}
 								>
-									{'Cancel'}
+									{Liferay.Language.get('cancel')}
 								</ClayButton>
 							</ClayButton.Group>
 						}
@@ -79,10 +92,15 @@ function VariantModal({
 
 	function _handleSave() {
 		setBusy(true);
-		onSave(inputName).then(() => {
-			setBusy(false);
-			// onClose();
-		});
+		onSave(inputName)
+			.then(() => {
+				setBusy(false);
+				onClose();
+			})
+			.catch(() => {
+				setBusy(false);
+				setError(Liferay.Language.get('create-variant-error-message'));
+			});
 	}
 
 	function _handleClose() {

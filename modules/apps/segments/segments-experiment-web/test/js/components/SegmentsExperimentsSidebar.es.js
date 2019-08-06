@@ -17,28 +17,7 @@ import {cleanup, fireEvent, render} from '@testing-library/react';
 import SegmentsExperimentsSidebar from '../../../src/main/resources/META-INF/resources/js/components/SegmentsExperimentsSidebar.es';
 import SegmentsExperimentsContext from '../../../src/main/resources/META-INF/resources/js/context.es';
 import React from 'react';
-
-const segmentsExperiment = {
-	name: 'Experiment 1',
-	description: 'Experiment 1 description',
-	segmentsExperimentId: '0',
-	segmentsExperienceId: '0'
-};
-
-const segmentsExperiences = [
-	{
-		name: 'Default',
-		description: 'Default',
-		segmentsExperienceId: '0',
-		segmentsExperiment
-	},
-	{
-		name: 'Experience 1',
-		description: 'Experience 1 description',
-		segmentsExperienceId: '1',
-		segmentsExperiment
-	}
-];
+import {segmentsExperiment, segmentsExperiences} from '../fixtures.es';
 
 function _renderSegmentsExperimentsSidebarComponent({
 	initialSegmentsExperiences = [],
@@ -48,7 +27,8 @@ function _renderSegmentsExperimentsSidebarComponent({
 	editSegmentsExperimentURL = '',
 	classNameId = '',
 	classPK = '',
-	type = 'content'
+	type = 'content',
+	initialSegmentsVariants = []
 } = {}) {
 	return render(
 		<SegmentsExperimentsContext.Provider
@@ -67,6 +47,7 @@ function _renderSegmentsExperimentsSidebarComponent({
 			<SegmentsExperimentsSidebar
 				initialSegmentsExperiences={initialSegmentsExperiences}
 				initialSegmentsExperiment={initialSegmentsExperiment}
+				initialSegmentsVariants={initialSegmentsVariants}
 				selectedSegmentsExperienceId={selectedSegmentsExperienceId}
 			/>
 		</SegmentsExperimentsContext.Provider>
@@ -161,5 +142,22 @@ describe('SegmentsExperimentsSidebar', () => {
 
 		const cancelButton = getByText('cancel');
 		expect(cancelButton).not.toBe(null);
+	});
+
+	it('renders _No Variants Message_', () => {
+		const {getByText} = _renderSegmentsExperimentsSidebarComponent({
+			initialSegmentsExperiences: segmentsExperiences,
+			initialSegmentsVariants: [],
+			initialSegmentsExperiment: segmentsExperiment,
+			selectedSegmentsExperienceId:
+				segmentsExperiment.segmentsExperimentId
+		});
+
+		const noVariantsMessage = getByText('no-variants-message');
+		const noVariantsTip = getByText('no-variants-message');
+
+		expect(noVariantsMessage).not.toBe(null);
+
+		expect(noVariantsTip).not.toBe(null);
 	});
 });

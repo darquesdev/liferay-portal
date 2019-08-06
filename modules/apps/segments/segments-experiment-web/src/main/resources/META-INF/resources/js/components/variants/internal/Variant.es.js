@@ -53,9 +53,7 @@ function Variant({name, control = false, active}) {
 								<ClayIcon symbol="ellipsis-v" />
 							</ClayButton>
 						}
-					>
-						<ClayDropDown.ItemList />
-					</ClayDropDown>
+					/>
 				</ClayTable.Cell>
 			)}
 		</ClayTable.Row>
