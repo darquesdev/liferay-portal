@@ -147,7 +147,7 @@ public class AddSegmentsExperienceMVCActionCommand
 
 		SegmentsExperiment segmentsExperiment = null;
 
-		if (segmentsExperimentId == GetterUtil.DEFAULT_LONG) {
+		if (segmentsExperimentId != GetterUtil.DEFAULT_LONG) {
 			segmentsExperiment =
 				_segmentsExperimentService.getSegmentsExperiment(
 					segmentsExperimentId);
