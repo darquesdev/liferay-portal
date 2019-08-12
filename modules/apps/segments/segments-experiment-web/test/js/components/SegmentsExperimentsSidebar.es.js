@@ -13,7 +13,15 @@
  */
 
 import '@testing-library/jest-dom/extend-expect';
-import {cleanup, fireEvent, render} from '@testing-library/react';
+import {
+	cleanup,
+	fireEvent,
+	render,
+	waitForElement,
+	wait,
+	waitForElementToBeRemoved
+} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import SegmentsExperimentsSidebar from '../../../src/main/resources/META-INF/resources/js/components/SegmentsExperimentsSidebar.es';
 import SegmentsExperimentsContext from '../../../src/main/resources/META-INF/resources/js/context.es';
 import React from 'react';
@@ -25,28 +33,34 @@ import {
 } from '../fixtures.es';
 
 function _renderSegmentsExperimentsSidebarComponent({
+	api = {},
 	classNameId = '',
 	classPK = '',
-	contentPageEditorNamespace = '',
-	createSegmentsExperimentURL = '',
-	editSegmentsExperimentURL = '',
 	initialGoals = segmentsGoals,
 	initialSegmentsExperiences = [],
 	initialSegmentsExperiment,
 	initialSegmentsVariants = [],
-	namespace = '',
 	selectedSegmentsExperienceId,
 	type = 'content'
 } = {}) {
+	const {
+		createExperiment = () => {},
+		createVariant = () => {},
+		deleteVariant = () => {},
+		editExperiment = () => {},
+		editVariant = () => {}
+	} = api;
+
 	return render(
 		<SegmentsExperimentsContext.Provider
 			value={{
-				contentPageEditorNamespace,
-				endpoints: {
-					createSegmentsExperimentURL,
-					editSegmentsExperimentURL
+				api: {
+					createExperiment,
+					createVariant,
+					deleteVariant,
+					editExperiment,
+					editVariant
 				},
-				namespace,
 				page: {
 					classNameId,
 					classPK,
@@ -61,7 +75,10 @@ function _renderSegmentsExperimentsSidebarComponent({
 				initialSegmentsVariants={initialSegmentsVariants}
 				selectedSegmentsExperienceId={selectedSegmentsExperienceId}
 			/>
-		</SegmentsExperimentsContext.Provider>
+		</SegmentsExperimentsContext.Provider>,
+		{
+			baseElement: document.body
+		}
 	);
 }
 
@@ -154,6 +171,10 @@ describe('SegmentsExperimentsSidebar', () => {
 		const cancelButton = getByText('cancel');
 		expect(cancelButton).not.toBe(null);
 	});
+});
+
+describe('Variants ', () => {
+	afterEach(cleanup);
 
 	it('renders no variants message', () => {
 		const {getByText} = _renderSegmentsExperimentsSidebarComponent({
@@ -187,5 +208,74 @@ describe('SegmentsExperimentsSidebar', () => {
 
 		expect(control).not.toBe(null);
 		expect(variant).not.toBe(null);
+	});
+
+	it('create variant button', done => {
+		const createVariantMock = jest.fn(
+			variant =>
+				new Promise(resolve => {
+					console.log(variant.name);
+					return resolve({
+						segmentsExperimentRel: {
+							name: variant.name,
+							segmentsExperienceId: JSON.stringify(Math.random()),
+							segmentsExperimentId: JSON.stringify(Math.random()),
+							segmentsExperimentRelId: JSON.stringify(
+								Math.random()
+							)
+						}
+					});
+				})
+		);
+		const {
+			getByText,
+			getByLabelText
+		} = _renderSegmentsExperimentsSidebarComponent({
+			api: {
+				createVariant: createVariantMock
+			},
+			initialSegmentsExperiences: segmentsExperiences,
+			initialSegmentsExperiment: segmentsExperiment,
+			initialSegmentsVariants: segmentsVariants,
+			selectedSegmentsExperienceId:
+				segmentsExperiment.segmentsExperimentId
+		});
+
+		const button = getByText('create-variant');
+
+		expect(button).not.toBe(null);
+
+		userEvent.click(button);
+
+		waitForElement(() => getByText('create-new-variant')).then(() => {
+			const variantNameInput = getByLabelText('name');
+
+			expect(variantNameInput.value).toBe('');
+
+			userEvent.type(variantNameInput, 'Variant Name').then(() => {
+				const saveButton = getByText('save');
+				userEvent.click(saveButton);
+
+				waitForElementToBeRemoved(() => getByLabelText('name')).then(
+					() => {
+						wait(() => expect(getByText('Variant Name'))).then(
+							() => {
+								expect(createVariantMock).toHaveBeenCalledWith(
+									expect.objectContaining({
+										name: 'Variant Name'
+									})
+								);
+
+								expect(getByText('Variant Name')).not.toBe(
+									null
+								);
+
+								done();
+							}
+						);
+					}
+				);
+			});
+		});
 	});
 });

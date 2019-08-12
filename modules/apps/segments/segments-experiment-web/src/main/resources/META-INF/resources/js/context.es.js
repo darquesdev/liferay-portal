@@ -16,26 +16,32 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const SegmentsExperimentsContext = React.createContext({
-	endpoints: {},
-	page: {}
+	api: {
+		createExperiment: () => {},
+		createVariant: () => {},
+		deleteVariant: () => {},
+		editExperiment: () => {},
+		editVariant: () => {}
+	},
+	page: {
+		classNameId: '',
+		classPK: '',
+		type: ''
+	}
 });
 
 SegmentsExperimentsContext.Provider.propTypes = {
-	value: PropTypes.shape({
-		contentPageEditorNamespace: PropTypes.string.isRequired,
-		endpoints: PropTypes.shape({
-			createSegmentsExperimentURL: PropTypes.string,
-			createSegmentsVariantURL: PropTypes.string,
-			deleteSegmentsVariantURL: PropTypes.string,
-			editSegmentsExperimentURL: PropTypes.string,
-			editSegmentsVariantURL: PropTypes.string
-		}).isRequired,
-		namespace: PropTypes.string.isRequired,
-		page: PropTypes.shape({
-			classNameId: PropTypes.string.isRequired,
-			classPK: PropTypes.string.isRequired,
-			type: PropTypes.string.isRequired
-		})
+	api: PropTypes.shape({
+		createExperiment: PropTypes.func.isRequired,
+		createVariant: PropTypes.func.isRequired,
+		deleteVariant: PropTypes.func.isRequired,
+		editExperiment: PropTypes.func.isRequired,
+		editVariant: PropTypes.func.isRequired
+	}),
+	page: PropTypes.shape({
+		classNameId: PropTypes.string.isRequired,
+		classPK: PropTypes.string.isRequired,
+		type: PropTypes.string.isRequired
 	})
 };
 

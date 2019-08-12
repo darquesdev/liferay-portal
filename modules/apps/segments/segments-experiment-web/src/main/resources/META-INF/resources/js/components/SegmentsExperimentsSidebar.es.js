@@ -32,9 +32,7 @@ function SegmentsExperimentsSidebar({
 	initialSegmentsExperiment,
 	initialSelectedSegmentsExperienceId = '0'
 }) {
-	const {endpoints, page, contentPageEditorNamespace, namespace} = useContext(
-		SegmentsExperimentsContext
-	);
+	const {api, page} = useContext(SegmentsExperimentsContext);
 	const [creationModal, setCreationModal] = useState({active: false});
 	const [editionModal, setEditionModal] = useState({active: false});
 	const [segmentsExperiment, setSegmentsExperiment] = useState(
@@ -132,16 +130,7 @@ function SegmentsExperimentsSidebar({
 			segmentsExperienceId: segmentsExperiment.segmentsExperienceId
 		};
 
-		fetch(endpoints.createSegmentsExperimentURL, {
-			body: getFormData(body, namespace),
-			credentials: 'include',
-			method: 'POST'
-		})
-			.then(response => response.json())
-			.then(objectResponse => {
-				if (objectResponse.error) throw objectResponse.error;
-				return objectResponse;
-			})
+		api.createExperiment(body)
 			.then(function _successCallback(objectResponse) {
 				const {
 					segmentsExperiment,
@@ -198,16 +187,7 @@ function SegmentsExperimentsSidebar({
 			segmentsExperimentId: segmentsExperiment.segmentsExperimentId
 		};
 
-		fetch(endpoints.editSegmentsExperimentURL, {
-			body: getFormData(body, namespace),
-			credentials: 'include',
-			method: 'POST'
-		})
-			.then(response => response.json())
-			.then(objectResponse => {
-				if (objectResponse.error) throw objectResponse.error;
-				return objectResponse;
-			})
+		api.editExperiment(body)
 			.then(function _successCallback(objectResponse) {
 				const {segmentsExperiment} = objectResponse;
 
@@ -261,16 +241,7 @@ function SegmentsExperimentsSidebar({
 				segmentsExperimentId: segmentsExperiment.segmentsExperimentId
 			};
 
-			fetch(endpoints.createSegmentsVariantURL, {
-				body: getFormData(body, contentPageEditorNamespace),
-				credentials: 'include',
-				method: 'POST'
-			})
-				.then(response => response.json())
-				.then(objectResponse => {
-					if (objectResponse.error) throw objectResponse.error;
-					return objectResponse;
-				})
+			api.createVariant(body)
 				.then(({segmentsExperimentRel}) => {
 					const {
 						name,
@@ -302,23 +273,13 @@ function SegmentsExperimentsSidebar({
 			segmentsExperimentRelId: variantId
 		};
 
-		fetch(endpoints.deleteSegmentsVariantURL, {
-			body: getFormData(body, namespace),
-			credentials: 'include',
-			method: 'POST'
-		})
-			.then(response => response.json())
-			.then(response => {
-				if (response.error) throw response.error;
-				return response;
-			})
-			.then(() => {
-				setVariants(
-					variants.filter(
-						variant => variant.segmentsExperimentRelId !== variantId
-					)
-				);
-			});
+		api.deleteVariant(body).then(() => {
+			setVariants(
+				variants.filter(
+					variant => variant.segmentsExperimentRelId !== variantId
+				)
+			);
+		});
 	}
 
 	function _handleVariantEdition({name, variantId}) {
@@ -330,16 +291,7 @@ function SegmentsExperimentsSidebar({
 				segmentsExperimentRelId: variantId
 			};
 
-			fetch(endpoints.editSegmentsVariantURL, {
-				body: getFormData(body, namespace),
-				credentials: 'include',
-				method: 'POST'
-			})
-				.then(response => response.json())
-				.then(response => {
-					if (response.error) throw response.error;
-					return response;
-				})
+			api.editVariant(body)
 				.then(({segmentsExperimentRel}) => {
 					setVariants(
 						variants.map(variant => {
@@ -374,11 +326,3 @@ SegmentsExperimentsSidebar.propTypes = {
 };
 
 export default SegmentsExperimentsSidebar;
-
-function getFormData(body, prefix, _formData = new FormData()) {
-	Object.entries(body).forEach(([key, value]) => {
-		_formData.append(`${prefix}${key}`, value);
-	});
-
-	return _formData;
-}

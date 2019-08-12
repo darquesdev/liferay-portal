@@ -17,17 +17,36 @@ import ReactDOM from 'react-dom';
 import {ClayIconSpriteContext} from '@clayui/icon';
 import SegmentsExperimentsSidebar from './components/SegmentsExperimentsSidebar.es';
 import SegmentsExperimentsContext from './context.es';
+import API from './API/index.es';
 
 export default function segmentsExperimentsApp(id, props, context) {
 	const rootElement = document.getElementById(id);
 
+	const {page, endpoints} = context;
+	const {
+		createSegmentsExperimentURL,
+		createSegmentsVariantURL,
+		deleteSegmentsVariantURL,
+		editSegmentsExperimentURL,
+		editSegmentsVariantURL
+	} = endpoints;
+
 	ReactDOM.render(
 		<SegmentsExperimentsContext.Provider
 			value={{
-				contentPageEditorNamespace: context.contentPageEditorNamespace,
-				endpoints: context.endpoints,
-				namespace: context.namespace,
-				page: context.page
+				api: API({
+					contentPageEditorNamespace:
+						context.contentPageEditorNamespace,
+					endpoints: {
+						createSegmentsExperimentURL,
+						createSegmentsVariantURL,
+						deleteSegmentsVariantURL,
+						editSegmentsExperimentURL,
+						editSegmentsVariantURL
+					},
+					namespace: context.namespace
+				}),
+				page
 			}}
 		>
 			<ClayIconSpriteContext.Provider value={context.spritemap}>
