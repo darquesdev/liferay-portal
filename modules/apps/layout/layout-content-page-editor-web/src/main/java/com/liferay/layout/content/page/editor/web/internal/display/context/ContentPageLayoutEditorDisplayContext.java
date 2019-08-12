@@ -270,6 +270,22 @@ public class ContentPageLayoutEditorDisplayContext
 		return _segmentsEntryId;
 	}
 
+	private String _getSegmentsExperienceId() {
+		if (_segmentsExperienceId != null) {
+			return String.valueOf(_segmentsExperienceId);
+		}
+
+		_segmentsExperienceId = ParamUtil.getLong(
+			PortalUtil.getOriginalServletRequest(request),
+			"segmentsExperienceId");
+
+		if (_segmentsExperienceId == null) {
+			return String.valueOf(SegmentsExperienceConstants.ID_DEFAULT);
+		}
+
+		return String.valueOf(_segmentsExperienceId);
+	}
+
 	private boolean _hasEditSegmentsEntryPermission() throws PortalException {
 		String editSegmentsEntryURL = _getEditSegmentsEntryURL();
 
@@ -325,6 +341,10 @@ public class ContentPageLayoutEditorDisplayContext
 			"layoutDataList", _getLayoutDataListSoyContext()
 		).put(
 			"selectedSegmentsEntryId", String.valueOf(_getSegmentsEntryId())
+		).put(
+			"segmentsExperienceId", _getSegmentsExperienceId()
+		).put(
+			"singleExperienceMode", true
 		);
 	}
 
@@ -332,6 +352,7 @@ public class ContentPageLayoutEditorDisplayContext
 	private String _editSegmentsEntryURL;
 	private SoyContext _fragmentsEditorToolbarSoyContext;
 	private Long _segmentsEntryId;
+	private Long _segmentsExperienceId;
 	private Boolean _showSegmentsExperiences;
 
 }
