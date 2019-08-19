@@ -295,6 +295,13 @@ public class SegmentsExperimentWrapper
 		return model.getSegmentsEntryId();
 	}
 
+	@Override
+	public String getSegmentsEntryName(java.util.Locale locale)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return model.getSegmentsEntryName(locale);
+	}
+
 	/**
 	 * Returns the segments experience ID of this segments experiment.
 	 *
