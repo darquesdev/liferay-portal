@@ -107,10 +107,13 @@ public class EditSegmentsExperimentMVCActionCommand
 				ParamUtil.getString(actionRequest, "goal"),
 				ParamUtil.getString(actionRequest, "goalTarget"));
 
+		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
 		return JSONUtil.put(
 			"segmentsExperiment",
 			SegmentsExperimentUtil.toSegmentsExperimentJSONObject(
-				segmentsExperiment));
+				themeDisplay.getLocale(), segmentsExperiment));
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

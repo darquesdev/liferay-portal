@@ -148,6 +148,7 @@ public class SegmentsExperimentDisplayContext {
 				).put(
 					"segmentsExperiment",
 					SegmentsExperimentUtil.toSegmentsExperimentJSONObject(
+						locale,
 						_getDraftSegmentsExperimentOptional(
 							segmentsExperience.getSegmentsExperienceId()
 						).orElse(
@@ -167,6 +168,7 @@ public class SegmentsExperimentDisplayContext {
 			).put(
 				"segmentsExperiment",
 				SegmentsExperimentUtil.toSegmentsExperimentJSONObject(
+					locale,
 					_getDraftSegmentsExperimentOptional(
 						SegmentsExperienceConstants.ID_DEFAULT
 					).orElse(
@@ -198,9 +200,11 @@ public class SegmentsExperimentDisplayContext {
 		return segmentsExperimentGoalsJSONArray;
 	}
 
-	public JSONObject getSegmentsExperimentJSONObject() throws PortalException {
+	public JSONObject getSegmentsExperimentJSONObject(Locale locale)
+		throws PortalException {
+
 		return SegmentsExperimentUtil.toSegmentsExperimentJSONObject(
-			_getSegmentsExperiment());
+			locale, _getSegmentsExperiment());
 	}
 
 	public JSONArray getSegmentsExperimentRelsJSONArray(Locale locale)

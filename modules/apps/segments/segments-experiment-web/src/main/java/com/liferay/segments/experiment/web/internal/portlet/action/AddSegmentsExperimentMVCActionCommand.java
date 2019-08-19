@@ -113,18 +113,18 @@ public class AddSegmentsExperimentMVCActionCommand
 				ParamUtil.getString(actionRequest, "goalTarget"),
 				ServiceContextFactory.getInstance(actionRequest));
 
+		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
 		JSONObject jsonObject = JSONUtil.put(
 			"segmentsExperiment",
 			SegmentsExperimentUtil.toSegmentsExperimentJSONObject(
-				segmentsExperiment));
+				themeDisplay.getLocale(), segmentsExperiment));
 
 		SegmentsExperimentRel segmentsExperimentRel =
 			_segmentsExperimentRelService.getSegmentsExperimentRel(
 				segmentsExperiment.getSegmentsExperimentId(),
 				segmentsExperiment.getSegmentsExperienceId());
-
-		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
 
 		jsonObject.put(
 			"segmentsExperimentRel",
