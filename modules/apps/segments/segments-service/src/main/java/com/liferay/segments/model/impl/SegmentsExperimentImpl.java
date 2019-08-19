@@ -14,19 +14,24 @@
 
 package com.liferay.segments.model.impl;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
+import com.liferay.segments.constants.SegmentsEntryConstants;
 import com.liferay.segments.constants.SegmentsExperienceConstants;
+import com.liferay.segments.model.SegmentsEntry;
 import com.liferay.segments.model.SegmentsExperience;
 import com.liferay.segments.model.SegmentsExperimentRel;
+import com.liferay.segments.service.SegmentsEntryLocalServiceUtil;
 import com.liferay.segments.service.SegmentsExperienceLocalServiceUtil;
 import com.liferay.segments.service.SegmentsExperimentRelLocalServiceUtil;
 
 import java.io.IOException;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -63,6 +68,25 @@ public class SegmentsExperimentImpl extends SegmentsExperimentBaseImpl {
 
 		return GetterUtil.getString(
 			typeSettingsProperties.getProperty("goalTarget"));
+	}
+
+	@Override
+	public String getSegmentsEntryName(Locale locale) throws PortalException {
+		if (getSegmentsExperienceId() ==
+				SegmentsExperienceConstants.ID_DEFAULT) {
+
+			return SegmentsEntryConstants.getDefaultSegmentsEntryName(locale);
+		}
+
+		SegmentsExperience segmentsExperience =
+			SegmentsExperienceLocalServiceUtil.getSegmentsExperience(
+				getSegmentsExperienceId());
+
+		SegmentsEntry segmentsEntry =
+			SegmentsEntryLocalServiceUtil.getSegmentsEntry(
+				segmentsExperience.getSegmentsEntryId());
+
+		return segmentsEntry.getName(locale);
 	}
 
 	@Override
