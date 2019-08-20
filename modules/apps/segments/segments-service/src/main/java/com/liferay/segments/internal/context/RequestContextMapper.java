@@ -53,7 +53,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -208,9 +207,11 @@ public class RequestContextMapper {
 			return new String[0];
 		}
 
-		Set<Entry<String,String[]>> entrySet = parameterMap.entrySet();
+		Set<Map.Entry<String, String[]>> entrySet = parameterMap.entrySet();
 
-		return entrySet.stream().map(
+		Stream<Map.Entry<String, String[]>> stream = entrySet.stream();
+
+		return stream.map(
 			e -> e.getKey() + "=" + StringUtil.merge(e.getValue())
 		).toArray(
 			String[]::new
