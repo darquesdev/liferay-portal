@@ -45,7 +45,7 @@ public interface SegmentsExperienceRequestProcessor {
 	 * @param  segmentsExperienceIds the primary keys of the user's active
 	 *         segment experiences
 	 * @return the processed IDs of segments experiences that will be actually
-	 * 	       applied in the current request
+	 *         applied in the current request
 	 * @throws PortalException if a portal exception occurred
 	 */
 	public long[] getSegmentsExperienceIds(
