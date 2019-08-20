@@ -29,10 +29,15 @@ import java.util.ResourceBundle;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
- * The extended model implementation for the SegmentsExperimentRel service. Represents a row in the &quot;SegmentsExperimentRel&quot; database table, with each column mapped to a property of this class.
+ * The extended model implementation for the SegmentsExperimentRel service.
+ * Represents a row in the &quot;SegmentsExperimentRel&quot; database table,
+ * with each column mapped to a property of this class.
  *
  * <p>
- * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.liferay.segments.model.SegmentsExperimentRel</code> interface.
+ * Helper methods and all application logic should be put in this class.
+ * Whenever methods are added, rerun ServiceBuilder to copy their definitions
+ * into the <code>com.liferay.segments.model.SegmentsExperimentRel</code>
+ * interface.
  * </p>
  *
  * @author Eduardo García
