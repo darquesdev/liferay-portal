@@ -239,7 +239,7 @@ public class SegmentsExperimentDisplayContext {
 			return _segmentsExperienceId;
 		}
 
-		_segmentsExperienceId = _getSegmentsExperienceId();
+		_segmentsExperienceId = _getSegmentsExperienceIdFromRequest();
 
 		if (_segmentsExperienceId == -1) {
 			_segmentsExperienceId = SegmentsExperienceConstants.ID_DEFAULT;
@@ -274,7 +274,7 @@ public class SegmentsExperimentDisplayContext {
 			actionURL.toString(), "p_l_mode", Constants.EDIT);
 	}
 
-	private long _getSegmentsExperienceId() {
+	private long _getSegmentsExperienceIdFromRequest() {
 		HttpServletRequest originalHttpServletRequest =
 			_portal.getOriginalServletRequest(_httpServletRequest);
 
@@ -287,30 +287,40 @@ public class SegmentsExperimentDisplayContext {
 			return _segmentsExperiment;
 		}
 
-		if (_getSegmentsExperienceId() != -1) {
+		long segmentsExperienceIdFromRequest =
+			_getSegmentsExperienceIdFromRequest();
+
+		if (segmentsExperienceIdFromRequest != -1) {
 			_segmentsExperiment = _getActiveSegmentsExperimentOptional(
 				getSelectedSegmentsExperienceId()
 			).orElse(
 				null
 			);
+
+			return _segmentsExperiment;
 		}
-		else {
-			HttpServletRequest originalHttpServletRequest =
-				_portal.getOriginalServletRequest(_httpServletRequest);
 
-			String segmentsExperimentKey = ParamUtil.getString(
-				originalHttpServletRequest, "segmentsExperimentKey");
+		String selectedSegmentsExperimentKey =
+			_getSegmentsExperimentKeyFromRequest();
 
-			if (Validator.isNotNull(segmentsExperimentKey)) {
-				SegmentsExperiment segmentsExperiment =
-					_segmentsExperimentService.fetchSegmentsExperiment(
-						_themeDisplay.getScopeGroupId(), segmentsExperimentKey);
+		if (Validator.isNotNull(selectedSegmentsExperimentKey)) {
+			SegmentsExperiment segmentsExperiment =
+				_segmentsExperimentService.fetchSegmentsExperiment(
+					_themeDisplay.getScopeGroupId(),
+					selectedSegmentsExperimentKey);
 
-				if (segmentsExperiment != null) {
-					_segmentsExperiment = segmentsExperiment;
-				}
+			if (segmentsExperiment != null) {
+				_segmentsExperiment = segmentsExperiment;
+
+				return _segmentsExperiment;
 			}
 		}
+
+		_segmentsExperiment = _getActiveSegmentsExperimentOptional(
+			getSelectedSegmentsExperienceId()
+		).orElse(
+			null
+		);
 
 		return _segmentsExperiment;
 	}
@@ -322,6 +332,14 @@ public class SegmentsExperimentDisplayContext {
 
 		return HttpUtil.addParameter(
 			actionURL.toString(), "p_l_mode", Constants.VIEW);
+	}
+
+	private String _getSegmentsExperimentKeyFromRequest() {
+		HttpServletRequest originalHttpServletRequest =
+			_portal.getOriginalServletRequest(_httpServletRequest);
+
+		return ParamUtil.getString(
+			originalHttpServletRequest, "segmentsExperimentKey");
 	}
 
 	private final HttpServletRequest _httpServletRequest;
