@@ -280,9 +280,20 @@ public class SegmentsExperimentLocalServiceTest {
 
 	@Test
 	public void testFetchSegmentsExperiment() throws Exception {
-		SegmentsExperience segmentsExperience = _addSegmentsExperience();
+		SegmentsExperiment segmentsExperiment = _addSegmentsExperiment();
 
-		_addSegmentsExperiment(segmentsExperience);
+		SegmentsExperience segmentsExperience =
+			_segmentsExperienceLocalService.addSegmentsExperience(
+				segmentsExperiment.getSegmentsEntryId(),
+				segmentsExperiment.getClassNameId(),
+				segmentsExperiment.getClassPK(),
+				RandomTestUtil.randomLocaleStringMap(), false,
+				ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
+
+		_segmentsExperimentRelLocalService.addSegmentsExperimentRel(
+			segmentsExperiment.getSegmentsExperimentId(),
+			segmentsExperience.getSegmentsExperienceId(),
+			ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
 
 		Assert.assertNull(
 			_segmentsExperimentLocalService.fetchSegmentsExperiment(

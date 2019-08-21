@@ -172,9 +172,8 @@ public class SegmentsExperimentLocalServiceImpl
 		int[] status) {
 
 		List<SegmentsExperiment> segmentsExperiments =
-			segmentsExperimentPersistence.findByS_C_C_S(
-				new long[] {segmentsExperienceId}, classNameId, classPK, status,
-				0, 1);
+			segmentsExperimentFinder.findByS_C_C_S(
+				segmentsExperienceId, classNameId, classPK, status, 0, 1);
 
 		if (segmentsExperiments.isEmpty()) {
 			return null;
@@ -249,7 +248,7 @@ public class SegmentsExperimentLocalServiceImpl
 		long segmentsExperienceId, long classNameId, long classPK, int status) {
 
 		int count = segmentsExperimentFinder.countByS_C_C_S(
-			segmentsExperienceId, classNameId, classPK, status);
+			segmentsExperienceId, classNameId, classPK, new int[] {status});
 
 		if (count > 0) {
 			return true;

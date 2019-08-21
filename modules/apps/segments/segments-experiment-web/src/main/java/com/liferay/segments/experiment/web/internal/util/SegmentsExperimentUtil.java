@@ -69,6 +69,8 @@ public class SegmentsExperimentUtil {
 		).put(
 			"goal", typeSettingsProperties.getProperty("goal")
 		).put(
+			"editable", _isEditableSegmentsExperiment(segmentsExperiment)
+		).put(
 			"goalTarget", typeSettingsProperties.getProperty("goalTarget")
 		).put(
 			"name", segmentsExperiment.getName()
@@ -129,6 +131,16 @@ public class SegmentsExperimentUtil {
 		).put(
 			"value", status.getValue()
 		);
+	}
+
+	private static boolean _isEditableSegmentsExperiment(
+		SegmentsExperiment segmentsExperiment) {
+
+		SegmentsExperimentConstants.Status status =
+			SegmentsExperimentConstants.Status.valueOf(
+				segmentsExperiment.getStatus());
+
+		return status.isEditable();
 	}
 
 	private SegmentsExperimentUtil() {
