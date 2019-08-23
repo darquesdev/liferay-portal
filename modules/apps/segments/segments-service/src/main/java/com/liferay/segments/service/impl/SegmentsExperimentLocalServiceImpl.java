@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.segments.constants.SegmentsExperimentConstants;
+import com.liferay.segments.exception.LockedSegmentsExperimentException;
 import com.liferay.segments.exception.NoSuchExperimentException;
 import com.liferay.segments.exception.SegmentsExperimentGoalException;
 import com.liferay.segments.exception.SegmentsExperimentNameException;
@@ -148,13 +149,20 @@ public class SegmentsExperimentLocalServiceImpl
 			long segmentsExperienceId, long classNameId, long classPK)
 		throws PortalException {
 
-		segmentsExperimentPersistence.removeByS_C_C(
-			segmentsExperienceId, classNameId, classPK);
+		List<SegmentsExperiment> segmentsExperiments =
+			segmentsExperimentPersistence.findByS_C_C(
+				segmentsExperienceId, classNameId, classPK);
+
+		for (SegmentsExperiment segmentsExperiment : segmentsExperiments) {
+			segmentsExperimentLocalService.deleteSegmentsExperiment(
+				segmentsExperiment);
+		}
 	}
 
 	@Override
 	public SegmentsExperiment fetchSegmentsExperiment(
-		long segmentsExperienceId, long classNameId, long classPK, int status) {
+		long segmentsExperienceId, long classNameId, long classPK,
+		int[] status) {
 
 		List<SegmentsExperiment> segmentsExperiments =
 			segmentsExperimentFinder.findByS_C_C_S(
@@ -230,7 +238,8 @@ public class SegmentsExperimentLocalServiceImpl
 
 	@Override
 	public boolean hasSegmentsExperiment(
-		long segmentsExperienceId, long classNameId, long classPK, int status) {
+		long segmentsExperienceId, long classNameId, long classPK,
+		int[] status) {
 
 		int count = segmentsExperimentFinder.countByS_C_C_S(
 			segmentsExperienceId, classNameId, classPK, status);
@@ -251,6 +260,14 @@ public class SegmentsExperimentLocalServiceImpl
 		SegmentsExperiment segmentsExperiment =
 			segmentsExperimentPersistence.findByPrimaryKey(
 				segmentsExperimentId);
+
+		SegmentsExperimentConstants.Status status =
+			SegmentsExperimentConstants.Status.valueOf(
+				segmentsExperiment.getStatus());
+
+		if (!status.isEditable()) {
+			throw new LockedSegmentsExperimentException(segmentsExperimentId);
+		}
 
 		_validateGoal(goal);
 		_validateName(name);
@@ -346,14 +363,27 @@ public class SegmentsExperimentLocalServiceImpl
 			SegmentsExperimentConstants.Status.valueOf(newStatusValue);
 
 		if (newStatus.isExclusive()) {
-			SegmentsExperiment segmentsExperiment =
-				segmentsExperimentPersistence.fetchByS_C_C_S_First(
-					segmentsExperienceId, classNameId, classPK,
-					newStatus.getValue(), null);
+			List<SegmentsExperiment> segmentsExperiments =
+				segmentsExperimentPersistence.findByS_C_C_S(
+					new long[] {segmentsExperienceId}, classNameId, classPK,
+					SegmentsExperimentConstants.Status.exclusiveStates());
 
-			if ((segmentsExperiment != null) &&
-				(segmentsExperiment.getSegmentsExperimentId() !=
-					segmentsExperimentId)) {
+			if (segmentsExperiments.isEmpty()) {
+				return;
+			}
+
+			if (segmentsExperiments.size() > 1) {
+				throw new SegmentsExperimentStatusException(
+					String.format(
+						"There are %d segments experiments with exclusive " +
+							"status",
+						segmentsExperiments.size()));
+			}
+
+			SegmentsExperiment segmentsExperiment = segmentsExperiments.get(0);
+
+			if (segmentsExperiment.getSegmentsExperimentId() !=
+					segmentsExperimentId) {
 
 				throw new SegmentsExperimentStatusException(
 					"A segments experiment with status " + newStatus.name() +
