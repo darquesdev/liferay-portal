@@ -219,10 +219,10 @@ public class SegmentsExperimentLocalServiceUtil {
 	public static com.liferay.segments.model.SegmentsExperiment
 		fetchSegmentsExperiment(
 			long segmentsExperienceId, long classNameId, long classPK,
-			int[] status) {
+			int[] statuses) {
 
 		return getService().fetchSegmentsExperiment(
-			segmentsExperienceId, classNameId, classPK, status);
+			segmentsExperienceId, classNameId, classPK, statuses);
 	}
 
 	public static com.liferay.segments.model.SegmentsExperiment
@@ -414,10 +414,10 @@ public class SegmentsExperimentLocalServiceUtil {
 
 	public static boolean hasSegmentsExperiment(
 		long segmentsExperienceId, long classNameId, long classPK,
-		int[] status) {
+		int[] statuses) {
 
 		return getService().hasSegmentsExperiment(
-			segmentsExperienceId, classNameId, classPK, status);
+			segmentsExperienceId, classNameId, classPK, statuses);
 	}
 
 	public static com.liferay.segments.model.SegmentsExperiment

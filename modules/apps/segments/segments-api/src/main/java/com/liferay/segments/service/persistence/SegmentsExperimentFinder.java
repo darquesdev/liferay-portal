@@ -25,11 +25,11 @@ public interface SegmentsExperimentFinder {
 
 	public int countByS_C_C_S(
 		long segmentsExperienceId, long classNameId, long classPK,
-		int[] status);
+		int[] statuses);
 
 	public java.util.List<com.liferay.segments.model.SegmentsExperiment>
 		findByS_C_C_S(
 			long segmentsExperienceId, long classNameId, long classPK,
-			int[] status, int start, int end);
+			int[] statuses, int start, int end);
 
 }
