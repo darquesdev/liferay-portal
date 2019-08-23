@@ -50,7 +50,7 @@ public class SegmentsExperimentFinderImpl
 	@Override
 	public int countByS_C_C_S(
 		long segmentsExperienceId, long classNameId, long classPK,
-		int[] status) {
+		int[] statuses) {
 
 		Session session = null;
 
@@ -59,7 +59,7 @@ public class SegmentsExperimentFinderImpl
 
 			String sql = _customSQL.get(getClass(), COUNT_BY_S_C_C_S);
 
-			sql = _replaceSegmentsExperimentStatus(sql, status);
+			sql = _replaceSegmentsExperimentStatus(sql, statuses);
 
 			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
@@ -93,8 +93,8 @@ public class SegmentsExperimentFinderImpl
 
 	@Override
 	public List<SegmentsExperiment> findByS_C_C_S(
-		long segmentsExperienceId, long classNameId, long classPK, int[] status,
-		int start, int end) {
+		long segmentsExperienceId, long classNameId, long classPK,
+		int[] statuses, int start, int end) {
 
 		Session session = null;
 
@@ -103,7 +103,7 @@ public class SegmentsExperimentFinderImpl
 
 			String sql = _customSQL.get(getClass(), FIND_BY_S_C_C_S);
 
-			sql = _replaceSegmentsExperimentStatus(sql, status);
+			sql = _replaceSegmentsExperimentStatus(sql, statuses);
 
 			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
@@ -126,13 +126,15 @@ public class SegmentsExperimentFinderImpl
 		}
 	}
 
-	private String _replaceSegmentsExperimentStatus(String sql, int[] status) {
-		StringBundler sb = new StringBundler(status.length);
+	private String _replaceSegmentsExperimentStatus(
+		String sql, int[] statuses) {
 
-		for (int i = 0; i < status.length; i++) {
-			sb.append(status[i]);
+		StringBundler sb = new StringBundler(statuses.length);
 
-			if (i != (status.length - 1)) {
+		for (int i = 0; i < statuses.length; i++) {
+			sb.append(statuses[i]);
+
+			if (i != (statuses.length - 1)) {
 				sb.append(", ");
 			}
 		}
