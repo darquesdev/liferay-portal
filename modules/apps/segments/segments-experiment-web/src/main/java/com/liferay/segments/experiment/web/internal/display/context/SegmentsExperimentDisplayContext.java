@@ -102,6 +102,10 @@ public class SegmentsExperimentDisplayContext {
 		return _getSegmentsExperimentActionURL("/edit_segments_experiment");
 	}
 
+	public String getEditSegmentsExperimentStatusURL() {
+		return _getSegmentsExperimentActionURL("/edit_segments_experiment_status");
+	}
+
 	public String getEditSegmentsVariantLayoutURL() throws PortalException {
 		Layout layout = _themeDisplay.getLayout();
 
