@@ -14,12 +14,7 @@
 
 package com.liferay.layout.content.page.editor.web.internal.portlet.action;
 
-import com.liferay.fragment.model.FragmentEntryLink;
-import com.liferay.fragment.service.FragmentEntryLinkLocalService;
-import com.liferay.fragment.service.FragmentEntryLinkService;
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortletKeys;
-import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
-import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -53,8 +48,6 @@ import com.liferay.segments.service.SegmentsExperimentRelService;
 import com.liferay.segments.service.SegmentsExperimentService;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -118,25 +111,6 @@ public class AddSegmentsExperienceMVCActionCommand
 			actionRequest, actionResponse, jsonObject);
 	}
 
-	private String _addLayoutData(
-			long groupId, long classNameId, long classPK,
-			long segmentsExperienceId, long baseSegmentsExperienceId)
-		throws PortalException {
-
-		LayoutPageTemplateStructure layoutPageTemplateStructure =
-			_layoutPageTemplateStructureService.
-				fetchLayoutPageTemplateStructure(
-					groupId, classNameId, classPK, true);
-
-		String data = layoutPageTemplateStructure.getData(
-			baseSegmentsExperienceId);
-
-		_layoutPageTemplateStructureService.updateLayoutPageTemplateStructure(
-			groupId, classNameId, classPK, segmentsExperienceId, data);
-
-		return data;
-	}
-
 	private JSONObject _addSegmentsExperience(ActionRequest actionRequest)
 		throws PortalException {
 
@@ -159,18 +133,20 @@ public class AddSegmentsExperienceMVCActionCommand
 		long baseSegmentsExperienceId = _getBaseSegmentsExperienceId(
 			segmentsExperiment);
 
-		String layoutData = _addLayoutData(
-			themeDisplay.getScopeGroupId(), classNameId, classPK,
-			segmentsExperience.getSegmentsExperienceId(),
-			baseSegmentsExperienceId);
+		String layoutData =
+			_addSegmentsExperienceMVCCommandHelper.copyLayoutData(
+				themeDisplay.getScopeGroupId(), classNameId, classPK,
+				baseSegmentsExperienceId,
+				segmentsExperience.getSegmentsExperienceId());
 
 		_populateLayoutDataJSONObject(jsonObject, layoutData);
 
 		Map<Long, String> fragmentEntryLinksEditableValuesMap =
-			_updateFragmentEntryLinksEditableValues(
-				themeDisplay.getScopeGroupId(), classNameId, classPK,
-				segmentsExperience.getSegmentsExperienceId(),
-				baseSegmentsExperienceId);
+			_addSegmentsExperienceMVCCommandHelper.
+				copyFragmentEntryLinksEditableValues(
+					themeDisplay.getScopeGroupId(), classNameId, classPK,
+					baseSegmentsExperienceId,
+					segmentsExperience.getSegmentsExperienceId());
 
 		_populateFragmentEntryLinksJSONObject(
 			jsonObject, fragmentEntryLinksEditableValuesMap);
@@ -276,15 +252,10 @@ public class AddSegmentsExperienceMVCActionCommand
 			_portal.getClassNameId(Layout.class.getName()), classPK);
 
 		if (draftLayout != null) {
-			_addLayoutData(
+			_addSegmentsExperienceMVCCommandHelper.copySegmentsExperienceData(
 				groupId, draftLayout.getClassNameId(), draftLayout.getPlid(),
-				segmentsExperience.getSegmentsExperienceId(),
-				baseSegmentsExperienceId);
-
-			_updateFragmentEntryLinksEditableValues(
-				groupId, draftLayout.getClassNameId(), draftLayout.getPlid(),
-				segmentsExperience.getSegmentsExperienceId(),
-				baseSegmentsExperienceId);
+				baseSegmentsExperienceId,
+				segmentsExperience.getSegmentsExperienceId());
 		}
 	}
 
@@ -357,106 +328,6 @@ public class AddSegmentsExperienceMVCActionCommand
 			));
 	}
 
-	private Map<Long, String> _updateFragmentEntryLinksEditableValues(
-			long groupId, long classNameId, long classPK,
-			long segmentsExperienceId, long baseSegmentsExperienceId)
-		throws PortalException {
-
-		Map<Long, String> fragmentEntryLinksEditableValuesMap = new HashMap<>();
-
-		List<FragmentEntryLink> fragmentEntryLinks =
-			_fragmentEntryLinkLocalService.getFragmentEntryLinks(
-				groupId, classNameId, classPK);
-
-		for (FragmentEntryLink fragmentEntryLink : fragmentEntryLinks) {
-			JSONObject editableValuesJSONObject =
-				JSONFactoryUtil.createJSONObject(
-					fragmentEntryLink.getEditableValues());
-
-			Iterator<String> keysIterator = editableValuesJSONObject.keys();
-
-			while (keysIterator.hasNext()) {
-				String editableProcessorKey = keysIterator.next();
-
-				JSONObject editableProcessorJSONObject =
-					editableValuesJSONObject.getJSONObject(
-						editableProcessorKey);
-
-				if (editableProcessorJSONObject == null) {
-					continue;
-				}
-
-				Iterator<String> editableKeysIterator =
-					editableProcessorJSONObject.keys();
-
-				while (editableKeysIterator.hasNext()) {
-					String editableKey = editableKeysIterator.next();
-
-					if (editableKey.startsWith(
-							SegmentsExperienceConstants.ID_PREFIX)) {
-
-						JSONObject baseExperienceValueJSONObject =
-							editableProcessorJSONObject.getJSONObject(
-								SegmentsExperienceConstants.ID_PREFIX +
-									baseSegmentsExperienceId);
-
-						editableProcessorJSONObject.put(
-							SegmentsExperienceConstants.ID_PREFIX +
-								segmentsExperienceId,
-							baseExperienceValueJSONObject);
-
-						editableValuesJSONObject.put(
-							editableProcessorKey, editableProcessorJSONObject);
-
-						break;
-					}
-
-					JSONObject editableJSONObject =
-						editableProcessorJSONObject.getJSONObject(editableKey);
-
-					JSONObject valueJSONObject = null;
-
-					if (editableJSONObject.has(
-							SegmentsExperienceConstants.ID_PREFIX +
-								baseSegmentsExperienceId)) {
-
-						valueJSONObject = editableJSONObject.getJSONObject(
-							SegmentsExperienceConstants.ID_PREFIX +
-								baseSegmentsExperienceId);
-					}
-					else if (editableJSONObject.has("defaultValue")) {
-						valueJSONObject = JSONUtil.put(
-							"defaultValue",
-							editableJSONObject.getString("defaultValue"));
-					}
-					else {
-						continue;
-					}
-
-					editableJSONObject.put(
-						SegmentsExperienceConstants.ID_PREFIX +
-							segmentsExperienceId,
-						valueJSONObject);
-
-					editableProcessorJSONObject.put(
-						editableKey, editableJSONObject);
-
-					editableValuesJSONObject.put(
-						editableProcessorKey, editableProcessorJSONObject);
-				}
-			}
-
-			fragmentEntryLinksEditableValuesMap.put(
-				fragmentEntryLink.getFragmentEntryLinkId(),
-				editableValuesJSONObject.toString());
-		}
-
-		_fragmentEntryLinkService.updateFragmentEntryLinks(
-			fragmentEntryLinksEditableValuesMap);
-
-		return fragmentEntryLinksEditableValuesMap;
-	}
-
 	private static final Log _log = LogFactoryUtil.getLog(
 		AddSegmentsExperienceMVCActionCommand.class);
 
@@ -465,17 +336,11 @@ public class AddSegmentsExperienceMVCActionCommand
 			Propagation.REQUIRED, new Class<?>[] {Exception.class});
 
 	@Reference
-	private FragmentEntryLinkLocalService _fragmentEntryLinkLocalService;
-
-	@Reference
-	private FragmentEntryLinkService _fragmentEntryLinkService;
+	private AddSegmentsExperienceMVCCommandHelper
+		_addSegmentsExperienceMVCCommandHelper;
 
 	@Reference
 	private LayoutLocalService _layoutLocalService;
-
-	@Reference
-	private LayoutPageTemplateStructureLocalService
-		_layoutPageTemplateStructureService;
 
 	@Reference
 	private Portal _portal;
