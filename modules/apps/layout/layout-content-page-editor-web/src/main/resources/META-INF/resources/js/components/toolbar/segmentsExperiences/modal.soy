@@ -37,6 +37,8 @@
 	{@param title: string }
 
 	{if $visible}
+		{let $emptySegments: $experienceForm.segmentSelector.segments and length($experienceForm.segmentSelector.segments) == 0 /}
+
 		{call liferay.frontend.Modal.render}
 			{param body kind="html"}
 				<form
@@ -102,7 +104,7 @@
 						</label>
 
 						{let $selectAttributes kind="attributes"}
-							{if $experienceForm.segmentSelector.segments and length($experienceForm.segmentSelector.segments) == 0}
+							{if $emptySegments}
 								disabled
 							{/if}
 						{/let}
@@ -162,7 +164,7 @@
 						</button>
 
 						{let $saveButtonDisabled kind="attributes"}
-							{if $experienceForm.segmentSelector.segments and length($experienceForm.segmentSelector.segments) == 0}
+							{if $emptySegments}
 								disabled
 							{/if}
 						{/let}
