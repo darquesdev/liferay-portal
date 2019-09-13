@@ -19,6 +19,7 @@ const DEFAULT_STATE = {
 	editExperimentModal: {active: false},
 	experiences: [],
 	experiment: null,
+	experimentHistory: [],
 	selectedExperienceId: null,
 	variants: [],
 	winnerVariant: null
@@ -26,6 +27,7 @@ const DEFAULT_STATE = {
 
 export function getInitialState(firstState) {
 	const {
+		initialExperimentHistory,
 		initialSegmentsExperiment,
 		initialSelectedSegmentsExperienceId,
 		initialSegmentsVariants
@@ -33,6 +35,7 @@ export function getInitialState(firstState) {
 
 	const state = {
 		experiment: initialSegmentsExperiment,
+		experimentHistory: initialExperimentHistory || [],
 		selectedExperienceId: initialSelectedSegmentsExperienceId,
 		variants: initialSegmentsVariants.map(initialVariant => {
 			if (

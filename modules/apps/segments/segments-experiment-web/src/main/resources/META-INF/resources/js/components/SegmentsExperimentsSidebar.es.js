@@ -42,6 +42,7 @@ import {
 } from '../state/actions.es';
 
 function SegmentsExperimentsSidebar({
+	initialExperimentHistory,
 	initialGoals,
 	initialSegmentsExperiences,
 	initialSegmentsVariants,
@@ -53,6 +54,7 @@ function SegmentsExperimentsSidebar({
 	const [state, dispatch] = useReducer(
 		reducer,
 		{
+			initialExperimentHistory,
 			initialSegmentsExperiment,
 			initialSegmentsVariants,
 			initialSelectedSegmentsExperienceId,
@@ -336,6 +338,8 @@ function SegmentsExperimentsSidebar({
 }
 
 SegmentsExperimentsSidebar.propTypes = {
+	initialExperimentHistory: PropTypes.arrayOf(SegmentsExperimentType)
+		.isRequired,
 	initialGoals: PropTypes.arrayOf(SegmentsExperimentGoal),
 	initialSegmentsExperiences: PropTypes.arrayOf(SegmentsExperienceType),
 	initialSegmentsExperiment: SegmentsExperimentType,

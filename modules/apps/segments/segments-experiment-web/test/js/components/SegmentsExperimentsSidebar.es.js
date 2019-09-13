@@ -80,6 +80,7 @@ function _renderSegmentsExperimentsSidebarComponent({
 			}}
 		>
 			<SegmentsExperimentsSidebar
+				initialExperimentHistory={[]}
 				initialGoals={initialGoals}
 				initialSegmentsExperiences={initialSegmentsExperiences}
 				initialSegmentsExperiment={initialSegmentsExperiment}

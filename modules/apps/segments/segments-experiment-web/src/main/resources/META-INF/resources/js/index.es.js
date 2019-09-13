@@ -62,6 +62,7 @@ function renderComponent({props, context}) {
 			}}
 		>
 			<SegmentsExperimentsSidebar
+				initialExperimentHistory={props.historySegmentsExperiments}
 				initialGoals={props.segmentsExperimentGoals}
 				initialSegmentsExperiences={props.segmentsExperiences}
 				initialSegmentsExperiment={props.segmentsExperiment}
