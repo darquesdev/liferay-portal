@@ -495,17 +495,15 @@ public class SegmentsExperimentLocalServiceImpl
 
 		if ((winnerSegmentsExperienceId !=
 				segmentsExperiment.getSegmentsExperienceId()) &&
-			(statusObject == SegmentsExperimentConstants.Status.COMPLETED)) {
+			(statusObject == SegmentsExperimentConstants.Status.COMPLETED) &&
+			(segmentsExperiment.getSegmentsExperienceId() !=
+				SegmentsExperienceConstants.ID_DEFAULT)) {
+
+			_segmentsExperienceLocalService.updateSegmentsExperienceActive(
+				segmentsExperiment.getSegmentsExperienceId(), false);
 
 			_segmentsExperienceLocalService.updateSegmentsExperienceActive(
 				winnerSegmentsExperienceId, true);
-
-			if (segmentsExperiment.getSegmentsExperienceId() !=
-					SegmentsExperienceConstants.ID_DEFAULT) {
-
-				_segmentsExperienceLocalService.updateSegmentsExperienceActive(
-					segmentsExperiment.getSegmentsExperienceId(), false);
-			}
 		}
 
 		return segmentsExperiment;
