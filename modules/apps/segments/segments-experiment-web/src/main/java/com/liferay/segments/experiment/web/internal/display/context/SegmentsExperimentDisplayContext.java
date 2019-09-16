@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.HttpUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -38,6 +39,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.segments.constants.SegmentsExperienceConstants;
 import com.liferay.segments.constants.SegmentsExperimentConstants;
 import com.liferay.segments.experiment.web.internal.util.SegmentsExperimentUtil;
+import com.liferay.segments.experiment.web.internal.util.comparator.SegmentsExperimentModifiedDateComparator;
 import com.liferay.segments.model.SegmentsExperience;
 import com.liferay.segments.model.SegmentsExperiment;
 import com.liferay.segments.model.SegmentsExperimentRel;
@@ -143,6 +145,35 @@ public class SegmentsExperimentDisplayContext {
 
 	public String getRunSegmentsExperimenttURL() {
 		return _getSegmentsExperimentActionURL("/run_segments_experiment");
+	}
+
+	public JSONArray getHistorySegmentsExperimentsJSONArray(Locale locale)
+		throws PortalException {
+
+		Layout layout = _themeDisplay.getLayout();
+
+		List<SegmentsExperiment> segmentsExperiments =
+			_segmentsExperimentService.getSegmentsExperiments(
+				getSelectedSegmentsExperienceId(),
+				_portal.getClassNameId(Layout.class), layout.getPlid(),
+				SegmentsExperimentConstants.Status.
+					getNonExclusiveStatusValues(),
+				new SegmentsExperimentModifiedDateComparator());
+
+		JSONArray segmentsExperimentsJSONArray =
+			JSONFactoryUtil.createJSONArray();
+
+		if (ListUtil.isEmpty(segmentsExperiments)) {
+			return segmentsExperimentsJSONArray;
+		}
+
+		for (SegmentsExperiment segmentsExperiment : segmentsExperiments) {
+			segmentsExperimentsJSONArray.put(
+				SegmentsExperimentUtil.toSegmentsExperimentJSONObject(
+					locale, segmentsExperiment));
+		}
+
+		return segmentsExperimentsJSONArray;
 	}
 
 	public JSONArray getSegmentsExperiencesJSONArray(Locale locale)
