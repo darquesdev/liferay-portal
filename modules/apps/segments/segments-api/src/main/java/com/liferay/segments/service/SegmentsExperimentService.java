@@ -99,6 +99,11 @@ public interface SegmentsExperimentService extends BaseService {
 	public List<SegmentsExperiment> getSegmentsExperiments(
 		long groupId, long classNameId, long classPK);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<SegmentsExperiment> getSegmentsExperiments(
+		long segmentsExperienceId, long classNameId, long classPK,
+		int[] statuses, int start, int end);
+
 	public SegmentsExperiment runSegmentsExperiment(
 			long segmentsExperimentId, double confidenceLevel,
 			Map<Long, Double> segmentsExperienceIdSplitMap)

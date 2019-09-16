@@ -120,6 +120,15 @@ public class SegmentsExperimentServiceUtil {
 			groupId, classNameId, classPK);
 	}
 
+	public static java.util.List<com.liferay.segments.model.SegmentsExperiment>
+		getSegmentsExperiments(
+			long segmentsExperienceId, long classNameId, long classPK,
+			int[] statuses, int start, int end) {
+
+		return getService().getSegmentsExperiments(
+			segmentsExperienceId, classNameId, classPK, statuses, start, end);
+	}
+
 	public static com.liferay.segments.model.SegmentsExperiment
 			runSegmentsExperiment(
 				long segmentsExperimentId, double confidenceLevel,
