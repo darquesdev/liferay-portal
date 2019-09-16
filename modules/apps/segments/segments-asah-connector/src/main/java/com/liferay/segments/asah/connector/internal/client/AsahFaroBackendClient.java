@@ -56,8 +56,8 @@ public interface AsahFaroBackendClient {
 	public String getDataSourceId();
 
 	/**
-	 * Returns the individual matching the primary key for the data source {@link
-	 * #getDataSourceId()}.
+	 * Returns the individual matching the primary key for the data source
+	 * {@link #getDataSourceId()}.
 	 *
 	 * @param  individualPK the primary key of the individual
 	 * @return the individual matching the primary key, or {@code null} if no
@@ -110,8 +110,8 @@ public interface AsahFaroBackendClient {
 	/**
 	 * Updates a set of {@link DXPVariants}.
 	 *
-	 * @param experimentId the experiment ID
-	 * @param dxpVariants list of experiment variants
+	 * @param  experimentId the experiment ID
+	 * @param  dxpVariants list of experiment variants
 	 * @review
 	 */
 	public void updateExperimentDXPVariants(

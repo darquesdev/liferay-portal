@@ -35,10 +35,15 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * The extended model implementation for the SegmentsExperiment service. Represents a row in the &quot;SegmentsExperiment&quot; database table, with each column mapped to a property of this class.
+ * The extended model implementation for the SegmentsExperiment service.
+ * Represents a row in the &quot;SegmentsExperiment&quot; database table, with
+ * each column mapped to a property of this class.
  *
  * <p>
- * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.liferay.segments.model.SegmentsExperiment</code> interface.
+ * Helper methods and all application logic should be put in this class.
+ * Whenever methods are added, rerun ServiceBuilder to copy their definitions
+ * into the <code>com.liferay.segments.model.SegmentsExperiment</code>
+ * interface.
  * </p>
  *
  * @author Eduardo García
@@ -48,7 +53,9 @@ public class SegmentsExperimentImpl extends SegmentsExperimentBaseImpl {
 	/**
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. All methods that expect a segments experiment model instance should use the {@link com.liferay.segments.model.SegmentsExperiment} interface instead.
+	 * Never reference this class directly. All methods that expect a segments
+	 * experiment model instance should use the {@link
+	 * com.liferay.segments.model.SegmentsExperiment} interface instead.
 	 */
 	public SegmentsExperimentImpl() {
 	}
