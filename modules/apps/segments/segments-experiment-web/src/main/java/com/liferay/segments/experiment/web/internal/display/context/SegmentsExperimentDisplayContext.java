@@ -16,6 +16,7 @@ package com.liferay.segments.experiment.web.internal.display.context;
 
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortletKeys;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -45,6 +46,8 @@ import com.liferay.segments.service.SegmentsExperienceService;
 import com.liferay.segments.service.SegmentsExperimentRelService;
 import com.liferay.segments.service.SegmentsExperimentService;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -143,6 +146,36 @@ public class SegmentsExperimentDisplayContext {
 
 	public String getRunSegmentsExperimenttURL() {
 		return _getSegmentsExperimentActionURL("/run_segments_experiment");
+	}
+
+	public JSONArray getHistorySegmentsExperimentsJSONArray(Locale locale)
+		throws PortalException {
+
+		List<SegmentsExperiment> segmentsExperiments =
+			_getNonExclusiveSegmentsExperimentOptional(getSelectedSegmentsExperienceId()
+		).orElse(
+			null
+		);
+
+		JSONArray segmentsExperimentsJSONArray =
+			JSONFactoryUtil.createJSONArray();
+
+		if (segmentsExperiments == null) {
+			return segmentsExperimentsJSONArray;
+		}
+
+		List<SegmentsExperiment> segmentsExperimentList = new ArrayList<>(
+			segmentsExperiments);
+
+		Collections.reverse(segmentsExperimentList);
+
+		for (SegmentsExperiment segmentsExperiment : segmentsExperimentList) {
+			segmentsExperimentsJSONArray.put(
+				SegmentsExperimentUtil.toSegmentsExperimentJSONObject(
+					locale, segmentsExperiment));
+		}
+
+		return segmentsExperimentsJSONArray;
 	}
 
 	public JSONArray getSegmentsExperiencesJSONArray(Locale locale)
@@ -298,6 +331,20 @@ public class SegmentsExperimentDisplayContext {
 		}
 
 		return String.valueOf(winnerSegmentsExperienceId);
+	}
+
+	private Optional<List<SegmentsExperiment>>
+			_getNonExclusiveSegmentsExperimentOptional(long segmentsExperienceId) {
+
+		Layout layout = _themeDisplay.getLayout();
+
+		return Optional.ofNullable(
+			_segmentsExperimentService.getSegmentsExperiments(
+				segmentsExperienceId, _portal.getClassNameId(Layout.class),
+				layout.getPlid(),
+				SegmentsExperimentConstants.Status.
+					getNonExclusiveStatusValues(),
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS));
 	}
 
 	private Optional<SegmentsExperiment> _getActiveSegmentsExperimentOptional(
