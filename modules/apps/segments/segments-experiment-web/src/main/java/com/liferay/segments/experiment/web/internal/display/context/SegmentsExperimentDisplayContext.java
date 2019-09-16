@@ -144,18 +144,15 @@ public class SegmentsExperimentDisplayContext {
 		return _getSegmentsExperimentActionURL("/edit_segments_experiment_rel");
 	}
 
-	public String getRunSegmentsExperimenttURL() {
-		return _getSegmentsExperimentActionURL("/run_segments_experiment");
-	}
-
 	public JSONArray getHistorySegmentsExperimentsJSONArray(Locale locale)
 		throws PortalException {
 
 		List<SegmentsExperiment> segmentsExperiments =
-			_getNonExclusiveSegmentsExperimentOptional(getSelectedSegmentsExperienceId()
-		).orElse(
-			null
-		);
+			_getNonexclusiveSegmentsExperimentOptional(
+				getSelectedSegmentsExperienceId()
+			).orElse(
+				null
+			);
 
 		JSONArray segmentsExperimentsJSONArray =
 			JSONFactoryUtil.createJSONArray();
@@ -176,6 +173,10 @@ public class SegmentsExperimentDisplayContext {
 		}
 
 		return segmentsExperimentsJSONArray;
+	}
+
+	public String getRunSegmentsExperimenttURL() {
+		return _getSegmentsExperimentActionURL("/run_segments_experiment");
 	}
 
 	public JSONArray getSegmentsExperiencesJSONArray(Locale locale)
@@ -333,20 +334,6 @@ public class SegmentsExperimentDisplayContext {
 		return String.valueOf(winnerSegmentsExperienceId);
 	}
 
-	private Optional<List<SegmentsExperiment>>
-			_getNonExclusiveSegmentsExperimentOptional(long segmentsExperienceId) {
-
-		Layout layout = _themeDisplay.getLayout();
-
-		return Optional.ofNullable(
-			_segmentsExperimentService.getSegmentsExperiments(
-				segmentsExperienceId, _portal.getClassNameId(Layout.class),
-				layout.getPlid(),
-				SegmentsExperimentConstants.Status.
-					getNonExclusiveStatusValues(),
-				QueryUtil.ALL_POS, QueryUtil.ALL_POS));
-	}
-
 	private Optional<SegmentsExperiment> _getActiveSegmentsExperimentOptional(
 			long segmentsExperienceId)
 		throws PortalException {
@@ -371,6 +358,20 @@ public class SegmentsExperimentDisplayContext {
 
 		return HttpUtil.addParameter(
 			actionURL.toString(), "p_l_mode", Constants.EDIT);
+	}
+
+	private Optional<List<SegmentsExperiment>>
+		_getNonexclusiveSegmentsExperimentOptional(long segmentsExperienceId) {
+
+		Layout layout = _themeDisplay.getLayout();
+
+		return Optional.ofNullable(
+			_segmentsExperimentService.getSegmentsExperiments(
+				segmentsExperienceId, _portal.getClassNameId(Layout.class),
+				layout.getPlid(),
+				SegmentsExperimentConstants.Status.
+					getNonexclusiveStatusValues(),
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS));
 	}
 
 	private long _getRequestSegmentsExperienceId() throws PortalException {

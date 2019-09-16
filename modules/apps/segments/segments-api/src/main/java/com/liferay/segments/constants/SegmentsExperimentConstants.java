@@ -83,7 +83,8 @@ public class SegmentsExperimentConstants {
 	public enum Status {
 
 		COMPLETED(
-			STATUS_COMPLETED, "COMPLETED", "completed", true, false, true, true),
+			STATUS_COMPLETED, "COMPLETED", "completed", true, false, true,
+			true),
 		DRAFT(STATUS_DRAFT, "DRAFT", "draft", true) {
 
 			@Override
@@ -143,17 +144,8 @@ public class SegmentsExperimentConstants {
 
 		},
 		TERMINATED(
-			STATUS_TERMINATED, "TERMINATED", "terminated", true, false, false, true);
-
-		public static int[] getNonExclusiveStatusValues() {
-			Stream<Status> stream = Arrays.stream(Status.values());
-
-			return stream.filter(
-				status -> !status.isExclusive()
-			).mapToInt(
-				Status::getValue
-			).toArray();
-		}
+			STATUS_TERMINATED, "TERMINATED", "terminated", true, false, false,
+			true);
 
 		public static int[] getExclusiveStatusValues() {
 			Stream<Status> stream = Arrays.stream(Status.values());
@@ -170,6 +162,16 @@ public class SegmentsExperimentConstants {
 
 			return stream.filter(
 				status -> !status.isEditable()
+			).mapToInt(
+				Status::getValue
+			).toArray();
+		}
+
+		public static int[] getNonexclusiveStatusValues() {
+			Stream<Status> stream = Arrays.stream(Status.values());
+
+			return stream.filter(
+				status -> !status.isExclusive()
 			).mapToInt(
 				Status::getValue
 			).toArray();
