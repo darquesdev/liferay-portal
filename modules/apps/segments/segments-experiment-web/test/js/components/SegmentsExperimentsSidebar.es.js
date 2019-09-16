@@ -53,7 +53,6 @@ function _renderSegmentsExperimentsSidebarComponent({
 		createExperiment = () => {},
 		createVariant = () => {},
 		deleteVariant = () => {},
-		discardExperiment = () => {},
 		editExperiment = () => {},
 		editVariant = () => {},
 		publishExperience = () => {}
@@ -66,7 +65,6 @@ function _renderSegmentsExperimentsSidebarComponent({
 					createExperiment,
 					createVariant,
 					deleteVariant,
-					discardExperiment,
 					editExperiment,
 					editVariant,
 					publishExperience
@@ -409,7 +407,7 @@ describe('Winner declared', () => {
 
 		const {getByText} = _renderSegmentsExperimentsSidebarComponent({
 			APIService: {
-				discardExperiment: mockDiscard
+				publishExperience: mockDiscard
 			},
 			initialSegmentsExperiences: segmentsExperiences,
 			initialSegmentsExperiment: {
@@ -430,7 +428,8 @@ describe('Winner declared', () => {
 
 		expect(mockDiscard).toHaveBeenCalledWith({
 			segmentsExperimentId: segmentsExperiment.segmentsExperimentId,
-			status: STATUS_COMPLETED
+			status: STATUS_COMPLETED,
+			winnerSegmentsExperienceId: segmentsExperiment.segmentsExperienceId
 		});
 
 		await waitForElement(() => getByText('completed'));

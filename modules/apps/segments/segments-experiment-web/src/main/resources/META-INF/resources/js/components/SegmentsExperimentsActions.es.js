@@ -102,7 +102,7 @@ function SegmentsExperimentsActions({onEditSegmentsExperimentStatus}) {
 			{experiment.status.value === STATUS_FINISHED_WINNER && (
 				<>
 					<ClayButton
-						className="w-100 mb-3"
+						className="w-100"
 						displayType="secondary"
 						onClick={_handleDiscardExperiment}
 					>
@@ -113,7 +113,7 @@ function SegmentsExperimentsActions({onEditSegmentsExperimentStatus}) {
 
 			{experiment.status.value === STATUS_FINISHED_NO_WINNER && (
 				<ClayButton
-					className="w-100 mb-3"
+					className="w-100"
 					displayType="primary"
 					onClick={_handleDiscardExperiment}
 				>
@@ -166,10 +166,11 @@ function SegmentsExperimentsActions({onEditSegmentsExperimentStatus}) {
 	function _handleDiscardExperiment() {
 		const body = {
 			segmentsExperimentId: experiment.segmentsExperimentId,
-			status: STATUS_COMPLETED
+			status: STATUS_COMPLETED,
+			winnerSegmentsExperienceId: experiment.segmentsExperienceId
 		};
 
-		APIService.discardExperiment(body).then(({segmentsExperiment}) => {
+		APIService.publishExperience(body).then(({segmentsExperiment}) => {
 			dispatch(updateSegmentsExperiment(segmentsExperiment));
 		});
 	}

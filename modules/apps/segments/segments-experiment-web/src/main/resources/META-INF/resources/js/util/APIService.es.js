@@ -83,14 +83,6 @@ function APIService({endpoints, namespace, contentPageEditorNamespace}) {
 		});
 	}
 
-	function discardExperiment(body) {
-		return _fetchWithError(editSegmentsExperimentStatusURL, {
-			body: _getFormDataRequest(body, namespace),
-			credentials: 'include',
-			method: 'POST'
-		});
-	}
-
 	function publishExperience(body) {
 		// TODO somehow type this
 		return _fetchWithError(editSegmentsExperimentStatusURL, {
@@ -113,7 +105,6 @@ function APIService({endpoints, namespace, contentPageEditorNamespace}) {
 		createVariant,
 		deleteExperiment,
 		deleteVariant,
-		discardExperiment,
 		editExperiment,
 		editExperimentStatus,
 		editVariant,
