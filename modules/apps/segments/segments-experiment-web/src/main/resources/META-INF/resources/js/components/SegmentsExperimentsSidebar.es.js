@@ -32,6 +32,7 @@ import {
 	StateContext
 } from '../state/context.es';
 import {
+	archiveExperiment,
 	closeCreationModal,
 	closeEditionModal,
 	openEditionModal,
@@ -40,6 +41,7 @@ import {
 	updateSegmentsExperiment,
 	addVariant
 } from '../state/actions.es';
+import {STATUS_COMPLETED, STATUS_TERMINATED} from '../util/statuses.es';
 
 function SegmentsExperimentsSidebar({
 	initialExperimentHistory,
@@ -226,13 +228,23 @@ function SegmentsExperimentsSidebar({
 		APIService.editExperimentStatus(body)
 			.then(function _successCallback(objectResponse) {
 				const {editable, status} = objectResponse.segmentsExperiment;
-
-				dispatch(
-					updateSegmentsExperiment({
-						editable,
-						status
-					})
-				);
+				if (
+					status.value === STATUS_TERMINATED ||
+					status.value === STATUS_COMPLETED
+				) {
+					dispatch(
+						archiveExperiment({
+							status
+						})
+					);
+				} else {
+					dispatch(
+						updateSegmentsExperiment({
+							editable,
+							status
+						})
+					);
+				}
 			})
 			.catch(function _errorCallback() {
 				Liferay.Util.openToast({
