@@ -145,6 +145,16 @@ public class SegmentsExperimentConstants {
 		TERMINATED(
 			STATUS_TERMINATED, "TERMINATED", "terminated", true, false, false, true);
 
+		public static int[] getNonExclusiveStatusValues() {
+			Stream<Status> stream = Arrays.stream(Status.values());
+
+			return stream.filter(
+				status -> !status.isExclusive()
+			).mapToInt(
+				Status::getValue
+			).toArray();
+		}
+
 		public static int[] getExclusiveStatusValues() {
 			Stream<Status> stream = Arrays.stream(Status.values());
 
