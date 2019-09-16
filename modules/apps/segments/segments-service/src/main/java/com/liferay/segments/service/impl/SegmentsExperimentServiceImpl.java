@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.permission.LayoutPermissionUtil;
+import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.segments.constants.SegmentsExperienceConstants;
 import com.liferay.segments.model.SegmentsExperience;
@@ -163,6 +164,17 @@ public class SegmentsExperimentServiceImpl
 
 		return segmentsExperimentPersistence.filterFindByG_C_C(
 			groupId, classNameId, classPK);
+	}
+
+	@Override
+	public List<SegmentsExperiment> getSegmentsExperiments(
+		long segmentsExperienceId, long classNameId, long classPK,
+		int[] statuses,
+		OrderByComparator<SegmentsExperiment> orderByComparator) {
+
+		return segmentsExperimentLocalService.getSegmentsExperiments(
+			segmentsExperienceId, classNameId, classPK, statuses,
+			orderByComparator);
 	}
 
 	@Override
