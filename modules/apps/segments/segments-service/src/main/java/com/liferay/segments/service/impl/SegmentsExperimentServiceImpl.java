@@ -166,6 +166,15 @@ public class SegmentsExperimentServiceImpl
 	}
 
 	@Override
+	public List<SegmentsExperiment> getSegmentsExperiments(
+		long segmentsExperienceId, long classNameId, long classPK,
+		int[] statuses, int start, int end) {
+
+		return segmentsExperimentLocalService.getSegmentsExperiments(
+			segmentsExperienceId, classNameId, classPK, statuses, start, end);
+	}
+
+	@Override
 	public SegmentsExperiment runSegmentsExperiment(
 			long segmentsExperimentId, double confidenceLevel,
 			Map<Long, Double> segmentsExperienceIdSplitMap)
