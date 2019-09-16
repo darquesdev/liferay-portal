@@ -54,3 +54,8 @@ export const updateVariants = payload => ({
 	payload,
 	type: 'UPDATE_VARIANTS'
 });
+
+export const archiveExperiment = payload => ({
+	payload,
+	type: 'ARCHIVE_EXPERIMENT'
+});

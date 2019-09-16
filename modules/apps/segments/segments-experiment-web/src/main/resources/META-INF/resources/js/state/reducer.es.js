@@ -77,6 +77,16 @@ export function reducer(state, action) {
 				variants: action.payload
 			};
 
+		case 'ARCHIVE_EXPERIMENT':
+			return {
+				...state,
+				experiment: null,
+				experimentHistory: [
+					{...state.experiment, status: action.payload.status},
+					...state.experimentHistory
+				]
+			};
+
 		default:
 			return state;
 	}
