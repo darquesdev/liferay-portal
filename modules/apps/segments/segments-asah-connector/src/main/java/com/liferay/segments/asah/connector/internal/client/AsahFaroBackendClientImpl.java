@@ -14,17 +14,21 @@
 
 package com.liferay.segments.asah.connector.internal.client;
 
+import com.fasterxml.jackson.databind.type.TypeFactory;
+
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.NestableRuntimeException;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.segments.asah.connector.internal.client.data.binding.AsahFaroBackendJSONObjectMapper;
 import com.liferay.segments.asah.connector.internal.client.data.binding.IndividualJSONObjectMapper;
 import com.liferay.segments.asah.connector.internal.client.data.binding.IndividualSegmentJSONObjectMapper;
 import com.liferay.segments.asah.connector.internal.client.data.binding.InterestTermsJSONObjectMapper;
 import com.liferay.segments.asah.connector.internal.client.model.DXPVariants;
 import com.liferay.segments.asah.connector.internal.client.model.Experiment;
+import com.liferay.segments.asah.connector.internal.client.model.GoalMetric;
 import com.liferay.segments.asah.connector.internal.client.model.Individual;
 import com.liferay.segments.asah.connector.internal.client.model.IndividualSegment;
 import com.liferay.segments.asah.connector.internal.client.model.Results;
@@ -87,6 +91,24 @@ public class AsahFaroBackendClientImpl implements AsahFaroBackendClient {
 				_PATH_EXPERIMENTS_EXPERIMENT, "{experimentId}",
 				segmentsExperimentKey),
 			new HashMap<>(), _headers);
+	}
+
+	@Override
+	public List<GoalMetric> getAvailableGoalMetrics() {
+		try {
+			TypeFactory typeFactory = TypeFactory.defaultInstance();
+
+			return AsahFaroBackendJSONObjectMapper.map(
+				_jsonWebServiceClient.doGet(
+					_PATH_EXPERIMENTS_AVAILABLE_GOAL_METRICS,
+					new MultivaluedHashMap<>(), _headers),
+				typeFactory.constructCollectionType(
+					List.class, GoalMetric.class));
+		}
+		catch (IOException ioe) {
+			throw new NestableRuntimeException(
+				_ERROR_MSG + ioe.getMessage(), ioe);
+		}
 	}
 
 	@Override
@@ -302,6 +324,9 @@ public class AsahFaroBackendClientImpl implements AsahFaroBackendClient {
 	private static final String _ERROR_MSG = "Unable to handle JSON response: ";
 
 	private static final String _PATH_EXPERIMENTS = "api/1.0/experiments";
+
+	private static final String _PATH_EXPERIMENTS_AVAILABLE_GOAL_METRICS =
+		_PATH_EXPERIMENTS + "/available-goal-metrics";
 
 	private static final String _PATH_EXPERIMENTS_DXP_VARIANTS =
 		_PATH_EXPERIMENTS + "/{experimentId}/dxp-variants";

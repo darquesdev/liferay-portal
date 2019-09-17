@@ -16,6 +16,7 @@ package com.liferay.segments.asah.connector.internal.client;
 
 import com.liferay.segments.asah.connector.internal.client.model.DXPVariants;
 import com.liferay.segments.asah.connector.internal.client.model.Experiment;
+import com.liferay.segments.asah.connector.internal.client.model.GoalMetric;
 import com.liferay.segments.asah.connector.internal.client.model.Individual;
 import com.liferay.segments.asah.connector.internal.client.model.IndividualSegment;
 import com.liferay.segments.asah.connector.internal.client.model.Results;
@@ -47,6 +48,8 @@ public interface AsahFaroBackendClient {
 	 * @review
 	 */
 	public void deleteExperiment(Experiment experiment);
+
+	public List<GoalMetric> getAvailableGoalMetrics();
 
 	/**
 	 * Returns the ID of the data source connected to the client.

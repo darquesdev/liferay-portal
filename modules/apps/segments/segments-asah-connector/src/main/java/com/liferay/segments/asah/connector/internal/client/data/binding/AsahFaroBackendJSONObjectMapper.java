@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import com.liferay.segments.asah.connector.internal.client.model.PageMetadata;
@@ -36,6 +37,12 @@ public class AsahFaroBackendJSONObjectMapper {
 
 	public static <T> T map(String json, Class<T> clazz) throws IOException {
 		return _objectMapper.readValue(json, clazz);
+	}
+
+	public static <T> T map(String json, CollectionType collectionType)
+		throws IOException {
+
+		return _objectMapper.readValue(json, collectionType);
 	}
 
 	public static <T> Results<T> mapToResults(
