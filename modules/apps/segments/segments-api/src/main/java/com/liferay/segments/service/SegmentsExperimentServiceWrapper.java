@@ -129,6 +129,20 @@ public class SegmentsExperimentServiceWrapper
 	}
 
 	@Override
+	public java.util.List<com.liferay.segments.model.SegmentsExperiment>
+		getSegmentsExperiments(
+			long segmentsExperienceId, long classNameId, long classPK,
+			int[] statuses,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<com.liferay.segments.model.SegmentsExperiment>
+					orderByComparator) {
+
+		return _segmentsExperimentService.getSegmentsExperiments(
+			segmentsExperienceId, classNameId, classPK, statuses,
+			orderByComparator);
+	}
+
+	@Override
 	public com.liferay.segments.model.SegmentsExperiment runSegmentsExperiment(
 			long segmentsExperimentId, double confidenceLevel,
 			java.util.Map<Long, Double> segmentsExperienceIdSplitMap)

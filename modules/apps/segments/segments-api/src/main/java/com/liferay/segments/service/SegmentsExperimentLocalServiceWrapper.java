@@ -423,10 +423,14 @@ public class SegmentsExperimentLocalServiceWrapper
 	public java.util.List<com.liferay.segments.model.SegmentsExperiment>
 		getSegmentsExperiments(
 			long segmentsExperienceId, long classNameId, long classPK,
-			int[] statuses, int start, int end) {
+			int[] statuses,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<com.liferay.segments.model.SegmentsExperiment>
+					orderByComparator) {
 
 		return _segmentsExperimentLocalService.getSegmentsExperiments(
-			segmentsExperienceId, classNameId, classPK, statuses, start, end);
+			segmentsExperienceId, classNameId, classPK, statuses,
+			orderByComparator);
 	}
 
 	/**

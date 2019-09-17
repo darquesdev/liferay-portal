@@ -225,6 +225,32 @@ public class SegmentsExperimentServiceSoap {
 		}
 	}
 
+	public static com.liferay.segments.model.SegmentsExperimentSoap[]
+			getSegmentsExperiments(
+				long segmentsExperienceId, long classNameId, long classPK,
+				int[] statuses,
+				com.liferay.portal.kernel.util.OrderByComparator
+					<com.liferay.segments.model.SegmentsExperiment>
+						orderByComparator)
+		throws RemoteException {
+
+		try {
+			java.util.List<com.liferay.segments.model.SegmentsExperiment>
+				returnValue =
+					SegmentsExperimentServiceUtil.getSegmentsExperiments(
+						segmentsExperienceId, classNameId, classPK, statuses,
+						orderByComparator);
+
+			return com.liferay.segments.model.SegmentsExperimentSoap.
+				toSoapModels(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	public static com.liferay.segments.model.SegmentsExperimentSoap
 			updateSegmentsExperiment(
 				long segmentsExperimentId, String name, String description,
