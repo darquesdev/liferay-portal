@@ -30,6 +30,9 @@ public interface SegmentsExperimentFinder {
 	public java.util.List<com.liferay.segments.model.SegmentsExperiment>
 		findByS_C_C_S(
 			long segmentsExperienceId, long classNameId, long classPK,
-			int[] statuses, int start, int end);
+			int[] statuses, int start, int end,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<com.liferay.segments.model.SegmentsExperiment>
+					orderByComparator);
 
 }

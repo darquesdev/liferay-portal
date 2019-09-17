@@ -24,6 +24,7 @@ import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.Type;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.segments.model.SegmentsExperiment;
 import com.liferay.segments.model.impl.SegmentsExperimentImpl;
@@ -97,7 +98,8 @@ public class SegmentsExperimentFinderImpl
 	@Override
 	public List<SegmentsExperiment> findByS_C_C_S(
 		long segmentsExperienceId, long classNameId, long classPK,
-		int[] statuses, int start, int end) {
+		int[] statuses, int start, int end,
+		OrderByComparator<SegmentsExperiment> orderByComparator) {
 
 		Session session = null;
 
@@ -108,6 +110,7 @@ public class SegmentsExperimentFinderImpl
 
 			sql = StringUtil.replace(
 				sql, "[$STATUSES$]", getStatusesSQL(statuses));
+			sql = _customSQL.replaceOrderBy(sql, orderByComparator);
 
 			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
