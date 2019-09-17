@@ -85,7 +85,8 @@ export function reducer(state, action) {
 					{...state.experiment, status: action.payload.status},
 					...state.experimentHistory
 				],
-				variants: []
+				variants: [],
+				winnerVariant: null
 			};
 
 		default:
