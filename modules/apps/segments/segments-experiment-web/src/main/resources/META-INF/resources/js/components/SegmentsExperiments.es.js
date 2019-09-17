@@ -29,8 +29,7 @@ import {StateContext} from '../state/context.es';
 import SegmentsExperimentsContext from '../context.es';
 import ClayTabs from '@clayui/tabs';
 import ExperimentsHistory from './ExperimentsHistory.es';
-
-const NO_EXPERIMENT_ILLUSTRATION_FILENAME = '/no-experiment.svg';
+import {NO_EXPERIMENT_ILLUSTRATION_FILENAME} from '../util/contants.es';
 
 const TABS_STATES = {
 	ACTIVE: 0,

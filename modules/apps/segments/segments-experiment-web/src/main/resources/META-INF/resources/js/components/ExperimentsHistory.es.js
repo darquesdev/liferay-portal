@@ -18,9 +18,31 @@ import ClayList from '@clayui/list';
 import ClayLabel from '@clayui/label';
 import {statusToLabelDisplayType} from '../util/statuses.es';
 import {SegmentsExperimentType} from '../types.es';
+import SegmentsExperimentContext from '../context.es';
+import {NO_EXPERIMENT_ILLUSTRATION_FILENAME} from '../util/contants.es';
+
+const {useContext} = React;
 
 function ExperimentsHistory({experimentHistory}) {
-	return (
+	const {assetsPath} = useContext(SegmentsExperimentContext);
+
+	const noHistoryIllustration = `${assetsPath}${NO_EXPERIMENT_ILLUSTRATION_FILENAME}`;
+	return experimentHistory.length === 0 ? (
+		<div className="text-center">
+			<img
+				alt=""
+				className="my-3"
+				src={noHistoryIllustration}
+				width="120px"
+			/>
+			<h4>{Liferay.Language.get('no-test-history-for-experience')}</h4>
+			<p className="text-secondary">
+				{Liferay.Language.get(
+					'completed-or-terminated-tests-will-be-archived-here'
+				)}
+			</p>
+		</div>
+	) : (
 		<ClayList>
 			{experimentHistory.map(experiment => {
 				return (
