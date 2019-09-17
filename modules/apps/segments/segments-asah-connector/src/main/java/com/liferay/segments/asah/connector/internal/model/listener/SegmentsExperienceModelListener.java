@@ -14,7 +14,6 @@
 
 package com.liferay.segments.asah.connector.internal.model.listener;
 
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.ModelListenerException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -62,8 +61,7 @@ public class SegmentsExperienceModelListener
 				_segmentsExperimentLocalService.getSegmentsExperiments(
 					segmentsExperience.getSegmentsExperienceId(),
 					segmentsExperience.getClassNameId(),
-					segmentsExperience.getClassPK(), new int[0],
-					QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+					segmentsExperience.getClassPK(), new int[0], null);
 
 			for (SegmentsExperiment segmentsExperiment : segmentsExperiments) {
 				_processUpdateSegmentsExperience(
