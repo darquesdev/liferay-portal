@@ -55,6 +55,7 @@ function _renderSegmentsExperimentsSidebarComponent({
 		deleteVariant = () => {},
 		editExperiment = () => {},
 		editVariant = () => {},
+		getEstimatedTime = () => Promise.resolve(),
 		publishExperience = () => {}
 	} = APIService;
 
@@ -67,6 +68,7 @@ function _renderSegmentsExperimentsSidebarComponent({
 					deleteVariant,
 					editExperiment,
 					editVariant,
+					getEstimatedTime,
 					publishExperience
 				},
 				assetsPath: '',
@@ -297,16 +299,11 @@ describe('Run and review test', () => {
 			initialSegmentsVariants: segmentsVariants
 		});
 
-		const defaultExperience = getByDisplayValue(
-			segmentsExperiences[0].name
-		);
-		expect(defaultExperience).not.toBe(null);
+		getByDisplayValue(segmentsExperiences[0].name);
 
-		const experiment = getByText(segmentsExperiment.name);
-		expect(experiment).not.toBe(null);
+		getByText(segmentsExperiment.name);
 
 		const createTestHelpMessage = getByText('review-and-run-test');
-		expect(createTestHelpMessage).not.toBe(null);
 		expect(createTestHelpMessage).not.toHaveAttribute('disabled');
 
 		userEvent.click(createTestHelpMessage);

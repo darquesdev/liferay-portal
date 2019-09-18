@@ -17,6 +17,7 @@ import {fetch} from 'frontend-js-web';
 
 function APIService({endpoints, namespace, contentPageEditorNamespace}) {
 	const {
+		calculateSegmentsExperimentEstimatedDurationURL,
 		createSegmentsExperimentURL,
 		createSegmentsVariantURL,
 		deleteSegmentsExperimentURL,
@@ -83,6 +84,17 @@ function APIService({endpoints, namespace, contentPageEditorNamespace}) {
 		});
 	}
 
+	function getEstimatedTime(body) {
+		return _fetchWithError(
+			calculateSegmentsExperimentEstimatedDurationURL,
+			{
+				body: _getFormDataRequest(body, namespace),
+				credentials: 'include',
+				method: 'POST'
+			}
+		);
+	}
+
 	function publishExperience(body) {
 		// TODO somehow type this
 		return _fetchWithError(editSegmentsExperimentStatusURL, {
@@ -108,6 +120,7 @@ function APIService({endpoints, namespace, contentPageEditorNamespace}) {
 		editExperiment,
 		editExperimentStatus,
 		editVariant,
+		getEstimatedTime,
 		publishExperience,
 		runExperiment
 	};
@@ -123,6 +136,8 @@ APIService.propTypes = {
 		editSegmentsExperimentStatusURL: PropTypes.string.isRequired,
 		editSegmentsExperimentURL: PropTypes.string.isRequired,
 		editSegmentsVariantURL: PropTypes.string.isRequired,
+		calculateSegmentsExperimentEstimatedDurationURL:
+			PropTypes.string.isRequired,
 		runSegmentsExperimentURL: PropTypes.string.isRequired
 	}),
 	namespace: PropTypes.string.isRequired
