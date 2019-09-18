@@ -94,6 +94,11 @@ public class SegmentsExperimentDisplayContext {
 		return PortalUtil.getPathContext(_httpServletRequest) + "/assets";
 	}
 
+	public String getCalculateSegmentsExperimentEstimatedDurationURL() {
+		return _getSegmentsExperimentActionURL(
+			"/calculate_segments_experiment_estimated_duration");
+	}
+
 	public String getContentPageEditorPortletNamespace() {
 		return _portal.getPortletNamespace(
 			ContentPageEditorPortletKeys.CONTENT_PAGE_EDITOR_PORTLET);

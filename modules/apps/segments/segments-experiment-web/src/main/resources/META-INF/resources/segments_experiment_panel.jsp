@@ -35,6 +35,7 @@
 						assetsPath: '<%= segmentsExperimentDisplayContext.getAssetsPath() %>',
 						contentPageEditorNamespace: '<%= segmentsExperimentDisplayContext.getContentPageEditorPortletNamespace() %>',
 						endpoints: {
+							calculateSegmentsExperimentEstimatedDurationURL: '<%= segmentsExperimentDisplayContext.getCalculateSegmentsExperimentEstimatedDurationURL() %>',
 							createSegmentsExperimentURL: '<%= segmentsExperimentDisplayContext.getCreateSegmentsExperimentURL() %>',
 							createSegmentsVariantURL: '<%= segmentsExperimentDisplayContext.getCreateSegmentsVariantURL() %>',
 							deleteSegmentsExperimentURL: '<%= segmentsExperimentDisplayContext.getDeleteSegmentsExperimentURL() %>',
