@@ -118,6 +118,24 @@ function ReviewExperimentModal({onRun, variants, visible, setVisible}) {
 								onValueChange={setConfidenceLevel}
 								value={confidenceLevel}
 							/>
+
+							<hr />
+							<div>
+								<div className="d-flex">
+									<label className="w-100">
+										{Liferay.Language.get(
+											'estimated-time-to-declare-winner'
+										)}
+									</label>
+
+									<p className="mb-0 text-nowrap"></p>
+								</div>
+								<p className="small text-secondary">
+									{Liferay.Language.get(
+										'time-depends-on-confidence-level-and-traffic-to-the-variants'
+									)}
+								</p>
+							</div>
 						</>
 					)}
 				</ClayModal.Body>
