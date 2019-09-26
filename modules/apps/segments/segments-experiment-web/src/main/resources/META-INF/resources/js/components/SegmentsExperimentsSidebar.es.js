@@ -151,7 +151,7 @@ function SegmentsExperimentsSidebar({
 			.then(() => {
 				openSuccessToast();
 
-				navigateToExperience(initialSelectedSegmentsExperienceId);
+				navigateToExperience(experiment.segmentsExperienceId);
 			})
 			.catch(_error => {
 				openErrorToast();
