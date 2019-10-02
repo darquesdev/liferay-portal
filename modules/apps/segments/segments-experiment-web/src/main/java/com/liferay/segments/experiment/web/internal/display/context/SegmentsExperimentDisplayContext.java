@@ -165,7 +165,7 @@ public class SegmentsExperimentDisplayContext {
 
 		List<SegmentsExperiment> segmentsExperiments =
 			_segmentsExperimentService.getSegmentsExperiments(
-				getSelectedSegmentsExperienceId(),
+				_getSegmentsExperienceId(),
 				_portal.getClassNameId(Layout.class), layout.getPlid(),
 				SegmentsExperimentConstants.Status.
 					getNonexclusiveStatusValues(),
@@ -380,6 +380,16 @@ public class SegmentsExperimentDisplayContext {
 			new long[] {SegmentsExperienceConstants.ID_DEFAULT});
 
 		return renderedSegmentsExperienceIds[0];
+	}
+
+	private long _getSegmentsExperienceId() throws PortalException {
+		SegmentsExperiment segmentsExperiment = _getSegmentsExperiment();
+
+		if (segmentsExperiment != null) {
+			return segmentsExperiment.getSegmentsExperienceId();
+		}
+
+		return getSelectedSegmentsExperienceId();
 	}
 
 	private SegmentsExperiment _getSegmentsExperiment() throws PortalException {
