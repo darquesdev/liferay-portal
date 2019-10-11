@@ -79,44 +79,7 @@ import org.osgi.service.component.annotations.Reference;
 public class AddSegmentsExperienceMVCActionCommand
 	extends BaseMVCActionCommand {
 
-	@Override
-	protected void doProcessAction(
-			ActionRequest actionRequest, ActionResponse actionResponse)
-		throws Exception {
-
-		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
-		Callable<JSONObject> callable = new AddSegmentsExperienceCallable(
-			actionRequest);
-
-		JSONObject jsonObject = null;
-
-		try {
-			jsonObject = TransactionInvokerUtil.invoke(
-				_transactionConfig, callable);
-		}
-		catch (Throwable t) {
-			_log.error(t, t);
-
-			HttpServletResponse httpServletResponse =
-				_portal.getHttpServletResponse(actionResponse);
-
-			httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-
-			jsonObject = JSONUtil.put(
-				"error",
-				LanguageUtil.get(
-					themeDisplay.getRequest(), "an-unexpected-error-occurred"));
-		}
-
-		hideDefaultSuccessMessage(actionRequest);
-
-		JSONPortletResponseUtil.writeJSON(
-			actionRequest, actionResponse, jsonObject);
-	}
-
-	private JSONObject _addSegmentsExperience(ActionRequest actionRequest)
+	protected JSONObject addSegmentsExperience(ActionRequest actionRequest)
 		throws PortalException {
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
@@ -173,6 +136,43 @@ public class AddSegmentsExperienceMVCActionCommand
 			segmentsExperience.getSegmentsExperienceId());
 
 		return jsonObject;
+	}
+
+	@Override
+	protected void doProcessAction(
+			ActionRequest actionRequest, ActionResponse actionResponse)
+		throws Exception {
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		Callable<JSONObject> callable = new AddSegmentsExperienceCallable(
+			actionRequest);
+
+		JSONObject jsonObject = null;
+
+		try {
+			jsonObject = TransactionInvokerUtil.invoke(
+				_transactionConfig, callable);
+		}
+		catch (Throwable t) {
+			_log.error(t, t);
+
+			HttpServletResponse httpServletResponse =
+				_portal.getHttpServletResponse(actionResponse);
+
+			httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+
+			jsonObject = JSONUtil.put(
+				"error",
+				LanguageUtil.get(
+					themeDisplay.getRequest(), "an-unexpected-error-occurred"));
+		}
+
+		hideDefaultSuccessMessage(actionRequest);
+
+		JSONPortletResponseUtil.writeJSON(
+			actionRequest, actionResponse, jsonObject);
 	}
 
 	private SegmentsExperience _addSegmentsExperience(
@@ -379,7 +379,7 @@ public class AddSegmentsExperienceMVCActionCommand
 
 		@Override
 		public JSONObject call() throws Exception {
-			return _addSegmentsExperience(_actionRequest);
+			return addSegmentsExperience(_actionRequest);
 		}
 
 		private AddSegmentsExperienceCallable(ActionRequest actionRequest) {
