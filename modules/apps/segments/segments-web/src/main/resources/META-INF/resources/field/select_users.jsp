@@ -101,5 +101,6 @@ SelectUsersDisplayContext selectUsersDisplayContext = (SelectUsersDisplayContext
 
 <liferay-util:include page="/field/select_js.jsp" servletContext="<%= application %>">
 	<liferay-util:param name="searchContainerId" value="selectSegmentsEntryUsers" />
+	<liferay-util:param name="displayStyle" value="<%= selectUsersDisplayContext.getDisplayStyle() %>" />
 	<liferay-util:param name="selectEventName" value="<%= selectUsersDisplayContext.getEventName() %>" />
 </liferay-util:include>
