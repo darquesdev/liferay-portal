@@ -62,9 +62,12 @@ public interface SegmentsEntryProvider {
 	 * @return the IDs of the active segments entries related to the entity
 	 * @throws PortalException if a portal exception occurred
 	 */
-	public long[] getSegmentsEntryIds(
+	public default long[] getSegmentsEntryIds(
 			long groupId, String className, long classPK)
-		throws PortalException;
+		throws PortalException {
+
+		return getSegmentsEntryIds(groupId, className, classPK, null);
+	}
 
 	/**
 	 * Returns IDs of the group's active segments entries that are related to

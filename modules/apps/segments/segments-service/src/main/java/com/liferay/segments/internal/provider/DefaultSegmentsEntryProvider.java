@@ -137,13 +137,6 @@ public class DefaultSegmentsEntryProvider implements SegmentsEntryProvider {
 
 	@Override
 	public long[] getSegmentsEntryIds(
-		long groupId, String className, long classPK) {
-
-		return getSegmentsEntryIds(groupId, className, classPK, null);
-	}
-
-	@Override
-	public long[] getSegmentsEntryIds(
 		long groupId, String className, long classPK, Context context) {
 
 		List<SegmentsEntry> segmentsEntries =
