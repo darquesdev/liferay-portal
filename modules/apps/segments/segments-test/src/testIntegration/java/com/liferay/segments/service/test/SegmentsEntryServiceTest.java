@@ -43,6 +43,8 @@ import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import com.liferay.segments.constants.SegmentsActionKeys;
 import com.liferay.segments.constants.SegmentsEntryConstants;
+import com.liferay.segments.criteria.Criteria;
+import com.liferay.segments.criteria.CriteriaSerializer;
 import com.liferay.segments.model.SegmentsEntry;
 import com.liferay.segments.service.SegmentsEntryService;
 import com.liferay.segments.test.util.SegmentsTestUtil;
@@ -108,7 +110,7 @@ public class SegmentsEntryServiceTest {
 				RandomTestUtil.randomString(),
 				RandomTestUtil.randomLocaleStringMap(),
 				RandomTestUtil.randomLocaleStringMap(), true,
-				RandomTestUtil.randomString(),
+				CriteriaSerializer.serialize(new Criteria()),
 				SegmentsEntryConstants.SOURCE_DEFAULT,
 				RandomTestUtil.randomString(),
 				ServiceContextTestUtil.getServiceContext(
@@ -359,7 +361,8 @@ public class SegmentsEntryServiceTest {
 
 		SegmentsEntry segmentsEntry = SegmentsTestUtil.addSegmentsEntry(
 			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
-			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(),
+			CriteriaSerializer.serialize(new Criteria()),
 			SegmentsEntryConstants.SOURCE_ASAH_FARO_BACKEND,
 			RandomTestUtil.randomString(), serviceContext);
 
@@ -414,7 +417,7 @@ public class SegmentsEntryServiceTest {
 				RandomTestUtil.randomString(),
 				RandomTestUtil.randomLocaleStringMap(),
 				RandomTestUtil.randomLocaleStringMap(), true,
-				RandomTestUtil.randomString(),
+				CriteriaSerializer.serialize(new Criteria()),
 				ServiceContextTestUtil.getServiceContext(
 					_group, _groupUser.getUserId()));
 		}

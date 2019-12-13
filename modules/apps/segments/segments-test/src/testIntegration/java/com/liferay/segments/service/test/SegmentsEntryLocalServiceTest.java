@@ -345,7 +345,7 @@ public class SegmentsEntryLocalServiceTest {
 			LocaleUtil.getDefault(), RandomTestUtil.randomString()
 		).build();
 
-		String criteria = RandomTestUtil.randomString();
+		String criteria = CriteriaSerializer.serialize(new Criteria());
 
 		SegmentsEntry updatedSegmentsEntry =
 			_segmentsEntryLocalService.updateSegmentsEntry(
