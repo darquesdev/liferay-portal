@@ -15,6 +15,8 @@
 package com.liferay.segments.asah.connector.provider.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.petra.string.StringPool;
+import com.liferay.petra.string.StringUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -135,7 +137,8 @@ public class AsahSegmentsEntryProviderTest {
 			context);
 
 		Assert.assertEquals(
-			segmentsEntryIds.toString(), 2, segmentsEntryIds.length);
+			StringUtil.merge(segmentsEntryIds, StringPool.COMMA), 2,
+			segmentsEntryIds.length);
 		Assert.assertTrue(
 			ArrayUtil.containsAll(
 				new long[] {

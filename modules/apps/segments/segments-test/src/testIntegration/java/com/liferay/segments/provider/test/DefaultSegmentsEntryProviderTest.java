@@ -15,6 +15,8 @@
 package com.liferay.segments.provider.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.petra.string.StringPool;
+import com.liferay.petra.string.StringUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.model.User;
@@ -247,7 +249,8 @@ public class DefaultSegmentsEntryProviderTest {
 			context);
 
 		Assert.assertEquals(
-			segmentsEntryIds.toString(), 3, segmentsEntryIds.length);
+			StringUtil.merge(segmentsEntryIds, StringPool.COMMA), 3,
+			segmentsEntryIds.length);
 		Assert.assertTrue(
 			ArrayUtil.containsAll(
 				new long[] {
@@ -305,7 +308,8 @@ public class DefaultSegmentsEntryProviderTest {
 			_group.getGroupId(), User.class.getName(), _user1.getUserId());
 
 		Assert.assertEquals(
-			segmentsEntryIds.toString(), 2, segmentsEntryIds.length);
+			StringUtil.merge(segmentsEntryIds, StringPool.COMMA), 2,
+			segmentsEntryIds.length);
 		Assert.assertTrue(
 			ArrayUtil.containsAll(
 				new long[] {
@@ -351,7 +355,8 @@ public class DefaultSegmentsEntryProviderTest {
 			context);
 
 		Assert.assertEquals(
-			segmentsEntryIds.toString(), 2, segmentsEntryIds.length);
+			StringUtil.merge(segmentsEntryIds, StringPool.COMMA), 2,
+			segmentsEntryIds.length);
 		Assert.assertTrue(
 			ArrayUtil.containsAll(
 				segmentsEntryIds,
@@ -398,7 +403,8 @@ public class DefaultSegmentsEntryProviderTest {
 			_group.getGroupId(), User.class.getName(), _user1.getUserId());
 
 		Assert.assertEquals(
-			segmentsEntryIds.toString(), 2, segmentsEntryIds.length);
+			StringUtil.merge(segmentsEntryIds, StringPool.COMMA), 2,
+			segmentsEntryIds.length);
 		Assert.assertTrue(
 			ArrayUtil.containsAll(
 				new long[] {
