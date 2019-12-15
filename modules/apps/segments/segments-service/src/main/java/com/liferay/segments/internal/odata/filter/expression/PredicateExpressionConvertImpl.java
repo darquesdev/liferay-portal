@@ -18,7 +18,6 @@ import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.odata.filter.ExpressionConvert;
 import com.liferay.portal.odata.filter.expression.Expression;
 import com.liferay.portal.odata.filter.expression.ExpressionVisitException;
-import com.liferay.segments.context.Context;
 
 import java.util.Locale;
 import java.util.function.Predicate;
@@ -30,19 +29,19 @@ import org.osgi.service.component.annotations.Component;
  */
 @Component(
 	immediate = true,
-	property = "result.class.name=java.util.function.Predicate<Context>",
+	property = "result.class.name=java.util.function.Predicate",
 	service = ExpressionConvert.class
 )
-public class ContextExpressionConvertImpl
-	implements ExpressionConvert<Predicate<Context>> {
+public class PredicateExpressionConvertImpl
+	implements ExpressionConvert<Predicate> {
 
 	@Override
-	public Predicate<Context> convert(
+	public Predicate convert(
 			Expression expression, Locale locale, EntityModel entityModel)
 		throws ExpressionVisitException {
 
-		return (Predicate<Context>)expression.accept(
-			new ContextExpressionVisitorImpl(entityModel));
+		return (Predicate)expression.accept(
+			new PredicateExpressionVisitorImpl(entityModel));
 	}
 
 }

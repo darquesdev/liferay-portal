@@ -35,7 +35,6 @@ import com.liferay.portal.odata.filter.expression.MethodExpression;
 import com.liferay.portal.odata.filter.expression.PrimitivePropertyExpression;
 import com.liferay.portal.odata.filter.expression.PropertyExpression;
 import com.liferay.portal.odata.filter.expression.UnaryExpression;
-import com.liferay.segments.context.Context;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -53,14 +52,15 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * @author Eduardo García
  */
-public class ContextExpressionVisitorImpl implements ExpressionVisitor<Object> {
+public class PredicateExpressionVisitorImpl<T extends Map>
+	implements ExpressionVisitor<Object> {
 
-	public ContextExpressionVisitorImpl(EntityModel entityModel) {
+	public PredicateExpressionVisitorImpl(EntityModel entityModel) {
 		_entityModel = entityModel;
 		_lambdaCollectionEntityField = null;
 	}
 
-	public ContextExpressionVisitorImpl(
+	public PredicateExpressionVisitorImpl(
 		EntityModel entityModel,
 		CollectionEntityField lambdaCollectionEntityField) {
 
@@ -69,10 +69,10 @@ public class ContextExpressionVisitorImpl implements ExpressionVisitor<Object> {
 	}
 
 	@Override
-	public Predicate<Context> visitBinaryExpressionOperation(
+	public Predicate<T> visitBinaryExpressionOperation(
 		BinaryExpression.Operation operation, Object left, Object right) {
 
-		Optional<Predicate<Context>> predicateOptional = Optional.empty();
+		Optional<Predicate<T>> predicateOptional = Optional.empty();
 
 		if (_lambdaCollectionEntityField != null) {
 			predicateOptional = _getLambdaPredicateOptional(
@@ -104,7 +104,7 @@ public class ContextExpressionVisitorImpl implements ExpressionVisitor<Object> {
 				collectionPropertyExpression.getName());
 
 		return lambdaFunctionExpression.accept(
-			new ContextExpressionVisitorImpl(
+			new PredicateExpressionVisitorImpl(
 				_getLambdaEntityModel(
 					lambdaFunctionExpression.getVariableName(),
 					collectionEntityField),
@@ -254,11 +254,11 @@ public class ContextExpressionVisitorImpl implements ExpressionVisitor<Object> {
 	}
 
 	@Override
-	public Predicate<Context> visitUnaryExpressionOperation(
+	public Predicate<T> visitUnaryExpressionOperation(
 		UnaryExpression.Operation operation, Object operand) {
 
 		if (Objects.equals(UnaryExpression.Operation.NOT, operation)) {
-			return _getNotPredicate((Predicate<Context>)operand);
+			return _getNotPredicate((Predicate<T>)operand);
 		}
 
 		throw new UnsupportedOperationException(
@@ -270,16 +270,18 @@ public class ContextExpressionVisitorImpl implements ExpressionVisitor<Object> {
 		return expression.accept(this);
 	}
 
-	private Predicate<Context> _getANDPredicate(
-		Predicate<Context> leftPredicate, Predicate<Context> rightPredicate) {
+	private Predicate<T> _getANDPredicate(
+		Predicate<T> leftPredicate, Predicate<T> rightPredicate) {
 
 		return leftPredicate.and(rightPredicate);
 	}
 
-	private Predicate<Context> _getContainsPredicate(
+	private Predicate<T> _getContainsPredicate(
 		EntityField entityField, Object fieldValue) {
 
-		if (Objects.equals(entityField.getType(), EntityField.Type.STRING)) {
+		if (Objects.equals(entityField.getType(), EntityField.Type.ID) ||
+			Objects.equals(entityField.getType(), EntityField.Type.STRING)) {
+
 			return p -> StringUtils.containsIgnoreCase(
 				String.valueOf(p.get(entityField.getName())),
 				String.valueOf(fieldValue));
@@ -290,24 +292,27 @@ public class ContextExpressionVisitorImpl implements ExpressionVisitor<Object> {
 				entityField.getType());
 	}
 
-	private Predicate<Context> _getEQPredicate(
+	private Predicate<T> _getEQPredicate(
 		EntityField entityField, Object fieldValue) {
 
-		Predicate<Context> predicate = null;
+		if (Objects.equals(entityField.getType(), EntityField.Type.ID)) {
+			return p -> StringUtils.containsIgnoreCase(
+				String.valueOf(p.get(entityField.getName())),
+				String.valueOf(fieldValue));
+		}
+		else if (Objects.equals(
+					entityField.getType(), EntityField.Type.STRING)) {
 
-		if (Objects.equals(entityField.getType(), EntityField.Type.STRING)) {
-			predicate = p -> fieldValue.equals(
+			return p -> fieldValue.equals(
 				_normalizeStringLiteral(
 					String.valueOf(p.get(entityField.getName()))));
 		}
 		else {
-			predicate = p -> fieldValue.equals(p.get(entityField.getName()));
+			return p -> fieldValue.equals(p.get(entityField.getName()));
 		}
-
-		return predicate;
 	}
 
-	private Predicate<Context> _getGEPredicate(
+	private Predicate<T> _getGEPredicate(
 		EntityField entityField, Object fieldValue) {
 
 		if ((fieldValue instanceof Comparable) &&
@@ -328,7 +333,7 @@ public class ContextExpressionVisitorImpl implements ExpressionVisitor<Object> {
 				entityField.getType());
 	}
 
-	private Predicate<Context> _getGTPredicate(
+	private Predicate<T> _getGTPredicate(
 		EntityField entityField, Object fieldValue) {
 
 		if ((fieldValue instanceof Comparable) &&
@@ -349,7 +354,7 @@ public class ContextExpressionVisitorImpl implements ExpressionVisitor<Object> {
 				entityField.getType());
 	}
 
-	private Predicate<Context> _getLambdaContainsPredicate(
+	private Predicate<T> _getLambdaContainsPredicate(
 		EntityField entityField, Object fieldValue) {
 
 		if (Objects.equals(entityField.getType(), EntityField.Type.STRING)) {
@@ -385,7 +390,7 @@ public class ContextExpressionVisitorImpl implements ExpressionVisitor<Object> {
 		};
 	}
 
-	private Predicate<Context> _getLambdaEQPredicate(
+	private Predicate<T> _getLambdaEQPredicate(
 		EntityField entityField, Object fieldValue) {
 
 		if (Objects.equals(entityField.getType(), EntityField.Type.STRING)) {
@@ -402,7 +407,7 @@ public class ContextExpressionVisitorImpl implements ExpressionVisitor<Object> {
 				entityField.getType());
 	}
 
-	private Optional<Predicate<Context>> _getLambdaPredicateOptional(
+	private Optional<Predicate<T>> _getLambdaPredicateOptional(
 		BinaryExpression.Operation operation, Object left, Object right) {
 
 		if (Objects.equals(BinaryExpression.Operation.EQ, operation)) {
@@ -412,7 +417,7 @@ public class ContextExpressionVisitorImpl implements ExpressionVisitor<Object> {
 		return Optional.empty();
 	}
 
-	private Predicate<Context> _getLEPredicate(
+	private Predicate<T> _getLEPredicate(
 		EntityField entityField, Object fieldValue) {
 
 		if ((fieldValue instanceof Comparable) &&
@@ -433,7 +438,7 @@ public class ContextExpressionVisitorImpl implements ExpressionVisitor<Object> {
 				entityField.getType());
 	}
 
-	private Predicate<Context> _getLTPredicate(
+	private Predicate<T> _getLTPredicate(
 		EntityField entityField, Object fieldValue) {
 
 		if ((fieldValue instanceof Comparable) &&
@@ -454,24 +459,24 @@ public class ContextExpressionVisitorImpl implements ExpressionVisitor<Object> {
 				entityField.getType());
 	}
 
-	private Predicate<Context> _getNotPredicate(Predicate<Context> predicate) {
+	private Predicate<T> _getNotPredicate(Predicate<T> predicate) {
 		return predicate.negate();
 	}
 
-	private Predicate<Context> _getORPredicate(
-		Predicate<Context> leftPredicate, Predicate<Context> rightPredicate) {
+	private Predicate<T> _getORPredicate(
+		Predicate<T> leftPredicate, Predicate<T> rightPredicate) {
 
 		return leftPredicate.or(rightPredicate);
 	}
 
-	private Optional<Predicate<Context>> _getPredicateOptional(
+	private Optional<Predicate<T>> _getPredicateOptional(
 		BinaryExpression.Operation operation, Object left, Object right) {
 
-		Predicate<Context> predicate = null;
+		Predicate<T> predicate = null;
 
 		if (Objects.equals(BinaryExpression.Operation.AND, operation)) {
 			predicate = _getANDPredicate(
-				(Predicate<Context>)left, (Predicate<Context>)right);
+				(Predicate<T>)left, (Predicate<T>)right);
 		}
 		else if (Objects.equals(BinaryExpression.Operation.EQ, operation)) {
 			predicate = _getEQPredicate((EntityField)left, right);
@@ -490,7 +495,7 @@ public class ContextExpressionVisitorImpl implements ExpressionVisitor<Object> {
 		}
 		else if (Objects.equals(BinaryExpression.Operation.OR, operation)) {
 			predicate = _getORPredicate(
-				(Predicate<Context>)left, (Predicate<Context>)right);
+				(Predicate<T>)left, (Predicate<T>)right);
 		}
 		else {
 			return Optional.empty();
