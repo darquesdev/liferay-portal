@@ -129,7 +129,7 @@ public class SegmentsEntrySegmentsFieldCustomizer
 		SegmentsEntrySegmentsFieldCustomizer.class);
 
 	private static final List<String> _fieldNames = ListUtil.fromArray(
-		"segmentsEntryId");
+		"segmentsEntryIds");
 
 	@Reference
 	private Portal _portal;

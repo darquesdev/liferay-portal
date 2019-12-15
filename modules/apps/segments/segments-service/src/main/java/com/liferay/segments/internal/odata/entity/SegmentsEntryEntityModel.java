@@ -40,7 +40,7 @@ public class SegmentsEntryEntityModel implements EntityModel {
 	public SegmentsEntryEntityModel() {
 		_entityFieldsMap = EntityModel.toEntityFieldsMap(
 			new IdEntityField(
-				"segmentsEntryId", locale -> "segmentsEntryId",
+				"segmentsEntryIds", locale -> "segmentsEntryIds",
 				String::valueOf));
 	}
 
