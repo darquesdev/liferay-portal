@@ -49,6 +49,17 @@ public class SegmentsEntryModelPreFilterContributor
 			return;
 		}
 
+		String[] excludedSources = (String[])params.get("excludedSources");
+
+		if (ArrayUtil.isNotEmpty(excludedSources)) {
+			TermsFilter sourceTermsFilter = new TermsFilter("source");
+
+			sourceTermsFilter.addValues(
+				ArrayUtil.toStringArray(excludedSources));
+
+			booleanFilter.add(sourceTermsFilter, BooleanClauseOccur.MUST_NOT);
+		}
+
 		long[] roleIds = (long[])params.get("roleIds");
 
 		if (ArrayUtil.isNotEmpty(roleIds)) {

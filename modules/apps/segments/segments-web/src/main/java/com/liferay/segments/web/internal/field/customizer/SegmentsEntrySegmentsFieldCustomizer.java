@@ -23,6 +23,8 @@ import com.liferay.portal.kernel.portlet.PortletProviderUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.segments.constants.SegmentsEntryConstants;
 import com.liferay.segments.field.Field;
 import com.liferay.segments.field.customizer.SegmentsFieldCustomizer;
 import com.liferay.segments.model.SegmentsEntry;
@@ -97,6 +99,9 @@ public class SegmentsEntrySegmentsFieldCustomizer
 			}
 
 			portletURL.setParameter("eventName", "selectEntity");
+			portletURL.setParameter(
+				"excludedSources",
+				StringUtil.toLowerCase(SegmentsEntryConstants.SOURCE_REFERRED));
 			portletURL.setWindowState(LiferayWindowState.POP_UP);
 
 			return new Field.SelectEntity(

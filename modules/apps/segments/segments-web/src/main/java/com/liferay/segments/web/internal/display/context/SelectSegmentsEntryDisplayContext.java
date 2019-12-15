@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -36,6 +37,7 @@ import com.liferay.segments.service.SegmentsEntryLocalService;
 import com.liferay.segments.web.internal.util.comparator.SegmentsEntryModifiedDateComparator;
 import com.liferay.segments.web.internal.util.comparator.SegmentsEntryNameComparator;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -156,10 +158,15 @@ public class SelectSegmentsEntryDisplayContext {
 		searchContainer.setOrderByComparator(_getOrderByComparator());
 		searchContainer.setOrderByType(getOrderByType());
 
+		LinkedHashMap<String, Object> params =
+			LinkedHashMapBuilder.<String, Object>put(
+				"excludedSources", _getExcludedSources()
+			).build();
+
 		BaseModelSearchResult<SegmentsEntry> baseModelSearchResult =
 			_segmentsEntryLocalService.searchSegmentsEntries(
 				_themeDisplay.getCompanyId(), _themeDisplay.getScopeGroupId(),
-				_getKeywords(), true, searchContainer.getStart(),
+				_getKeywords(), true, params, searchContainer.getStart(),
 				searchContainer.getEnd(), _getSort());
 
 		searchContainer.setResults(baseModelSearchResult.getBaseModels());
@@ -203,6 +210,17 @@ public class SelectSegmentsEntryDisplayContext {
 		}
 
 		return true;
+	}
+
+	private String[] _getExcludedSources() {
+		if (_excludedSources != null) {
+			return _excludedSources;
+		}
+
+		_excludedSources = ParamUtil.getStringValues(
+			_httpServletRequest, "excludedSources");
+
+		return _excludedSources;
 	}
 
 	private List<DropdownItem> _getFilterNavigationDropdownItems() {
@@ -302,6 +320,8 @@ public class SelectSegmentsEntryDisplayContext {
 		}
 
 		portletURL.setParameter("displayStyle", getDisplayStyle());
+		portletURL.setParameter(
+			"excludedSources", StringUtil.merge(_getExcludedSources()));
 		portletURL.setParameter("orderByCol", _getOrderByCol());
 		portletURL.setParameter("orderByType", getOrderByType());
 
@@ -352,6 +372,7 @@ public class SelectSegmentsEntryDisplayContext {
 
 	private String _displayStyle;
 	private String _eventName;
+	private String[] _excludedSources;
 	private final HttpServletRequest _httpServletRequest;
 	private String _keywords;
 	private String _orderByCol;

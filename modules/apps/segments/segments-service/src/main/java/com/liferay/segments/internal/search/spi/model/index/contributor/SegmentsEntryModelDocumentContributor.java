@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.localization.SearchLocalizationHelper;
 import com.liferay.portal.search.spi.model.index.contributor.ModelDocumentContributor;
 import com.liferay.segments.internal.search.SegmentsEntryField;
@@ -69,6 +70,8 @@ public class SegmentsEntryModelDocumentContributor
 			true, true);
 		document.addKeyword(
 			"roleIds", _getRoleIds(segmentsEntry.getSegmentsEntryId()));
+		document.addKeyword(
+			"source", StringUtil.toLowerCase(segmentsEntry.getSource()));
 	}
 
 	private long[] _getRoleIds(long segmentsEntryId) {
