@@ -14,6 +14,7 @@
 
 package com.liferay.segments.internal.provider;
 
+import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -28,6 +29,7 @@ import com.liferay.segments.provider.SegmentsEntryProviderRegistry;
 import com.liferay.segments.service.SegmentsEntryLocalService;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -50,6 +52,10 @@ public class SegmentsEntryProviderRegistryTest {
 		ReflectionTestUtil.setFieldValue(
 			_segmentsEntryProviderRegistry, "_segmentsEntryLocalService",
 			_segmentsEntryLocalService);
+
+		ReflectionTestUtil.setFieldValue(
+			_segmentsEntryProviderRegistry, "_serviceTrackerList",
+			_serviceTrackerList);
 
 		ReflectionTestUtil.setFieldValue(
 			_segmentsEntryProviderRegistry, "_serviceTrackerMap",
@@ -170,18 +176,19 @@ public class SegmentsEntryProviderRegistryTest {
 		};
 
 		SegmentsEntryProvider segmentsEntryProvider1 =
-			_createSegmentsEntryProvider(
-				groupId, className, classPK, context, segmentsEntryIds1);
+			_createSegmentsEntryProvider(segmentsEntryIds1);
 
 		SegmentsEntryProvider segmentsEntryProvider2 =
-			_createSegmentsEntryProvider(
-				groupId, className, classPK, context, segmentsEntryIds2);
+			_createSegmentsEntryProvider(segmentsEntryIds2);
+
+		List<SegmentsEntryProvider> segmentsEntryProviders = Arrays.asList(
+			segmentsEntryProvider1, segmentsEntryProvider2);
 
 		Mockito.doReturn(
-			Arrays.asList(segmentsEntryProvider1, segmentsEntryProvider2)
+			segmentsEntryProviders.iterator()
 		).when(
-			_serviceTrackerMap
-		).values();
+			_serviceTrackerList
+		).iterator();
 
 		long[] actualSegmentsEntryIds =
 			_segmentsEntryProviderRegistry.getSegmentsEntryIds(
@@ -197,19 +204,21 @@ public class SegmentsEntryProviderRegistryTest {
 		Assert.assertArrayEquals(segmentsEntryIds, actualSegmentsEntryIds);
 
 		Mockito.verify(
-			_serviceTrackerMap, Mockito.times(1)
-		).values();
+			_serviceTrackerList, Mockito.times(1)
+		).iterator();
 
 		Mockito.verify(
 			segmentsEntryProvider1, Mockito.times(1)
 		).getSegmentsEntryIds(
-			groupId, className, classPK, context
+			Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong(),
+			Mockito.any(Context.class), Mockito.any(long[].class)
 		);
 
 		Mockito.verify(
 			segmentsEntryProvider2, Mockito.times(1)
 		).getSegmentsEntryIds(
-			groupId, className, classPK, context
+			Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong(),
+			Mockito.any(Context.class), Mockito.any(long[].class)
 		);
 	}
 
@@ -270,7 +279,6 @@ public class SegmentsEntryProviderRegistryTest {
 	}
 
 	private SegmentsEntryProvider _createSegmentsEntryProvider(
-			long groupId, String className, long classPK, Context context,
 			long[] segmentsEntryIds)
 		throws PortalException {
 
@@ -282,7 +290,8 @@ public class SegmentsEntryProviderRegistryTest {
 		).when(
 			segmentsEntryProvider
 		).getSegmentsEntryIds(
-			groupId, className, classPK, context
+			Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong(),
+			Mockito.any(Context.class), Mockito.any(long[].class)
 		);
 
 		return segmentsEntryProvider;
@@ -293,6 +302,10 @@ public class SegmentsEntryProviderRegistryTest {
 
 	private final SegmentsEntryProviderRegistry _segmentsEntryProviderRegistry =
 		new SegmentsEntryProviderRegistryImpl();
+
+	@Mock
+	private ServiceTrackerList<SegmentsEntryProvider, SegmentsEntryProvider>
+		_serviceTrackerList;
 
 	@Mock
 	private ServiceTrackerMap<String, SegmentsEntryProvider> _serviceTrackerMap;
