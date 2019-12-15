@@ -31,7 +31,6 @@ import com.liferay.segments.provider.SegmentsEntryProviderRegistry;
 import com.liferay.segments.service.SegmentsEntryLocalService;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.osgi.framework.BundleContext;
@@ -101,21 +100,20 @@ public class SegmentsEntryProviderRegistryImpl
 			long groupId, String className, long classPK, Context context)
 		throws PortalException {
 
-		Set<Long> segmentsEntryIds = new HashSet<>();
+		long[] segmentsEntryIds = new long[0];
 
 		for (SegmentsEntryProvider segmentsEntryProvider :
-				_serviceTrackerMap.values()) {
+				_serviceTrackerList) {
 
-			long[] segmentsEntryProviderSegmentsEntryIds =
+			segmentsEntryIds = ArrayUtil.append(
+				segmentsEntryIds,
 				segmentsEntryProvider.getSegmentsEntryIds(
-					groupId, className, classPK, context);
-
-			for (long segmentsEntryId : segmentsEntryProviderSegmentsEntryIds) {
-				segmentsEntryIds.add(segmentsEntryId);
-			}
+					groupId, className, classPK, context, segmentsEntryIds));
 		}
 
-		return ArrayUtil.toLongArray(segmentsEntryIds);
+		Set<Long> segmentsEntryIdsSet = SetUtil.fromArray(segmentsEntryIds);
+
+		return ArrayUtil.toLongArray(segmentsEntryIdsSet);
 	}
 
 	@Override
