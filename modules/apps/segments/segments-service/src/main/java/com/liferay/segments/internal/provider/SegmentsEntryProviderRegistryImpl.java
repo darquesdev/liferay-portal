@@ -14,18 +14,23 @@
 
 package com.liferay.segments.internal.provider;
 
+import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
+import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
+import com.liferay.osgi.service.tracker.collections.map.PropertyServiceReferenceComparator;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.segments.context.Context;
 import com.liferay.segments.model.SegmentsEntry;
 import com.liferay.segments.provider.SegmentsEntryProvider;
 import com.liferay.segments.provider.SegmentsEntryProviderRegistry;
 import com.liferay.segments.service.SegmentsEntryLocalService;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -120,6 +125,12 @@ public class SegmentsEntryProviderRegistryImpl
 
 	@Activate
 	protected void activate(BundleContext bundleContext) {
+		_serviceTrackerList = ServiceTrackerListFactory.open(
+			bundleContext, SegmentsEntryProvider.class,
+			Collections.reverseOrder(
+				new PropertyServiceReferenceComparator(
+					"segments.entry.provider.order")));
+
 		_serviceTrackerMap = ServiceTrackerMapFactory.openSingleValueMap(
 			bundleContext, SegmentsEntryProvider.class,
 			"segments.entry.provider.source");
@@ -127,6 +138,7 @@ public class SegmentsEntryProviderRegistryImpl
 
 	@Deactivate
 	protected void deactivate() {
+		_serviceTrackerList.close();
 		_serviceTrackerMap.close();
 	}
 
@@ -136,6 +148,8 @@ public class SegmentsEntryProviderRegistryImpl
 	@Reference
 	private SegmentsEntryLocalService _segmentsEntryLocalService;
 
+	private ServiceTrackerList<SegmentsEntryProvider, SegmentsEntryProvider>
+		_serviceTrackerList;
 	private ServiceTrackerMap<String, SegmentsEntryProvider> _serviceTrackerMap;
 
 }

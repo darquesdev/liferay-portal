@@ -55,7 +55,10 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	immediate = true,
-	property = "segments.entry.provider.source=" + SegmentsEntryConstants.SOURCE_ASAH_FARO_BACKEND,
+	property = {
+		"segments.entry.provider.order:Integer=50",
+		"segments.entry.provider.source=" + SegmentsEntryConstants.SOURCE_ASAH_FARO_BACKEND
+	},
 	service = SegmentsEntryProvider.class
 )
 public class AsahSegmentsEntryProvider implements SegmentsEntryProvider {
