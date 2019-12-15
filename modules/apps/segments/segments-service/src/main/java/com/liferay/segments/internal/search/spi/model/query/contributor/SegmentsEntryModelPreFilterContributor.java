@@ -52,11 +52,11 @@ public class SegmentsEntryModelPreFilterContributor
 		long[] roleIds = (long[])params.get("roleIds");
 
 		if (ArrayUtil.isNotEmpty(roleIds)) {
-			TermsFilter accountEntryTermsFilter = new TermsFilter("roleIds");
+			TermsFilter roleIdsTermsFilter = new TermsFilter("roleIds");
 
-			accountEntryTermsFilter.addValues(ArrayUtil.toStringArray(roleIds));
+			roleIdsTermsFilter.addValues(ArrayUtil.toStringArray(roleIds));
 
-			booleanFilter.add(accountEntryTermsFilter, BooleanClauseOccur.MUST);
+			booleanFilter.add(roleIdsTermsFilter, BooleanClauseOccur.MUST);
 		}
 	}
 
