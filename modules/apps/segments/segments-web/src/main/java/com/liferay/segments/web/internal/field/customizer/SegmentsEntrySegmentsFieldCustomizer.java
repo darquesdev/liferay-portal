@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.portlet.PortletProvider;
 import com.liferay.portal.kernel.portlet.PortletProviderUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.segments.constants.SegmentsEntryConstants;
@@ -99,6 +100,16 @@ public class SegmentsEntrySegmentsFieldCustomizer
 			}
 
 			portletURL.setParameter("eventName", "selectEntity");
+
+			long segmentsEntryId = ParamUtil.getLong(
+				portletRequest, "segmentsEntryId");
+
+			if (segmentsEntryId > 0) {
+				portletURL.setParameter(
+					"excludedSegmentsEntryIds",
+					String.valueOf(segmentsEntryId));
+			}
+
 			portletURL.setParameter(
 				"excludedSources",
 				StringUtil.toLowerCase(SegmentsEntryConstants.SOURCE_REFERRED));

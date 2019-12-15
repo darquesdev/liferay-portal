@@ -160,6 +160,8 @@ public class SelectSegmentsEntryDisplayContext {
 
 		LinkedHashMap<String, Object> params =
 			LinkedHashMapBuilder.<String, Object>put(
+				"excludedSegmentsEntryIds", _getExcludedSegmentsEntryIds()
+			).put(
 				"excludedSources", _getExcludedSources()
 			).build();
 
@@ -210,6 +212,17 @@ public class SelectSegmentsEntryDisplayContext {
 		}
 
 		return true;
+	}
+
+	private long[] _getExcludedSegmentsEntryIds() {
+		if (_excludedSegmentsEntryIds != null) {
+			return _excludedSegmentsEntryIds;
+		}
+
+		_excludedSegmentsEntryIds = ParamUtil.getLongValues(
+			_httpServletRequest, "excludedSegmentsEntryIds");
+
+		return _excludedSegmentsEntryIds;
 	}
 
 	private String[] _getExcludedSources() {
@@ -372,6 +385,7 @@ public class SelectSegmentsEntryDisplayContext {
 
 	private String _displayStyle;
 	private String _eventName;
+	private long[] _excludedSegmentsEntryIds;
 	private String[] _excludedSources;
 	private final HttpServletRequest _httpServletRequest;
 	private String _keywords;
