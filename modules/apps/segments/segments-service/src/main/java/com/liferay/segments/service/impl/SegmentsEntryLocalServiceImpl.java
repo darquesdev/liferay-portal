@@ -42,6 +42,8 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.segments.constants.SegmentsEntryConstants;
+import com.liferay.segments.criteria.Criteria;
+import com.liferay.segments.criteria.CriteriaSerializer;
 import com.liferay.segments.exception.RequiredSegmentsEntryException;
 import com.liferay.segments.exception.SegmentsEntryKeyException;
 import com.liferay.segments.exception.SegmentsEntryNameException;
@@ -114,14 +116,7 @@ public class SegmentsEntryLocalServiceImpl
 		segmentsEntry.setDescriptionMap(descriptionMap);
 		segmentsEntry.setActive(active);
 		segmentsEntry.setCriteria(criteria);
-
-		if (Validator.isNull(source)) {
-			segmentsEntry.setSource(SegmentsEntryConstants.SOURCE_DEFAULT);
-		}
-		else {
-			segmentsEntry.setSource(source);
-		}
-
+		segmentsEntry.setSource(getSource(criteria, source));
 		segmentsEntry.setType(type);
 
 		segmentsEntryPersistence.update(segmentsEntry);
@@ -369,6 +364,7 @@ public class SegmentsEntryLocalServiceImpl
 		segmentsEntry.setDescriptionMap(descriptionMap);
 		segmentsEntry.setActive(active);
 		segmentsEntry.setCriteria(criteria);
+		segmentsEntry.setSource(getSource(criteria, null));
 
 		return segmentsEntryPersistence.update(segmentsEntry);
 	}
@@ -451,6 +447,24 @@ public class SegmentsEntryLocalServiceImpl
 		}
 
 		return segmentsEntries;
+	}
+
+	protected String getSource(String criteria, String source) {
+		if (Validator.isNotNull(criteria)) {
+			Criteria criteriaObj = CriteriaSerializer.deserialize(criteria);
+
+			if (Validator.isNotNull(
+					criteriaObj.getFilterString(Criteria.Type.REFERRED))) {
+
+				return SegmentsEntryConstants.SOURCE_REFERRED;
+			}
+		}
+
+		if (Validator.isNull(source)) {
+			return SegmentsEntryConstants.SOURCE_DEFAULT;
+		}
+
+		return source;
 	}
 
 	protected void validateKey(

@@ -33,6 +33,8 @@ public class SegmentsEntryConstants {
 
 	public static final String SOURCE_DEFAULT = "DEFAULT";
 
+	public static final String SOURCE_REFERRED = "REFERRED";
+
 	public static String getDefaultSegmentsEntryName(Locale locale) {
 		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
 			"content.Language", locale, SegmentsEntryConstants.class);
