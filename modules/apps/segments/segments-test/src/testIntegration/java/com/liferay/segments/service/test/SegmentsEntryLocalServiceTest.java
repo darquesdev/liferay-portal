@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -37,8 +38,10 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.service.test.ServiceTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.segments.constants.SegmentsEntryConstants;
 import com.liferay.segments.criteria.Criteria;
 import com.liferay.segments.criteria.CriteriaSerializer;
+import com.liferay.segments.criteria.contributor.SegmentsCriteriaContributor;
 import com.liferay.segments.exception.RequiredSegmentsEntryException;
 import com.liferay.segments.exception.SegmentsEntryKeyException;
 import com.liferay.segments.exception.SegmentsEntryNameException;
@@ -148,6 +151,27 @@ public class SegmentsEntryLocalServiceTest {
 			StringPool.BLANK, StringPool.BLANK,
 			CriteriaSerializer.serialize(new Criteria()),
 			RandomTestUtil.randomString());
+	}
+
+	@Test
+	public void testAddSegmentsEntryWithReferredSource()
+		throws PortalException {
+
+		Criteria criteria = new Criteria();
+
+		_segmentsEntrySegmentsCriteriaContributor.contribute(
+			criteria,
+			String.format(
+				"(segmentsEntryIds eq '%s') and (segmentsEntryIds eq '%s')",
+				RandomTestUtil.nextLong(), RandomTestUtil.nextLong()),
+			Criteria.Conjunction.AND);
+
+		SegmentsEntry segmentsEntry = SegmentsTestUtil.addSegmentsEntry(
+			_group.getGroupId(), CriteriaSerializer.serialize(criteria),
+			User.class.getName());
+
+		Assert.assertEquals(
+			SegmentsEntryConstants.SOURCE_REFERRED, segmentsEntry.getSource());
 	}
 
 	@Test
@@ -304,6 +328,67 @@ public class SegmentsEntryLocalServiceTest {
 	}
 
 	@Test
+	public void testSearchSegmentsEntriesWithExcludedSegmentsEntryIds()
+		throws PortalException {
+
+		SegmentsEntry segmentsEntry1 = SegmentsTestUtil.addSegmentsEntry(
+			_group.getGroupId());
+		SegmentsEntry segmentsEntry2 = SegmentsTestUtil.addSegmentsEntry(
+			_group.getGroupId());
+
+		LinkedHashMap<String, Object> params =
+			LinkedHashMapBuilder.<String, Object>put(
+				"excludedSegmentsEntryIds",
+				new long[] {segmentsEntry1.getSegmentsEntryId()}
+			).build();
+
+		BaseModelSearchResult<SegmentsEntry> baseModelSearchResult =
+			_segmentsEntryLocalService.searchSegmentsEntries(
+				segmentsEntry1.getCompanyId(), segmentsEntry1.getGroupId(),
+				null, true, params, 0, 1, null);
+
+		List<SegmentsEntry> segmentsEntries =
+			baseModelSearchResult.getBaseModels();
+
+		Assert.assertEquals(
+			segmentsEntries.toString(), 1, segmentsEntries.size());
+		Assert.assertEquals(segmentsEntry2, segmentsEntries.get(0));
+	}
+
+	@Test
+	public void testSearchSegmentsEntriesWithExcludedSources()
+		throws PortalException {
+
+		SegmentsEntry segmentsEntry = SegmentsTestUtil.addSegmentsEntry(
+			_group.getGroupId());
+		SegmentsTestUtil.addSegmentsEntry(
+			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(),
+			CriteriaSerializer.serialize(new Criteria()),
+			SegmentsEntryConstants.SOURCE_ASAH_FARO_BACKEND,
+			RandomTestUtil.randomString(),
+			ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
+
+		LinkedHashMap<String, Object> params =
+			LinkedHashMapBuilder.<String, Object>put(
+				"excludedSources",
+				new String[] {SegmentsEntryConstants.SOURCE_ASAH_FARO_BACKEND}
+			).build();
+
+		BaseModelSearchResult<SegmentsEntry> baseModelSearchResult =
+			_segmentsEntryLocalService.searchSegmentsEntries(
+				segmentsEntry.getCompanyId(), segmentsEntry.getGroupId(), null,
+				true, params, 0, 1, null);
+
+		List<SegmentsEntry> segmentsEntries =
+			baseModelSearchResult.getBaseModels();
+
+		Assert.assertEquals(
+			segmentsEntries.toString(), 1, segmentsEntries.size());
+		Assert.assertEquals(segmentsEntry, segmentsEntries.get(0));
+	}
+
+	@Test
 	public void testSearchSegmentsEntriesWithRoleIds() throws PortalException {
 		SegmentsEntry segmentsEntry = SegmentsTestUtil.addSegmentsEntry(
 			_group.getGroupId());
@@ -390,6 +475,35 @@ public class SegmentsEntryLocalServiceTest {
 			ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
 	}
 
+	@Test
+	public void testUpdateSegmentsEntryWithReferredSource()
+		throws PortalException {
+
+		SegmentsEntry segmentsEntry = SegmentsTestUtil.addSegmentsEntry(
+			_group.getGroupId());
+
+		Criteria criteria = new Criteria();
+
+		_segmentsEntrySegmentsCriteriaContributor.contribute(
+			criteria,
+			String.format(
+				"(segmentsEntryIds eq '%s') and (segmentsEntryIds eq '%s')",
+				RandomTestUtil.nextLong(), RandomTestUtil.nextLong()),
+			Criteria.Conjunction.AND);
+
+		SegmentsEntry updatedSegmentsEntry =
+			_segmentsEntryLocalService.updateSegmentsEntry(
+				segmentsEntry.getSegmentsEntryId(),
+				segmentsEntry.getSegmentsEntryKey(), segmentsEntry.getNameMap(),
+				segmentsEntry.getDescriptionMap(), false,
+				CriteriaSerializer.serialize(criteria),
+				ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
+
+		Assert.assertEquals(
+			SegmentsEntryConstants.SOURCE_REFERRED,
+			updatedSegmentsEntry.getSource());
+	}
+
 	private Group _group;
 
 	@DeleteAfterTestRun
@@ -406,6 +520,13 @@ public class SegmentsEntryLocalServiceTest {
 
 	@Inject
 	private SegmentsEntryRoleLocalService _segmentsEntryRoleLocalService;
+
+	@Inject(
+		filter = "segments.criteria.contributor.key=segments",
+		type = SegmentsCriteriaContributor.class
+	)
+	private SegmentsCriteriaContributor
+		_segmentsEntrySegmentsCriteriaContributor;
 
 	@Inject
 	private SegmentsExperienceLocalService _segmentsExperienceLocalService;
