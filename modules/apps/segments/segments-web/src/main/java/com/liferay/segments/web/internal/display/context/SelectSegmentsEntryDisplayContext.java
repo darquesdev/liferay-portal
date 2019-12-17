@@ -334,6 +334,9 @@ public class SelectSegmentsEntryDisplayContext {
 
 		portletURL.setParameter("displayStyle", getDisplayStyle());
 		portletURL.setParameter(
+			"excludedSegmentsEntryIds",
+			StringUtil.merge(_getExcludedSegmentsEntryIds()));
+		portletURL.setParameter(
 			"excludedSources", StringUtil.merge(_getExcludedSources()));
 		portletURL.setParameter("orderByCol", _getOrderByCol());
 		portletURL.setParameter("orderByType", getOrderByType());
