@@ -99,13 +99,11 @@ public class SegmentsEntryRoleContributor implements RoleContributor {
 		}
 
 		if ((segmentsEntryIds.length > 0) && _log.isDebugEnabled()) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(
-					StringBundler.concat(
-						"Found segments ", segmentsEntryIds, " for user ",
-						user.getUserId(), " in group ",
-						roleCollection.getGroupId()));
-			}
+			_log.debug(
+				StringBundler.concat(
+					"Found segments ", segmentsEntryIds, " for user ",
+					user.getUserId(), " in group ",
+					roleCollection.getGroupId()));
 		}
 
 		return segmentsEntryIds;
