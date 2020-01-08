@@ -416,6 +416,7 @@ public class SegmentsEntryLocalServiceTest {
 		List<SegmentsEntry> segmentsEntries =
 			baseModelSearchResult.getBaseModels();
 
+		Assert.assertTrue(true);
 		Assert.assertEquals(
 			segmentsEntries.toString(), 1, segmentsEntries.size());
 		Assert.assertEquals(segmentsEntry2, segmentsEntries.get(0));
