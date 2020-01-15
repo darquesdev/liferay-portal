@@ -1,0 +1,25 @@
+/*TODO Check if it's necessary*/
+@import 'mixins';
+
+.lfr-analytics-reports-panel {
+	&.open-admin-panel.sidenav-menu-slider {
+		visibility: visible;
+		width: 320px;
+	}
+
+	.sidebar-body {
+		background-color: #fff;
+	}
+}
+
+.lfr-has-analytics-reports-panel {
+	overflow: auto;
+
+	.lfr-configurator-visibility {
+		display: none;
+	}
+
+	.analytics-reports-icon {
+		display: none;
+	}
+}

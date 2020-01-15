@@ -1,0 +1,24 @@
+var analyticsReportsPanelToggle = document.getElementById('${portletNamespace}analyticsReportsPanelToggleId');
+
+var sidenavInstance = Liferay.SideNavigation.initialize(analyticsReportsPanelToggle);
+
+sidenavInstance.on(
+	'open.lexicon.sidenav',
+	function(event) {
+		Liferay.fire('AnalyticsReportsPanel:openAnalyticsReportsPanel');
+	}
+);
+
+sidenavInstance.on(
+	'closed.lexicon.sidenav',
+	function(event) {
+		Liferay.fire('AnalyticsReportsPanel:closeAnalyticsReportsPanel');
+	}
+);
+
+Liferay.once(
+	'screenLoad',
+	function() {
+		Liferay.SideNavigation.destroy(analyticsReportsPanelToggle);
+	}
+);

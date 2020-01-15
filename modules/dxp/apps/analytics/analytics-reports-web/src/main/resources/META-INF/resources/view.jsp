@@ -15,3 +15,17 @@
 --%>
 
 <%@ include file="/init.jsp" %>
+
+<div class="lfr-analytics-reports-sidebar" id="analyticsReportsSidebar">
+	<div class="sidebar-header">
+		<h1 class="sr-only"><liferay-ui:message key="analytics-reports-panel" /></h1>
+
+		<span><liferay-ui:message key="analytics-reports" /></span>
+
+		<aui:icon cssClass="icon-monospaced sidenav-close" image="times" markupView="lexicon" url="javascript:;" />
+	</div>
+
+	<div class="sidebar-body">
+		<liferay-util:include page="/analytics_reports_panel.jsp" servletContext="<%= application %>" />
+	</div>
+</div>
