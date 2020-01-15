@@ -1,15 +1,15 @@
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
+ * The contents of this file are subject to the terms of the Liferay Enterprise
+ * Subscription License ("License"). You may not use this file except in
+ * compliance with the License. You can obtain a copy of the License by
+ * contacting Liferay, Inc. See the License for the specific language governing
+ * permissions and limitations under the License, including but not limited to
+ * distribution rights of the Software.
  *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
+ *
+ *
  */
 
 package com.liferay.analytics.reports.web.internal.product.navigation.control.menu;
@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletURLFactory;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Html;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -36,24 +37,28 @@ import com.liferay.taglib.aui.IconTag;
 import com.liferay.taglib.aui.ScriptTag;
 import com.liferay.taglib.ui.MessageTag;
 import com.liferay.taglib.util.BodyBottomTag;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletURL;
-import javax.portlet.WindowStateException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.PageContext;
 import java.io.IOException;
 import java.io.Writer;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+
+import javax.portlet.PortletRequest;
+import javax.portlet.PortletURL;
+import javax.portlet.WindowStateException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.PageContext;
+
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Sarai Díaz
@@ -69,12 +74,6 @@ import java.util.ResourceBundle;
 public class AnalyticsReportsProductNavigationControlMenuEntry
 	extends BaseProductNavigationControlMenuEntry {
 
-	@Activate
-	public void activate() {
-		_portletNamespace = _portal.getPortletNamespace(
-			AnalyticsReportsWebKeys.ANALYTICS_REPORTS);
-	}
-
 	@Override
 	public String getLabel(Locale locale) {
 		return null;
@@ -87,8 +86,8 @@ public class AnalyticsReportsProductNavigationControlMenuEntry
 
 	@Override
 	public boolean includeBody(
-		HttpServletRequest httpServletRequest,
-		HttpServletResponse httpServletResponse)
+			HttpServletRequest httpServletRequest,
+			HttpServletResponse httpServletResponse)
 		throws IOException {
 
 		BodyBottomTag bodyBottomTag = new BodyBottomTag();
@@ -109,8 +108,8 @@ public class AnalyticsReportsProductNavigationControlMenuEntry
 
 	@Override
 	public boolean includeIcon(
-		HttpServletRequest httpServletRequest,
-		HttpServletResponse httpServletResponse)
+			HttpServletRequest httpServletRequest,
+			HttpServletResponse httpServletResponse)
 		throws IOException {
 
 		PortletURL analyticsReportsPanelURL = _portletURLFactory.create(
@@ -142,16 +141,16 @@ public class AnalyticsReportsProductNavigationControlMenuEntry
 			ReflectionUtil.throwException(je);
 		}
 
-		values.put("portletNamespace", _portletNamespace);
 		values.put(
-			"analyticsReportsPanelURL",
-			analyticsReportsPanelURL.toString());
+			"analyticsReportsPanelURL", analyticsReportsPanelURL.toString());
+		values.put("portletNamespace", _portletNamespace);
 
 		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
 			_portal.getLocale(httpServletRequest), getClass());
 
 		values.put(
-			"title", _html.escape(_language.get(resourceBundle, "analytics-reports")));
+			"title",
+			_html.escape(_language.get(resourceBundle, "analytics-reports")));
 
 		Writer writer = httpServletResponse.getWriter();
 
@@ -188,6 +187,12 @@ public class AnalyticsReportsProductNavigationControlMenuEntry
 		return super.isShow(httpServletRequest);
 	}
 
+	@Activate
+	protected void activate() {
+		_portletNamespace = _portal.getPortletNamespace(
+			AnalyticsReportsWebKeys.ANALYTICS_REPORTS);
+	}
+
 	private void _processBodyBottomTagBody(PageContext pageContext) {
 		try {
 			HttpServletRequest httpServletRequest =
@@ -198,32 +203,39 @@ public class AnalyticsReportsProductNavigationControlMenuEntry
 
 			pageContext.setAttribute("resourceBundle", resourceBundle);
 
-			Map<String, String> values = new HashMap<>();
-
-			values.put("portletNamespace", _portletNamespace);
-
-			MessageTag messageTag = new MessageTag();
-
-			messageTag.setKey("analytics-reports");
-
-			values.put("sidebarMessage", messageTag.doTagAsString(pageContext));
-
-			messageTag = new MessageTag();
-
-			messageTag.setKey("analytics-reports-panel");
-
-			values.put(
+			Map<String, String> values = HashMapBuilder.put(
 				"analyticsReportsPanel",
-				messageTag.doTagAsString(pageContext));
+				() -> {
+					MessageTag messageTag = new MessageTag();
 
-			IconTag iconTag = new IconTag();
+					messageTag.setKey("analytics-reports-panel");
 
-			iconTag.setCssClass("icon-monospaced sidenav-close");
-			iconTag.setImage("times");
-			iconTag.setMarkupView("lexicon");
-			iconTag.setUrl("javascript:;");
+					return messageTag.doTagAsString(pageContext);
+				}
+			).put(
+				"portletNamespace", _portletNamespace
+			).put(
+				"sidebarIcon",
+				() -> {
+					IconTag iconTag = new IconTag();
 
-			values.put("sidebarIcon", iconTag.doTagAsString(pageContext));
+					iconTag.setCssClass("icon-monospaced sidenav-close");
+					iconTag.setImage("times");
+					iconTag.setMarkupView("lexicon");
+					iconTag.setUrl("javascript:;");
+
+					return iconTag.doTagAsString(pageContext);
+				}
+			).put(
+				"sidebarMessage",
+				() -> {
+					MessageTag messageTag = new MessageTag();
+
+					messageTag.setKey("analytics-reports");
+
+					return messageTag.doTagAsString(pageContext);
+				}
+			).build();
 
 			Writer writer = pageContext.getOut();
 

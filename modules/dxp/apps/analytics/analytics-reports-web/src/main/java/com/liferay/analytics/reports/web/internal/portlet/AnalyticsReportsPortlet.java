@@ -1,15 +1,15 @@
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
- * This library is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
+ * The contents of this file are subject to the terms of the Liferay Enterprise
+ * Subscription License ("License"). You may not use this file except in
+ * compliance with the License. You can obtain a copy of the License by
+ * contacting Liferay, Inc. See the License for the specific language governing
+ * permissions and limitations under the License, including but not limited to
+ * distribution rights of the Software.
  *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
+ *
+ *
  */
 
 package com.liferay.analytics.reports.web.internal.portlet;
@@ -19,15 +19,18 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
+
+import java.io.IOException;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Sarai Díaz
@@ -45,23 +48,20 @@ import java.io.IOException;
 		"javax.portlet.display-name=Content Performance",
 		"javax.portlet.init-param.view-template=/view.jsp",
 		"javax.portlet.name=" + AnalyticsReportsWebKeys.ANALYTICS_REPORTS,
-		"javax.portlet.resource-bundle=content.Language",
-		"javax.portlet.supports.mime-type=text/html"
+		"javax.portlet.resource-bundle=content.Language"
 	},
-	service = {Portlet.class, AnalyticsReportsPortlet.class}
+	service = {AnalyticsReportsPortlet.class, Portlet.class}
 )
 public class AnalyticsReportsPortlet extends MVCPortlet {
 
 	@Override
 	protected void doDispatch(
-		RenderRequest renderRequest, RenderResponse renderResponse)
+			RenderRequest renderRequest, RenderResponse renderResponse)
 		throws IOException, PortletException {
 
-		HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(
-			renderRequest);
-
 		HttpServletRequest originalHttpServletRequest =
-			_portal.getOriginalServletRequest(httpServletRequest);
+			_portal.getOriginalServletRequest(
+				_portal.getHttpServletRequest(renderRequest));
 
 		String layoutMode = ParamUtil.getString(
 			originalHttpServletRequest, "p_l_mode", Constants.VIEW);

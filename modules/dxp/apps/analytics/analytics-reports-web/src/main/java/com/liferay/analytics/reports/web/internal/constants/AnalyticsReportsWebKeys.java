@@ -21,5 +21,6 @@ public class AnalyticsReportsWebKeys {
 
 	public static final String ANALYTICS_REPORTS =
 		"com_liferay_analytics_reports_web_internal_portlet_" +
-		"AnalyticsReportsPortlet";
+			"AnalyticsReportsPortlet";
+
 }
