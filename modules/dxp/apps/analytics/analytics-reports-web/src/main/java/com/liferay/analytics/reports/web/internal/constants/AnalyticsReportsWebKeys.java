@@ -23,4 +23,7 @@ public class AnalyticsReportsWebKeys {
 		"com_liferay_analytics_reports_web_internal_portlet_" +
 			"AnalyticsReportsPortlet";
 
+	public static final String ANALYTICS_REPORTS_PANEL_STATE =
+		"ANALYTICS_REPORTS_PANEL_STATE";
+
 }

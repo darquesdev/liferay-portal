@@ -16,46 +16,49 @@ package com.liferay.analytics.reports.web.internal.product.navigation.control.me
 
 import com.liferay.analytics.reports.web.internal.constants.AnalyticsReportsWebKeys;
 import com.liferay.petra.reflect.ReflectionUtil;
+import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletURLFactory;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
-import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Html;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
+import com.liferay.portal.kernel.util.SessionClicks;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.product.navigation.control.menu.BaseProductNavigationControlMenuEntry;
 import com.liferay.product.navigation.control.menu.ProductNavigationControlMenuEntry;
 import com.liferay.product.navigation.control.menu.constants.ProductNavigationControlMenuCategoryKeys;
 import com.liferay.taglib.aui.IconTag;
-import com.liferay.taglib.aui.ScriptTag;
-import com.liferay.taglib.ui.MessageTag;
-import com.liferay.taglib.util.BodyBottomTag;
+import com.liferay.taglib.portletext.RuntimeTag;
 
 import java.io.IOException;
 import java.io.Writer;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
-import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
+import javax.portlet.RenderRequest;
 import javax.portlet.WindowStateException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
+import com.liferay.taglib.servlet.PageContextFactoryUtil;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -90,19 +93,9 @@ public class AnalyticsReportsProductNavigationControlMenuEntry
 			HttpServletResponse httpServletResponse)
 		throws IOException {
 
-		BodyBottomTag bodyBottomTag = new BodyBottomTag();
-
-		bodyBottomTag.setOutputKey("analyticsReportsPanelURL");
-
-		try {
-			bodyBottomTag.doBodyTag(
-				httpServletRequest, httpServletResponse,
-				this::_processBodyBottomTagBody);
-		}
-		catch (JspException je) {
-			throw new IOException(je);
-		}
-
+		_processBodyBottomContent(
+			PageContextFactoryUtil.create(
+				httpServletRequest, httpServletResponse));
 		return true;
 	}
 
@@ -112,19 +105,37 @@ public class AnalyticsReportsProductNavigationControlMenuEntry
 			HttpServletResponse httpServletResponse)
 		throws IOException {
 
-		PortletURL analyticsReportsPanelURL = _portletURLFactory.create(
-			httpServletRequest, AnalyticsReportsWebKeys.ANALYTICS_REPORTS,
-			PortletRequest.RENDER_PHASE);
-
-		try {
-			analyticsReportsPanelURL.setWindowState(
-				LiferayWindowState.EXCLUSIVE);
-		}
-		catch (WindowStateException wse) {
-			ReflectionUtil.throwException(wse);
-		}
-
 		Map<String, String> values = new HashMap<>();
+
+		if (isPanelStateOpen(httpServletRequest)) {
+			values.put("analyticsReportsPanelURL", StringPool.BLANK);
+			values.put("cssClass", "active");
+		}
+		else {
+			values.put("cssClass", StringPool.BLANK);
+
+			PortletURL portletURL = _portletURLFactory.create(
+				httpServletRequest, AnalyticsReportsWebKeys.ANALYTICS_REPORTS,
+				RenderRequest.RENDER_PHASE);
+
+			portletURL.setParameter("mvcPath", "/analytics_reports_panel.jsp");
+
+			try {
+				portletURL.setWindowState(LiferayWindowState.EXCLUSIVE);
+			}
+			catch (WindowStateException wse) {
+				ReflectionUtil.throwException(wse);
+			}
+
+			values.put("analyticsReportsPanelURL", portletURL.toString());
+		}
+
+		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
+			_portal.getLocale(httpServletRequest), getClass());
+
+		values.put(
+			"title",
+			_html.escape(_language.get(resourceBundle, "analytics-reports")));
 
 		IconTag iconTag = new IconTag();
 
@@ -141,22 +152,25 @@ public class AnalyticsReportsProductNavigationControlMenuEntry
 			ReflectionUtil.throwException(je);
 		}
 
-		values.put(
-			"analyticsReportsPanelURL", analyticsReportsPanelURL.toString());
 		values.put("portletNamespace", _portletNamespace);
-
-		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
-			_portal.getLocale(httpServletRequest), getClass());
-
-		values.put(
-			"title",
-			_html.escape(_language.get(resourceBundle, "analytics-reports")));
 
 		Writer writer = httpServletResponse.getWriter();
 
 		writer.write(StringUtil.replace(_ICON_TMPL_CONTENT, "${", "}", values));
 
 		return true;
+	}
+
+	public boolean isPanelStateOpen(HttpServletRequest httpServletRequest) {
+		String analyticsReportsPanelState = SessionClicks.get(
+			httpServletRequest, "com.liferay.analytics.reports.web_panelState",
+			"closed");
+
+		if (Objects.equals(analyticsReportsPanelState, "open")) {
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override
@@ -169,7 +183,8 @@ public class AnalyticsReportsProductNavigationControlMenuEntry
 
 		Layout layout = themeDisplay.getLayout();
 
-		if (!layout.isTypeAssetDisplay()) {
+		//TODO isTypeAssetDisplay()
+		if (!LayoutConstants.TYPE_ASSET_DISPLAY.equals(layout.getType())) {
 			return false;
 		}
 
@@ -193,7 +208,7 @@ public class AnalyticsReportsProductNavigationControlMenuEntry
 			AnalyticsReportsWebKeys.ANALYTICS_REPORTS);
 	}
 
-	private void _processBodyBottomTagBody(PageContext pageContext) {
+	private void _processBodyBottomContent(PageContext pageContext) {
 		try {
 			HttpServletRequest httpServletRequest =
 				(HttpServletRequest)pageContext.getRequest();
@@ -203,77 +218,41 @@ public class AnalyticsReportsProductNavigationControlMenuEntry
 
 			pageContext.setAttribute("resourceBundle", resourceBundle);
 
-			Map<String, String> values = HashMapBuilder.put(
-				"analyticsReportsPanel",
-				() -> {
-					MessageTag messageTag = new MessageTag();
+			JspWriter jspWriter = pageContext.getOut();
 
-					messageTag.setKey("analytics-reports-panel");
+			jspWriter.write("<div class=\"");
 
-					return messageTag.doTagAsString(pageContext);
-				}
-			).put(
-				"portletNamespace", _portletNamespace
-			).put(
-				"sidebarIcon",
-				() -> {
-					IconTag iconTag = new IconTag();
+			if (isPanelStateOpen(httpServletRequest)) {
+				jspWriter.write(
+					"lfr-has-analytics-reports-panel open-admin-panel ");
+			}
 
-					iconTag.setCssClass("icon-monospaced sidenav-close");
-					iconTag.setImage("times");
-					iconTag.setMarkupView("lexicon");
-					iconTag.setUrl("javascript:;");
+			jspWriter.write(
+				StringBundler.concat(
+					"hidden-print lfr-admin-panel lfr-product-menu-panel ",
+					"lfr-analytics-reports-panel sidenav-fixed ",
+					"sidenav-menu-slider sidenav-right\" id=\""));
 
-					return iconTag.doTagAsString(pageContext);
-				}
-			).put(
-				"sidebarMessage",
-				() -> {
-					MessageTag messageTag = new MessageTag();
+			jspWriter.write(_portletNamespace);
 
-					messageTag.setKey("analytics-reports");
+			jspWriter.write("analyticsReportsPanelId\">");
+			jspWriter.write(
+				"<div class=\"sidebar sidebar-default sidenav-menu " +
+					"sidebar-sm\">");
 
-					return messageTag.doTagAsString(pageContext);
-				}
-			).build();
+			RuntimeTag runtimeTag = new RuntimeTag();
 
-			Writer writer = pageContext.getOut();
+			runtimeTag.setPortletName(
+				AnalyticsReportsWebKeys.ANALYTICS_REPORTS);
 
-			writer.write(
-				StringUtil.replace(_BODY_TMPL_CONTENT, "${", "}", values));
+			runtimeTag.doTag(pageContext);
 
-			ScriptTag scriptTag = new ScriptTag();
-
-			scriptTag.setUse("liferay-store,io-request,parse-content");
-
-			scriptTag.doBodyTag(pageContext, this::_processScriptTagBody);
+			jspWriter.write("</div></div>");
 		}
 		catch (Exception e) {
 			ReflectionUtil.throwException(e);
 		}
 	}
-
-	private void _processScriptTagBody(PageContext pageContext) {
-		Writer writer = pageContext.getOut();
-
-		try {
-			writer.write(
-				StringUtil.replace(
-					_BODY_SCRIPT_TMPL_CONTENT, "${", "}",
-					Collections.singletonMap(
-						"portletNamespace", _portletNamespace)));
-		}
-		catch (IOException ioe) {
-			ReflectionUtil.throwException(ioe);
-		}
-	}
-
-	private static final String _BODY_SCRIPT_TMPL_CONTENT = StringUtil.read(
-		AnalyticsReportsProductNavigationControlMenuEntry.class,
-		"body_script.tmpl");
-
-	private static final String _BODY_TMPL_CONTENT = StringUtil.read(
-		AnalyticsReportsProductNavigationControlMenuEntry.class, "body.tmpl");
 
 	private static final String _ICON_TMPL_CONTENT = StringUtil.read(
 		AnalyticsReportsProductNavigationControlMenuEntry.class, "icon.tmpl");

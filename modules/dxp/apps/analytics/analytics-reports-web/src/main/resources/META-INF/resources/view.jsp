@@ -16,6 +16,10 @@
 
 <%@ include file="/init.jsp" %>
 
+<%
+String analyticsReportsPanelState = SessionClicks.get(request, AnalyticsReportsWebKeys.ANALYTICS_REPORTS_PANEL_STATE, "closed");
+%>
+
 <div class="lfr-analytics-reports-sidebar" id="analyticsReportsSidebar">
 	<div class="sidebar-header">
 		<h1 class="sr-only"><liferay-ui:message key="analytics-reports-panel" /></h1>
@@ -26,6 +30,34 @@
 	</div>
 
 	<div class="sidebar-body">
-		<liferay-util:include page="/analytics_reports_panel.jsp" servletContext="<%= application %>" />
+		<c:if test='<%= Objects.equals(analyticsReportsPanelState, "open") %>'>
+			<liferay-util:include page="/analytics_reports_panel.jsp" servletContext="<%= application %>" />
+		</c:if>
 	</div>
 </div>
+
+<aui:script>
+	var analyticsReportsPanelToggle = document.getElementById(
+		'<portlet:namespace />analyticsReportsPanelToggleId'
+	);
+
+	var sidenavInstance = Liferay.SideNavigation.initialize(
+		analyticsReportsPanelToggle
+	);
+
+	sidenavInstance.on('open.lexicon.sidenav', function(event) {
+		Liferay.Util.Session.set(
+			'com.liferay.analytics.reports.web_panelState', 'open'
+		);
+	});
+
+	sidenavInstance.on('closed.lexicon.sidenav', function(event) {
+		Liferay.Util.Session.set(
+			'com.liferay.analytics.reports.web_panelState', 'closed'
+		);
+	});
+
+	Liferay.once('screenLoad', function() {
+		Liferay.SideNavigation.destroy(analyticsReportsPanelToggle);
+	});
+</aui:script>
