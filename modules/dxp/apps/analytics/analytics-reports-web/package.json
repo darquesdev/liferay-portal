@@ -7,6 +7,14 @@
 		"prop-types": "15.7.2",
 		"react": "16.9.0"
 	},
+	"devDependencies": {
+		"@testing-library/react": "^9.4.0"
+	},
+	"jest": {
+		"setupFiles": [
+			"<rootDir>/jest-setup.config.js"
+		]
+	},
 	"name": "analytics-reports-web",
 	"private": true,
 	"scripts": {
