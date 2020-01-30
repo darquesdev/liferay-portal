@@ -56,9 +56,26 @@ public class JournalArticleAnalyticsReportsInfoItemTest {
 
 	@Test
 	public void testGetAuthorNameWithExistingUser() {
+		User user = Mockito.mock(User.class);
+
+		Mockito.doReturn(
+			RandomTestUtil.randomString()
+		).when(
+			user
+		).getFullName();
+
+		long userId = RandomTestUtil.randomLong();
+
+		Mockito.doReturn(
+			user
+		).when(
+			_userLocalService
+		).fetchUser(
+			userId
+		);
+
 		String articleId = RandomTestUtil.randomString();
 		long groupId = RandomTestUtil.randomLong();
-		long userId = RandomTestUtil.randomLong();
 
 		JournalArticle journalArticle = _createJournalArticle(
 			articleId, groupId, userId);
@@ -71,21 +88,11 @@ public class JournalArticleAnalyticsReportsInfoItemTest {
 			Collections.singletonList(journalArticle)
 		);
 
-		User user = Mockito.mock(User.class);
-
 		Mockito.doReturn(
-			RandomTestUtil.randomString()
-		).when(
-			user
-		).getFullName();
-
-		Mockito.doReturn(
-			user
-		).when(
-			_userLocalService
-		).fetchUser(
 			userId
-		);
+		).when(
+			journalArticle
+		).getUserId();
 
 		Assert.assertEquals(
 			user.getFullName(),
@@ -95,9 +102,18 @@ public class JournalArticleAnalyticsReportsInfoItemTest {
 
 	@Test
 	public void testGetAuthorNameWithNonexistingUser() {
+		long userId = RandomTestUtil.randomLong();
+
+		Mockito.doReturn(
+			null
+		).when(
+			_userLocalService
+		).fetchUser(
+			userId
+		);
+
 		String articleId = RandomTestUtil.randomString();
 		long groupId = RandomTestUtil.randomLong();
-		long userId = RandomTestUtil.randomLong();
 
 		JournalArticle journalArticle = _createJournalArticle(
 			articleId, groupId, userId);
@@ -111,12 +127,10 @@ public class JournalArticleAnalyticsReportsInfoItemTest {
 		);
 
 		Mockito.doReturn(
-			null
-		).when(
-			_userLocalService
-		).fetchUser(
 			userId
-		);
+		).when(
+			journalArticle
+		).getUserId();
 
 		Assert.assertEquals(
 			StringPool.BLANK,
