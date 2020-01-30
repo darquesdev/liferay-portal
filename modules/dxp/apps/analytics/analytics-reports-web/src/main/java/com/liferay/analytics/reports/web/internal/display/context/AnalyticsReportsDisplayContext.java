@@ -61,6 +61,17 @@ public class AnalyticsReportsDisplayContext {
 			HashMapBuilder.<String, Object>put(
 				"endpoints",
 				HashMapBuilder.<String, Object>put(
+					"getAnalyticsReportsTotalReadsURL",
+					() -> {
+						ResourceURL resourceURL =
+							_renderResponse.createResourceURL();
+
+						resourceURL.setResourceID(
+							"/analytics_reports/get_total_reads");
+
+						return resourceURL.toString();
+					}
+				).put(
 					"getAnalyticsReportsTotalViewsURL",
 					() -> {
 						ResourceURL resourceURL =
