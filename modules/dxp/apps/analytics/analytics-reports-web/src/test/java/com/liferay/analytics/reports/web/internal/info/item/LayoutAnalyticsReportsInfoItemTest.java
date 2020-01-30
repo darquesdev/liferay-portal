@@ -22,7 +22,6 @@ import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 
-import java.util.Date;
 import java.util.Locale;
 
 import org.junit.Assert;
@@ -109,10 +108,8 @@ public class LayoutAnalyticsReportsInfoItemTest {
 	public void testGetPublishDate() {
 		Layout layout = Mockito.mock(Layout.class);
 
-		Date displayDate = RandomTestUtil.nextDate();
-
 		Mockito.doReturn(
-			displayDate
+			RandomTestUtil.nextDate()
 		).when(
 			layout
 		).getPublishDate();
@@ -126,12 +123,10 @@ public class LayoutAnalyticsReportsInfoItemTest {
 	public void testGetTitle() {
 		Layout layout = Mockito.mock(Layout.class);
 
-		String title = RandomTestUtil.randomString();
-
 		Locale locale = LocaleUtil.getDefault();
 
 		Mockito.doReturn(
-			title
+			RandomTestUtil.randomString()
 		).when(
 			layout
 		).getTitle(

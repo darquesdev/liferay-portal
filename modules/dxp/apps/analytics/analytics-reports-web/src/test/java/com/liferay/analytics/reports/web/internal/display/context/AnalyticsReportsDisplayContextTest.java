@@ -60,11 +60,11 @@ public class AnalyticsReportsDisplayContextTest {
 	public void testGetProps() {
 		String authorName = RandomTestUtil.randomString();
 		Locale locale = LocaleUtil.getDefault();
-		Date publishDate = RandomTestUtil.nextDate();
 		String title = RandomTestUtil.randomString();
 
 		AnalyticsReportsInfoItem analyticsReportsInfoItem =
-			_getAnalyticsReportsItem(authorName, locale, publishDate, title);
+			_getAnalyticsReportsItem(
+				authorName, locale, RandomTestUtil.nextDate(), title);
 
 		Date layoutPublishDate = RandomTestUtil.nextDate();
 

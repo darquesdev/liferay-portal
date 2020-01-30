@@ -22,8 +22,6 @@ import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 
-import java.util.Date;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -108,10 +106,8 @@ public class BlogsAnalyticsReportsInfoItemTest {
 	public void testGetPublishDate() {
 		BlogsEntry blogsEntry = Mockito.mock(BlogsEntry.class);
 
-		Date displayDate = RandomTestUtil.nextDate();
-
 		Mockito.doReturn(
-			displayDate
+			RandomTestUtil.nextDate()
 		).when(
 			blogsEntry
 		).getDisplayDate();
@@ -125,10 +121,8 @@ public class BlogsAnalyticsReportsInfoItemTest {
 	public void testGetTitle() {
 		BlogsEntry blogsEntry = Mockito.mock(BlogsEntry.class);
 
-		String title = RandomTestUtil.randomString();
-
 		Mockito.doReturn(
-			title
+			RandomTestUtil.randomString()
 		).when(
 			blogsEntry
 		).getTitle();

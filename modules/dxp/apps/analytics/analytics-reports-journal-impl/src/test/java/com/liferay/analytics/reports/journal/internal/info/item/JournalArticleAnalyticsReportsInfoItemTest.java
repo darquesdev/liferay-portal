@@ -25,7 +25,6 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.Locale;
 
 import org.junit.Assert;
@@ -129,10 +128,8 @@ public class JournalArticleAnalyticsReportsInfoItemTest {
 	public void testGetPublishDate() {
 		JournalArticle journalArticle = Mockito.mock(JournalArticle.class);
 
-		Date displayDate = RandomTestUtil.nextDate();
-
 		Mockito.doReturn(
-			displayDate
+			RandomTestUtil.nextDate()
 		).when(
 			journalArticle
 		).getDisplayDate();
@@ -147,12 +144,10 @@ public class JournalArticleAnalyticsReportsInfoItemTest {
 	public void testGetTitle() {
 		JournalArticle journalArticle = Mockito.mock(JournalArticle.class);
 
-		String title = RandomTestUtil.randomString();
-
 		Locale locale = LocaleUtil.getDefault();
 
 		Mockito.doReturn(
-			title
+			RandomTestUtil.randomString()
 		).when(
 			journalArticle
 		).getTitle(
