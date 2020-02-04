@@ -196,8 +196,11 @@ public class ManageLayoutProductNavigationControlMenuEntry
 		if (layout.isSystem()) {
 			layout = _layoutLocalService.fetchLayout(layout.getClassPK());
 
-			return _layoutPermission.contains(
-				themeDisplay.getPermissionChecker(), layout, ActionKeys.UPDATE);
+			if (layout != null) {
+				return _layoutPermission.contains(
+					themeDisplay.getPermissionChecker(), layout,
+					ActionKeys.UPDATE);
+			}
 		}
 
 		return super.isShow(httpServletRequest);

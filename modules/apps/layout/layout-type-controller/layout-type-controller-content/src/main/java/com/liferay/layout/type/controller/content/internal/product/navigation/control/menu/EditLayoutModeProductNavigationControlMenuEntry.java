@@ -178,9 +178,10 @@ public class EditLayoutModeProductNavigationControlMenuEntry
 			layout = _layoutLocalService.fetchLayout(layout.getClassPK());
 		}
 
-		if (_layoutPermission.contains(
-				themeDisplay.getPermissionChecker(), layout,
-				ActionKeys.UPDATE) ||
+		if (((layout != null) &&
+			 _layoutPermission.contains(
+				 themeDisplay.getPermissionChecker(), layout,
+				 ActionKeys.UPDATE)) ||
 			_layoutPermission.contains(
 				themeDisplay.getPermissionChecker(), layout,
 				ActionKeys.UPDATE_LAYOUT_CONTENT) ||
