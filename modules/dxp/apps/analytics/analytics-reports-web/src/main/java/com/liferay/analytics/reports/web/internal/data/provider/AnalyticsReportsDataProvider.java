@@ -40,7 +40,9 @@ public class AnalyticsReportsDataProvider {
 		}
 	}
 
-	public JSONObject getHistoricalViews(long plid) throws PortalException {
+	public JSONObject getHistoricalViewsJSONObject(long plid)
+		throws PortalException {
+
 		try {
 			return JSONFactoryUtil.createJSONObject(
 				_read("analytics-reports-historical-views.json"));
