@@ -30,7 +30,9 @@ import org.osgi.service.component.annotations.Component;
 @Component(immediate = true, service = AnalyticsReportsDataProvider.class)
 public class AnalyticsReportsDataProvider {
 
-	public JSONObject getHistoricalReads(long plid) throws PortalException {
+	public JSONObject getHistoricalReadsJSONObject(long plid)
+		throws PortalException {
+
 		try {
 			return JSONFactoryUtil.createJSONObject(
 				_read("analytics-reports-historical-reads.json"));
