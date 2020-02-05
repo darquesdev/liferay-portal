@@ -30,15 +30,20 @@ import org.osgi.service.component.annotations.Component;
 @Component(immediate = true, service = AnalyticsReportsDataProvider.class)
 public class AnalyticsReportsDataProvider {
 
+	public JSONObject getHistoricalReads(long plid) throws PortalException {
+		try {
+			return JSONFactoryUtil.createJSONObject(
+				_read("analytics-reports-historical-reads.json"));
+		}
+		catch (IOException ioException) {
+			throw new PortalException(ioException);
+		}
+	}
+
 	public JSONObject getHistoricalViews(long plid) throws PortalException {
 		try {
-			Class<?> clazz = getClass();
-
-			InputStream inputStream = clazz.getResourceAsStream(
-				"dependencies/analytics-reports-historical-views.json");
-
 			return JSONFactoryUtil.createJSONObject(
-				StringUtil.read(inputStream));
+				_read("analytics-reports-historical-views.json"));
 		}
 		catch (IOException ioException) {
 			throw new PortalException(ioException);
@@ -51,6 +56,15 @@ public class AnalyticsReportsDataProvider {
 
 	public Long getTotalViews(long plid) {
 		return 9999L;
+	}
+
+	private String _read(String fileName) throws IOException {
+		Class<?> clazz = getClass();
+
+		InputStream inputStream = clazz.getResourceAsStream(
+			"dependencies/" + fileName);
+
+		return StringUtil.read(inputStream);
 	}
 
 }
