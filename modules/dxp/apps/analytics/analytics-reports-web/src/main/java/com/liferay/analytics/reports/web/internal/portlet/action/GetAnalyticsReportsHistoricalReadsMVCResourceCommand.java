@@ -70,7 +70,7 @@ public class GetAnalyticsReportsHistoricalReadsMVCResourceCommand
 			jsonObject.put(
 				"analyticsReportsHistoricalReads",
 				_analyticsReportsDataProvider.getHistoricalReadsJSONObject(
-					plid, timeSpan, timeSpanOffset));
+					plid, timeSpan.toTimeRange(timeSpanOffset)));
 		}
 		catch (Exception exception) {
 			_log.error(exception, exception);

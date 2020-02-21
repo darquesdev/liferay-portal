@@ -70,7 +70,7 @@ public class GetAnalyticsReportsHistoricalViewsMVCResourceCommand
 			jsonObject.put(
 				"analyticsReportsHistoricalViews",
 				_analyticsReportsDataProvider.getHistoricalViewsJSONObject(
-					plid, timeSpan, timeSpanOffset));
+					plid, timeSpan.toTimeRange(timeSpanOffset)));
 		}
 		catch (Exception exception) {
 			_log.error(exception, exception);
