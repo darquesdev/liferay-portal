@@ -32,33 +32,42 @@ public class TimeRangeTest {
 	public void testGetIntervalsWithLast7DaysTimeSpan() {
 		TimeRange timeRange = TimeRange.of(TimeSpan.LAST_7_DAYS, 0);
 
-		List<LocalDateTime> intervals = timeRange.getIntervals();
+		List<LocalDateTime> intervalsLocalDateTimes =
+			timeRange.getIntervalsLocalDateTimes();
 
-		Assert.assertEquals(intervals.toString(), 7, intervals.size());
 		Assert.assertEquals(
-			timeRange.getStartLocalDateTime(), intervals.get(0));
+			intervalsLocalDateTimes.toString(), 7,
+			intervalsLocalDateTimes.size());
+		Assert.assertEquals(
+			timeRange.getStartLocalDateTime(), intervalsLocalDateTimes.get(0));
 	}
 
 	@Test
 	public void testGetIntervalsWithLast24HoursTimeSpan() {
 		TimeRange timeRange = TimeRange.of(TimeSpan.LAST_24_HOURS, 0);
 
-		List<LocalDateTime> intervals = timeRange.getIntervals();
+		List<LocalDateTime> intervalsLocalDateTimes =
+			timeRange.getIntervalsLocalDateTimes();
 
-		Assert.assertEquals(intervals.toString(), 24, intervals.size());
 		Assert.assertEquals(
-			timeRange.getStartLocalDateTime(), intervals.get(0));
+			intervalsLocalDateTimes.toString(), 24,
+			intervalsLocalDateTimes.size());
+		Assert.assertEquals(
+			timeRange.getStartLocalDateTime(), intervalsLocalDateTimes.get(0));
 	}
 
 	@Test
 	public void testGetIntervalsWithLast30DaysTimeSpan() {
 		TimeRange timeRange = TimeRange.of(TimeSpan.LAST_30_DAYS, 0);
 
-		List<LocalDateTime> intervals = timeRange.getIntervals();
+		List<LocalDateTime> intervalsLocalDateTimes =
+			timeRange.getIntervalsLocalDateTimes();
 
-		Assert.assertEquals(intervals.toString(), 30, intervals.size());
 		Assert.assertEquals(
-			timeRange.getStartLocalDateTime(), intervals.get(0));
+			intervalsLocalDateTimes.toString(), 30,
+			intervalsLocalDateTimes.size());
+		Assert.assertEquals(
+			timeRange.getStartLocalDateTime(), intervalsLocalDateTimes.get(0));
 	}
 
 	@Test

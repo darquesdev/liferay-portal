@@ -83,23 +83,23 @@ public class TimeRange {
 		return localDateTime.minusDays(_getOffsetDays());
 	}
 
-	public List<LocalDateTime> getIntervals() {
+	public List<LocalDateTime> getIntervalsLocalDateTimes() {
 		List<LocalDateTime> intervals = new ArrayList<>();
 
-		LocalDateTime interval = getStartLocalDateTime();
+		LocalDateTime intervalLocalDateTime = getStartLocalDateTime();
 
 		if (_timeSpan.equals(TimeSpan.LAST_24_HOURS)) {
 			for (int i = 0; i < 24; i++) {
-				intervals.add(interval);
+				intervals.add(intervalLocalDateTime);
 
-				interval = interval.plusHours(1);
+				intervalLocalDateTime = intervalLocalDateTime.plusHours(1);
 			}
 		}
 		else {
 			for (int i = 0; i < _timeSpan.getDays(); i++) {
-				intervals.add(interval);
+				intervals.add(intervalLocalDateTime);
 
-				interval = interval.plusDays(1);
+				intervalLocalDateTime = intervalLocalDateTime.plusDays(1);
 			}
 		}
 
