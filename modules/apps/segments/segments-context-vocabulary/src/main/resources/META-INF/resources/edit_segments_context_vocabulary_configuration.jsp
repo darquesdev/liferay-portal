@@ -68,7 +68,7 @@ SegmentsContextVocabularyConfigurationDisplayContext segmentsContextVocabularyCo
 							for (ConfigurationFieldOptionsProvider.Option option : segmentsContextVocabularyConfigurationDisplayContext.getContextNameOptions()) {
 							%>
 
-							<aui:option label="<%= option.getLabel(locale) %>" value="<%= option.getValue() %>" />
+								<aui:option label="<%= option.getLabel(locale) %>" value="<%= option.getValue() %>" />
 
 							<%
 							}
@@ -94,7 +94,7 @@ SegmentsContextVocabularyConfigurationDisplayContext segmentsContextVocabularyCo
 
 						</aui:select>
 
-						<span class="form-text"><liferay-ui:message key="segments-vocabulary-field-customizer-vocabulary-name-description" /></span>
+						<span class="form-text"><liferay-ui:message key="segments-context-vocabulary-configuration-vocabulary-name-description" /></span>
 					</div>
 
 					<aui:button-row>
