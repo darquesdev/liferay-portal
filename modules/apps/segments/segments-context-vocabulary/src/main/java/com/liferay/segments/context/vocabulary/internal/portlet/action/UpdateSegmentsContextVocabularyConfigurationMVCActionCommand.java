@@ -61,11 +61,11 @@ import org.osgi.service.component.annotations.Reference;
 	immediate = true,
 	property = {
 		"javax.portlet.name=" + ConfigurationAdminPortletKeys.INSTANCE_SETTINGS,
-		"mvc.command.name=/add_segments_context_vocabulary_configuration"
+		"mvc.command.name=/update_segments_context_vocabulary_configuration"
 	},
 	service = MVCActionCommand.class
 )
-public class AddSegmentsContextVocabularyConfigurationMVCActionCommand
+public class UpdateSegmentsContextVocabularyConfigurationMVCActionCommand
 	extends BaseMVCActionCommand {
 
 	@Override
@@ -204,7 +204,7 @@ public class AddSegmentsContextVocabularyConfigurationMVCActionCommand
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		AddSegmentsContextVocabularyConfigurationMVCActionCommand.class);
+		UpdateSegmentsContextVocabularyConfigurationMVCActionCommand.class);
 
 	@Reference
 	private ConfigurationAdmin _configurationAdmin;
