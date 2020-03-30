@@ -27,7 +27,6 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
-import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -40,8 +39,6 @@ import java.util.stream.Stream;
 import javax.portlet.RenderResponse;
 import javax.portlet.ResourceURL;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * @author David Arques
  * @author Sarai Díaz
@@ -50,19 +47,16 @@ public class AnalyticsReportsDisplayContext {
 
 	public AnalyticsReportsDisplayContext(
 		AnalyticsReportsInfoItem analyticsReportsInfoItem,
-		Object analyticsReportsInfoItemObject,
-		HttpServletRequest httpServletRequest, Portal portal,
-		RenderResponse renderResponse, ResourceBundle resourceBundle) {
+		Object analyticsReportsInfoItemObject, Portal portal,
+		RenderResponse renderResponse, ResourceBundle resourceBundle,
+		ThemeDisplay themeDisplay) {
 
 		_analyticsReportsInfoItem = analyticsReportsInfoItem;
 		_analyticsReportsInfoItemObject = analyticsReportsInfoItemObject;
-		_httpServletRequest = httpServletRequest;
 		_portal = portal;
 		_renderResponse = renderResponse;
 		_resourceBundle = resourceBundle;
-
-		_themeDisplay = (ThemeDisplay)_httpServletRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
+		_themeDisplay = themeDisplay;
 	}
 
 	public Map<String, Object> getData() {
@@ -208,7 +202,6 @@ public class AnalyticsReportsDisplayContext {
 	private final AnalyticsReportsInfoItem _analyticsReportsInfoItem;
 	private final Object _analyticsReportsInfoItemObject;
 	private Map<String, Object> _data;
-	private final HttpServletRequest _httpServletRequest;
 	private final Portal _portal;
 	private final RenderResponse _renderResponse;
 	private final ResourceBundle _resourceBundle;

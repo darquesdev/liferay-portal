@@ -20,14 +20,11 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.util.FastDateFormatFactoryImpl;
 
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -64,13 +61,11 @@ public class AnalyticsReportsDisplayContextTest {
 
 		Date layoutPublishDate = RandomTestUtil.nextDate();
 
-		HttpServletRequest httpServletRequest = _getHttpServletRequest(
-			locale, layoutPublishDate);
+		ThemeDisplay themeDisplay = _getThemeDisplay(locale, layoutPublishDate);
 
 		AnalyticsReportsDisplayContext analyticsReportsDisplayContext =
 			new AnalyticsReportsDisplayContext(
-				analyticsReportsInfoItem, null, httpServletRequest, null, null,
-				null);
+				analyticsReportsInfoItem, null, null, null, null, themeDisplay);
 
 		Map<String, Object> props = analyticsReportsDisplayContext.getProps();
 
@@ -112,23 +107,6 @@ public class AnalyticsReportsDisplayContextTest {
 		);
 
 		return analyticsReportsInfoItem;
-	}
-
-	private HttpServletRequest _getHttpServletRequest(
-		Locale locale, Date publishDate) {
-
-		HttpServletRequest httpServletRequest = Mockito.mock(
-			HttpServletRequest.class);
-
-		Mockito.doReturn(
-			_getThemeDisplay(locale, publishDate)
-		).when(
-			httpServletRequest
-		).getAttribute(
-			WebKeys.THEME_DISPLAY
-		);
-
-		return httpServletRequest;
 	}
 
 	private ThemeDisplay _getThemeDisplay(Locale locale, Date publishDate) {
