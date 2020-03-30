@@ -31,6 +31,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.io.IOException;
@@ -101,16 +102,16 @@ public class AnalyticsReportsPortlet extends MVCPortlet {
 				infoDisplayObjectProvider.getDisplayObject();
 		}
 
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
 		if ((analyticsReportsInfoItem == null) ||
 			(analyticsReportsInfoItemObject == null)) {
 
 			analyticsReportsInfoItem =
 				_analyticsReportsInfoItemTracker.getAnalyticsReportsInfoItem(
 					Layout.class.getName());
-
-			ThemeDisplay themeDisplay =
-				(ThemeDisplay)httpServletRequest.getAttribute(
-					WebKeys.THEME_DISPLAY);
 
 			analyticsReportsInfoItemObject = themeDisplay.getLayout();
 		}
@@ -119,7 +120,9 @@ public class AnalyticsReportsPortlet extends MVCPortlet {
 			AnalyticsReportsWebKeys.ANALYTICS_REPORTS_DISPLAY_CONTEXT,
 			new AnalyticsReportsDisplayContext(
 				analyticsReportsInfoItem, analyticsReportsInfoItemObject,
-				httpServletRequest, _portal, renderResponse));
+				httpServletRequest, _portal, renderResponse,
+				ResourceBundleUtil.getBundle(
+					"content.Language", themeDisplay.getLocale(), getClass())));
 
 		super.doDispatch(renderRequest, renderResponse);
 	}
