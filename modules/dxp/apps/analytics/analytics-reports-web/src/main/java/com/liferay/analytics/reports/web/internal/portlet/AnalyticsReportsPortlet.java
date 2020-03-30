@@ -120,9 +120,10 @@ public class AnalyticsReportsPortlet extends MVCPortlet {
 			AnalyticsReportsWebKeys.ANALYTICS_REPORTS_DISPLAY_CONTEXT,
 			new AnalyticsReportsDisplayContext(
 				analyticsReportsInfoItem, analyticsReportsInfoItemObject,
-				httpServletRequest, _portal, renderResponse,
+				_portal, renderResponse,
 				ResourceBundleUtil.getBundle(
-					"content.Language", themeDisplay.getLocale(), getClass())));
+					"content.Language", themeDisplay.getLocale(), getClass()),
+				themeDisplay));
 
 		super.doDispatch(renderRequest, renderResponse);
 	}
