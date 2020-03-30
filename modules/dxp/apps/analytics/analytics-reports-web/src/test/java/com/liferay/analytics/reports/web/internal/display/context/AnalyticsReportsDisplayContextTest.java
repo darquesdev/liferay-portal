@@ -15,6 +15,9 @@
 package com.liferay.analytics.reports.web.internal.display.context;
 
 import com.liferay.analytics.reports.info.item.AnalyticsReportsInfoItem;
+import com.liferay.analytics.reports.web.internal.data.provider.AnalyticsReportsDataProvider;
+import com.liferay.portal.json.JSONFactoryImpl;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -22,9 +25,12 @@ import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.util.FastDateFormatFactoryImpl;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -42,10 +48,8 @@ public class AnalyticsReportsDisplayContextTest {
 
 	@Before
 	public void setUp() {
-		FastDateFormatFactoryUtil fastDateFormatFactoryUtil =
-			new FastDateFormatFactoryUtil();
-
-		fastDateFormatFactoryUtil.setFastDateFormatFactory(
+		new JSONFactoryUtil().setJSONFactory(new JSONFactoryImpl());
+		new FastDateFormatFactoryUtil().setFastDateFormatFactory(
 			new FastDateFormatFactoryImpl());
 	}
 
@@ -65,7 +69,24 @@ public class AnalyticsReportsDisplayContextTest {
 
 		AnalyticsReportsDisplayContext analyticsReportsDisplayContext =
 			new AnalyticsReportsDisplayContext(
-				analyticsReportsInfoItem, null, null, null, null, themeDisplay);
+				new AnalyticsReportsDataProvider(), analyticsReportsInfoItem,
+				null, null, null, null,
+				new ResourceBundle() {
+
+					@Override
+					public Enumeration<String> getKeys() {
+						return Collections.enumeration(
+							Collections.singletonList(
+								RandomTestUtil.randomString()));
+					}
+
+					@Override
+					protected Object handleGetObject(String key) {
+						return key;
+					}
+
+				},
+				themeDisplay);
 
 		Map<String, Object> props = analyticsReportsDisplayContext.getProps();
 
