@@ -18,11 +18,16 @@ import com.liferay.analytics.reports.info.item.AnalyticsReportsInfoItem;
 import com.liferay.analytics.reports.info.item.AnalyticsReportsInfoItemTracker;
 import com.liferay.analytics.reports.web.internal.constants.AnalyticsReportsPortletKeys;
 import com.liferay.analytics.reports.web.internal.constants.AnalyticsReportsWebKeys;
+import com.liferay.analytics.reports.web.internal.data.provider.AnalyticsReportsDataProvider;
 import com.liferay.analytics.reports.web.internal.display.context.AnalyticsReportsDisplayContext;
 import com.liferay.asset.display.page.constants.AssetDisplayPageWebKeys;
 import com.liferay.info.display.contributor.InfoDisplayContributor;
 import com.liferay.info.display.contributor.InfoDisplayContributorTracker;
 import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
+import com.liferay.layout.seo.kernel.LayoutSEOLink;
+import com.liferay.layout.seo.kernel.LayoutSEOLinkManager;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
@@ -35,6 +40,11 @@ import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.io.IOException;
+
+import java.util.Collections;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
@@ -116,16 +126,57 @@ public class AnalyticsReportsPortlet extends MVCPortlet {
 			analyticsReportsInfoItemObject = themeDisplay.getLayout();
 		}
 
+		String canonicalURL = null;
+
+		try {
+			canonicalURL = _getCanonicalURL(httpServletRequest, themeDisplay);
+		}
+		catch (PortalException portalException) {
+			throw new PortletException(portalException);
+		}
+
 		renderRequest.setAttribute(
 			AnalyticsReportsWebKeys.ANALYTICS_REPORTS_DISPLAY_CONTEXT,
 			new AnalyticsReportsDisplayContext(
-				analyticsReportsInfoItem, analyticsReportsInfoItemObject,
-				_portal, renderResponse,
+				new AnalyticsReportsDataProvider(), analyticsReportsInfoItem,
+				analyticsReportsInfoItemObject, canonicalURL, _portal,
+				renderResponse,
 				ResourceBundleUtil.getBundle(
 					"content.Language", themeDisplay.getLocale(), getClass()),
 				themeDisplay));
 
 		super.doDispatch(renderRequest, renderResponse);
+	}
+
+	private String _getCanonicalURL(
+			HttpServletRequest httpServletRequest, ThemeDisplay themeDisplay)
+		throws PortalException {
+
+		String currentCompleteURL = _portal.getCurrentCompleteURL(
+			httpServletRequest);
+
+		String canonicalURL = null;
+
+		canonicalURL = _portal.getCanonicalURL(
+			currentCompleteURL, themeDisplay, themeDisplay.getLayout(), false,
+			false);
+
+		Map<Locale, String> alternateURLs = Collections.emptyMap();
+
+		Set<Locale> availableLocales = _language.getAvailableLocales(
+			themeDisplay.getSiteGroupId());
+
+		if (availableLocales.size() > 1) {
+			alternateURLs = _portal.getAlternateURLs(
+				canonicalURL, themeDisplay, themeDisplay.getLayout());
+		}
+
+		LayoutSEOLink layoutSEOLink =
+			_layoutSEOLinkManager.getCanonicalLayoutSEOLink(
+				themeDisplay.getLayout(), themeDisplay.getLocale(),
+				canonicalURL, alternateURLs);
+
+		return layoutSEOLink.getHref();
 	}
 
 	private InfoDisplayObjectProvider _getInfoDisplayObjectProvider(
@@ -164,6 +215,12 @@ public class AnalyticsReportsPortlet extends MVCPortlet {
 
 	@Reference
 	private InfoDisplayContributorTracker _infoDisplayContributorTracker;
+
+	@Reference
+	private Language _language;
+
+	@Reference
+	private LayoutSEOLinkManager _layoutSEOLinkManager;
 
 	@Reference
 	private Portal _portal;
