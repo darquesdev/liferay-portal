@@ -60,11 +60,8 @@ public class AnalyticsReportsDataProviderTest {
 		Assert.assertEquals(
 			trafficSources.toString(), 1, trafficSources.size());
 
-		TrafficSource trafficSource = trafficSources.get(0);
-
-		Assert.assertEquals("search", trafficSource.getName());
-		Assert.assertEquals(3856, trafficSource.getTrafficAmount());
-		Assert.assertEquals(100, trafficSource.getTrafficShare(), 0D);
+		Assert.assertEquals(
+			new TrafficSource("search", 3856, 100), trafficSources.get(0));
 	}
 
 	@Test(expected = PortalException.class)
