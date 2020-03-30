@@ -14,6 +14,8 @@
 
 package com.liferay.analytics.reports.web.internal.model;
 
+import java.util.Objects;
+
 /**
  * @author David Arques
  */
@@ -28,6 +30,28 @@ public class TrafficSource {
 		_trafficShare = trafficShare;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (!(obj instanceof TrafficSource)) {
+			return false;
+		}
+
+		TrafficSource trafficSource = (TrafficSource)obj;
+
+		if (Objects.equals(_name, trafficSource._name) &&
+			Objects.equals(_trafficAmount, trafficSource._trafficAmount) &&
+			Objects.equals(_trafficShare, trafficSource._trafficShare)) {
+
+			return true;
+		}
+
+		return false;
+	}
+
 	public String getName() {
 		return _name;
 	}
@@ -38,6 +62,11 @@ public class TrafficSource {
 
 	public double getTrafficShare() {
 		return _trafficShare;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(_name, _trafficAmount, _trafficShare);
 	}
 
 	public void setName(String name) {
