@@ -52,7 +52,7 @@ public class AnalyticsReportsInfoItemTrackerImpl
 		cardinality = ReferenceCardinality.MULTIPLE,
 		policy = ReferencePolicy.DYNAMIC
 	)
-	protected void setInfoItemSelector(
+	protected void setAnalyticsReportsInfoItem(
 		AnalyticsReportsInfoItem analyticsReportsInfo) {
 
 		_analyticsReportsInfoItems.put(
@@ -60,7 +60,7 @@ public class AnalyticsReportsInfoItemTrackerImpl
 			analyticsReportsInfo);
 	}
 
-	protected void unsetInfoItemSelector(
+	protected void unsetAnalyticsReportsInfoItem(
 		AnalyticsReportsInfoItem analyticsReportsInfo) {
 
 		_analyticsReportsInfoItems.remove(
