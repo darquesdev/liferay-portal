@@ -80,7 +80,7 @@ public class AnalyticsReportsDisplayContextTest {
 
 		AnalyticsReportsInfoItem analyticsReportsInfoItem =
 			_getAnalyticsReportsItem(
-				authorName, locale, RandomTestUtil.nextDate(), title);
+				authorName, RandomTestUtil.nextDate(), title);
 
 		String organicTitle = RandomTestUtil.randomString();
 		String paidTitle = RandomTestUtil.randomString();
@@ -159,36 +159,26 @@ public class AnalyticsReportsDisplayContextTest {
 	}
 
 	private AnalyticsReportsInfoItem _getAnalyticsReportsItem(
-		String authorName, Locale locale, Date publishDate, String title) {
+		String authorName, Date publishDate, String title) {
 
-		AnalyticsReportsInfoItem analyticsReportsInfoItem = Mockito.mock(
-			AnalyticsReportsInfoItem.class);
+		return new AnalyticsReportsInfoItem() {
 
-		Mockito.doReturn(
-			authorName
-		).when(
-			analyticsReportsInfoItem
-		).getAuthorName(
-			Mockito.any()
-		);
+			@Override
+			public String getAuthorName(Object model) {
+				return authorName;
+			}
 
-		Mockito.doReturn(
-			publishDate
-		).when(
-			analyticsReportsInfoItem
-		).getPublishDate(
-			Mockito.any()
-		);
+			@Override
+			public Date getPublishDate(Object model) {
+				return publishDate;
+			}
 
-		Mockito.doReturn(
-			title
-		).when(
-			analyticsReportsInfoItem
-		).getTitle(
-			Mockito.any(), Mockito.eq(locale)
-		);
+			@Override
+			public String getTitle(Object model, Locale locale) {
+				return title;
+			}
 
-		return analyticsReportsInfoItem;
+		};
 	}
 
 	private ResourceBundle _getResourceBundle(
