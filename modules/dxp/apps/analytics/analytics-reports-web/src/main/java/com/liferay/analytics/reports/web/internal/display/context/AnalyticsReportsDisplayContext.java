@@ -20,13 +20,13 @@ import com.liferay.analytics.reports.web.internal.model.TimeSpan;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONUtil;
-import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.Arrays;
@@ -34,6 +34,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
 import javax.portlet.RenderResponse;
@@ -51,13 +52,14 @@ public class AnalyticsReportsDisplayContext {
 		AnalyticsReportsInfoItem analyticsReportsInfoItem,
 		Object analyticsReportsInfoItemObject,
 		HttpServletRequest httpServletRequest, Portal portal,
-		RenderResponse renderResponse) {
+		RenderResponse renderResponse, ResourceBundle resourceBundle) {
 
 		_analyticsReportsInfoItem = analyticsReportsInfoItem;
 		_analyticsReportsInfoItemObject = analyticsReportsInfoItemObject;
 		_httpServletRequest = httpServletRequest;
 		_portal = portal;
 		_renderResponse = renderResponse;
+		_resourceBundle = resourceBundle;
 
 		_themeDisplay = (ThemeDisplay)_httpServletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -195,7 +197,8 @@ public class AnalyticsReportsDisplayContext {
 					"key", timeSpan.getKey()
 				).put(
 					"label",
-					LanguageUtil.get(_httpServletRequest, timeSpan.getKey())
+					ResourceBundleUtil.getString(
+						_resourceBundle, timeSpan.getKey())
 				))
 		);
 
@@ -208,6 +211,7 @@ public class AnalyticsReportsDisplayContext {
 	private final HttpServletRequest _httpServletRequest;
 	private final Portal _portal;
 	private final RenderResponse _renderResponse;
+	private final ResourceBundle _resourceBundle;
 	private final ThemeDisplay _themeDisplay;
 
 }

@@ -20,15 +20,12 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.util.FastDateFormatFactoryImpl;
 
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
-
-import javax.portlet.RenderResponse;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -72,9 +69,8 @@ public class AnalyticsReportsDisplayContextTest {
 
 		AnalyticsReportsDisplayContext analyticsReportsDisplayContext =
 			new AnalyticsReportsDisplayContext(
-				analyticsReportsInfoItem, Mockito.mock(Object.class),
-				httpServletRequest, Mockito.mock(Portal.class),
-				Mockito.mock(RenderResponse.class));
+				analyticsReportsInfoItem, null, httpServletRequest, null, null,
+				null);
 
 		Map<String, Object> props = analyticsReportsDisplayContext.getProps();
 
