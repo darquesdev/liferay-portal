@@ -63,11 +63,11 @@ public class AnalyticsReportsDisplayContextTest {
 
 	@Test
 	public void testGetProps() {
-		final int organicTrafficAmount = RandomTestUtil.randomInt();
-		final float organicTrafficShare = _randomFloat(0F, 100F);
+		int organicTrafficAmount = RandomTestUtil.randomInt();
+		float organicTrafficShare = _randomFloat(0F, 100F);
 
-		final int paidTrafficAmount = RandomTestUtil.randomInt();
-		final float paidTrafficShare = _randomFloat(0F, 100F);
+		int paidTrafficAmount = RandomTestUtil.randomInt();
+		float paidTrafficShare = _randomFloat(0F, 100F);
 
 		AnalyticsReportsDataProvider analyticsReportsDataProvider =
 			_getAnalyticsReportsDataProvider(
