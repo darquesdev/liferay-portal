@@ -152,12 +152,9 @@ public class AnalyticsReportsPortlet extends MVCPortlet {
 			HttpServletRequest httpServletRequest, ThemeDisplay themeDisplay)
 		throws PortalException {
 
-		String currentCompleteURL = _portal.getCurrentCompleteURL(
-			httpServletRequest);
-
 		String canonicalURL = _portal.getCanonicalURL(
-			currentCompleteURL, themeDisplay, themeDisplay.getLayout(), false,
-			false);
+			_portal.getCurrentCompleteURL(httpServletRequest), themeDisplay,
+			themeDisplay.getLayout(), false, false);
 
 		Map<Locale, String> alternateURLs = Collections.emptyMap();
 
