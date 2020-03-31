@@ -56,9 +56,15 @@ public class AnalyticsReportsDisplayContextTest {
 
 	@Before
 	public void setUp() {
-		new JSONFactoryUtil().setJSONFactory(new JSONFactoryImpl());
-		new FastDateFormatFactoryUtil().setFastDateFormatFactory(
+		FastDateFormatFactoryUtil fastDateFormatFactoryUtil =
+			new FastDateFormatFactoryUtil();
+
+		fastDateFormatFactoryUtil.setFastDateFormatFactory(
 			new FastDateFormatFactoryImpl());
+
+		JSONFactoryUtil jsonFactoryUtil = new JSONFactoryUtil();
+
+		jsonFactoryUtil.setJSONFactory(new JSONFactoryImpl());
 	}
 
 	@Test
