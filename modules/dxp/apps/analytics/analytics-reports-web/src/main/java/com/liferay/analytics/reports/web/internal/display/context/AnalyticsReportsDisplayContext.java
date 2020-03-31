@@ -219,7 +219,7 @@ public class AnalyticsReportsDisplayContext {
 			"this-number-refers-to-the-volume-of-people-that-find-your-page-" +
 				"through-a-search-engine");
 
-		HashMap<String, String> titleMap = HashMapBuilder.put(
+		Map<String, String> titleMap = HashMapBuilder.put(
 			"organic", ResourceBundleUtil.getString(_resourceBundle, "organic")
 		).put(
 			"paid", ResourceBundleUtil.getString(_resourceBundle, "paid")
