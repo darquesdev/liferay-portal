@@ -59,7 +59,6 @@ public class AnalyticsReportsDataProviderTest {
 
 		Assert.assertEquals(
 			trafficSources.toString(), 1, trafficSources.size());
-
 		Assert.assertEquals(
 			new TrafficSource("search", 3856, 100), trafficSources.get(0));
 	}
