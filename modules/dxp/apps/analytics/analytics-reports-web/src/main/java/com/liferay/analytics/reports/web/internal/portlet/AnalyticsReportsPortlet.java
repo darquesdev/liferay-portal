@@ -155,9 +155,7 @@ public class AnalyticsReportsPortlet extends MVCPortlet {
 		String currentCompleteURL = _portal.getCurrentCompleteURL(
 			httpServletRequest);
 
-		String canonicalURL = null;
-
-		canonicalURL = _portal.getCanonicalURL(
+		String canonicalURL = _portal.getCanonicalURL(
 			currentCompleteURL, themeDisplay, themeDisplay.getLayout(), false,
 			false);
 
