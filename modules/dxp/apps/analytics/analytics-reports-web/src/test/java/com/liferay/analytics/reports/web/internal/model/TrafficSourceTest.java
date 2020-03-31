@@ -35,7 +35,9 @@ public class TrafficSourceTest {
 
 	@Before
 	public void setUp() {
-		new JSONFactoryUtil().setJSONFactory(new JSONFactoryImpl());
+		JSONFactoryUtil jsonFactoryUtil = new JSONFactoryUtil();
+
+		jsonFactoryUtil.setJSONFactory(new JSONFactoryImpl());
 	}
 
 	@Test
