@@ -39,7 +39,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
 import java.util.ResourceBundle;
 
 import org.junit.Assert;
@@ -72,10 +71,10 @@ public class AnalyticsReportsDisplayContextTest {
 	@Test
 	public void testGetProps() {
 		int organicTrafficAmount = RandomTestUtil.randomInt();
-		float organicTrafficShare = _randomFloat(0F, 100F);
+		double organicTrafficShare = RandomTestUtil.randomDouble();
 
 		int paidTrafficAmount = RandomTestUtil.randomInt();
-		float paidTrafficShare = _randomFloat(0F, 100F);
+		double paidTrafficShare = RandomTestUtil.randomDouble();
 
 		AnalyticsReportsDataProvider analyticsReportsDataProvider =
 			_getAnalyticsReportsDataProvider(
@@ -137,8 +136,8 @@ public class AnalyticsReportsDisplayContextTest {
 	}
 
 	private AnalyticsReportsDataProvider _getAnalyticsReportsDataProvider(
-		int organicTrafficAmount, float organicTrafficShare,
-		int paidTrafficAmount, float paidTrafficShare) {
+		int organicTrafficAmount, double organicTrafficShare,
+		int paidTrafficAmount, double paidTrafficShare) {
 
 		return new AnalyticsReportsDataProvider() {
 
@@ -231,10 +230,6 @@ public class AnalyticsReportsDisplayContextTest {
 		themeDisplay.setLocale(LocaleUtil.US);
 
 		return themeDisplay;
-	}
-
-	private float _randomFloat(float min, float max) {
-		return min + new Random().nextFloat() * (max - min);
 	}
 
 	private static final String _HELP_MESSAGE_KEY =

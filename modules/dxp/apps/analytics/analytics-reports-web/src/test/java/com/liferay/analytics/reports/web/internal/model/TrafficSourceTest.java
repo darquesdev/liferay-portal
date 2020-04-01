@@ -21,7 +21,6 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Random;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -43,7 +42,7 @@ public class TrafficSourceTest {
 	public void testToJSONObject() {
 		TrafficSource trafficSource = new TrafficSource(
 			RandomTestUtil.randomString(), RandomTestUtil.randomInt(),
-			_randomFloat(0F, 100F));
+			RandomTestUtil.randomDouble());
 
 		String helpMessage = RandomTestUtil.randomString();
 
@@ -63,10 +62,6 @@ public class TrafficSourceTest {
 				"value", trafficSource.getTrafficAmount()
 			).toString(),
 			String.valueOf(trafficSource.toJSONObject(helpMessage, titleMap)));
-	}
-
-	private float _randomFloat(float min, float max) {
-		return min + new Random().nextFloat() * (max - min);
 	}
 
 }

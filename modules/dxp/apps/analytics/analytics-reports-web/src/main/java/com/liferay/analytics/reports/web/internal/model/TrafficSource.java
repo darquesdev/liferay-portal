@@ -28,7 +28,7 @@ public class TrafficSource {
 	public TrafficSource() {
 	}
 
-	public TrafficSource(String name, int trafficAmount, float trafficShare) {
+	public TrafficSource(String name, int trafficAmount, double trafficShare) {
 		_name = name;
 		_trafficAmount = trafficAmount;
 		_trafficShare = trafficShare;
@@ -81,7 +81,7 @@ public class TrafficSource {
 		_trafficAmount = trafficAmount;
 	}
 
-	public void setTrafficShare(float trafficShare) {
+	public void setTrafficShare(double trafficShare) {
 		_trafficShare = trafficShare;
 	}
 
