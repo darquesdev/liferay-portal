@@ -43,7 +43,7 @@ import java.util.Random;
 import java.util.ResourceBundle;
 
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -56,8 +56,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class AnalyticsReportsDisplayContextTest {
 
-	@Before
-	public void setUp() {
+	@BeforeClass
+	public static void setUpClass() {
 		FastDateFormatFactoryUtil fastDateFormatFactoryUtil =
 			new FastDateFormatFactoryUtil();
 

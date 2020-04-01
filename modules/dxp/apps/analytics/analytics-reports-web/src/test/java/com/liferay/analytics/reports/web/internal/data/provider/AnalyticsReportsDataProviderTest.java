@@ -25,7 +25,7 @@ import com.liferay.portal.util.FileImpl;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -33,8 +33,8 @@ import org.junit.Test;
  */
 public class AnalyticsReportsDataProviderTest {
 
-	@Before
-	public void setUp() {
+	@BeforeClass
+	public static void setUpClass() {
 		FileUtil fileUtil = new FileUtil();
 
 		fileUtil.setFile(new FileImpl());
