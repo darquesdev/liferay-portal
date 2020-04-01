@@ -16,11 +16,10 @@ package com.liferay.analytics.reports.web.internal.model;
 
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.kernel.util.HashMapBuilder;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Random;
 
@@ -42,35 +41,28 @@ public class TrafficSourceTest {
 
 	@Test
 	public void testToJSONObject() {
-		String name = RandomTestUtil.randomString();
-		int trafficAmount = RandomTestUtil.randomInt();
-		float trafficShare = _randomFloat(0F, 100F);
-
 		TrafficSource trafficSource = new TrafficSource(
-			name, trafficAmount, trafficShare);
+			RandomTestUtil.randomString(), RandomTestUtil.randomInt(),
+			_randomFloat(0F, 100F));
 
 		String helpMessage = RandomTestUtil.randomString();
 
-		Map<String, String> titleMap = HashMapBuilder.put(
-			name, RandomTestUtil.randomString()
-		).build();
-
-		JSONObject jsonObject = trafficSource.toJSONObject(
-			helpMessage, titleMap);
+		Map<String, String> titleMap = Collections.singletonMap(
+			trafficSource.getName(), RandomTestUtil.randomString());
 
 		Assert.assertEquals(
 			JSONUtil.put(
 				"helpMessage", helpMessage
 			).put(
-				"name", name
+				"name", trafficSource.getName()
 			).put(
-				"share", trafficShare
+				"share", trafficSource.getTrafficShare()
 			).put(
-				"title", titleMap.get(name)
+				"title", titleMap.get(trafficSource.getName())
 			).put(
-				"value", trafficAmount
+				"value", trafficSource.getTrafficAmount()
 			).toString(),
-			jsonObject.toString());
+			String.valueOf(trafficSource.toJSONObject(helpMessage, titleMap)));
 	}
 
 	private float _randomFloat(float min, float max) {

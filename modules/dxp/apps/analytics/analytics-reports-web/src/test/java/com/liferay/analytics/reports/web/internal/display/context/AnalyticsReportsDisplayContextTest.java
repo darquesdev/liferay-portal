@@ -22,11 +22,14 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.util.FastDateFormatFactoryImpl;
 
 import java.util.Arrays;
@@ -36,7 +39,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Random;
 import java.util.ResourceBundle;
 
@@ -80,37 +82,28 @@ public class AnalyticsReportsDisplayContextTest {
 				organicTrafficAmount, organicTrafficShare, paidTrafficAmount,
 				paidTrafficShare);
 
-		String authorName = RandomTestUtil.randomString();
-		Locale locale = LocaleUtil.getDefault();
-		String title = RandomTestUtil.randomString();
-
 		AnalyticsReportsInfoItem analyticsReportsInfoItem =
-			_getAnalyticsReportsItem(
-				authorName, RandomTestUtil.nextDate(), title);
+			_getAnalyticsReportsItem();
 
-		String organicTitle = RandomTestUtil.randomString();
-		String paidTitle = RandomTestUtil.randomString();
-		String helpMessage = RandomTestUtil.randomString();
-
-		ResourceBundle resourceBundle = _getResourceBundle(
-			helpMessage, organicTitle, paidTitle);
-
-		Date layoutPublishDate = RandomTestUtil.nextDate();
-
-		ThemeDisplay themeDisplay = _getThemeDisplay(locale, layoutPublishDate);
+		Layout layout = _getLayout();
 
 		AnalyticsReportsDisplayContext analyticsReportsDisplayContext =
 			new AnalyticsReportsDisplayContext(
 				analyticsReportsDataProvider, analyticsReportsInfoItem, null,
-				null, null, null, resourceBundle, themeDisplay);
+				null, null, null, _getResourceBundle(),
+				_getThemeDisplay(layout));
 
 		Map<String, Object> props = analyticsReportsDisplayContext.getProps();
 
-		Assert.assertEquals(authorName, props.get("authorName"));
+		Assert.assertEquals(
+			analyticsReportsInfoItem.getAuthorName(null),
+			props.get("authorName"));
 
-		Assert.assertEquals(layoutPublishDate, props.get("publishDate"));
+		Assert.assertEquals(layout.getPublishDate(), props.get("publishDate"));
 
-		Assert.assertEquals(title, props.get("title"));
+		Assert.assertEquals(
+			analyticsReportsInfoItem.getTitle(null, LocaleUtil.US),
+			props.get("title"));
 
 		JSONArray trafficSourcesJSONArray = (JSONArray)props.get(
 			"trafficSources");
@@ -118,24 +111,24 @@ public class AnalyticsReportsDisplayContextTest {
 		Assert.assertEquals(
 			JSONUtil.putAll(
 				JSONUtil.put(
-					"helpMessage", helpMessage
+					"helpMessage", _titles.get(_HELP_MESSAGE_KEY)
 				).put(
 					"name", _ORGANIC_TITLE_KEY
 				).put(
 					"share", organicTrafficShare
 				).put(
-					"title", organicTitle
+					"title", _titles.get(_ORGANIC_TITLE_KEY)
 				).put(
 					"value", organicTrafficAmount
 				),
 				JSONUtil.put(
-					"helpMessage", helpMessage
+					"helpMessage", _titles.get(_HELP_MESSAGE_KEY)
 				).put(
 					"name", _PAID_TITLE_KEY
 				).put(
 					"share", paidTrafficShare
 				).put(
-					"title", paidTitle
+					"title", _titles.get(_PAID_TITLE_KEY)
 				).put(
 					"value", paidTrafficAmount
 				)
@@ -151,8 +144,7 @@ public class AnalyticsReportsDisplayContextTest {
 
 			@Override
 			public List<TrafficSource> getTrafficSources(
-					long companyId, String url)
-				throws PortalException {
+				long companyId, String url) {
 
 				return Arrays.asList(
 					new TrafficSource(
@@ -164,8 +156,10 @@ public class AnalyticsReportsDisplayContextTest {
 		};
 	}
 
-	private AnalyticsReportsInfoItem _getAnalyticsReportsItem(
-		String authorName, Date publishDate, String title) {
+	private AnalyticsReportsInfoItem _getAnalyticsReportsItem() {
+		String authorName = StringUtil.randomString();
+		Date publishDate = RandomTestUtil.nextDate();
+		String title = StringUtil.randomString();
 
 		return new AnalyticsReportsInfoItem() {
 
@@ -187,9 +181,21 @@ public class AnalyticsReportsDisplayContextTest {
 		};
 	}
 
-	private ResourceBundle _getResourceBundle(
-		String helpMessage, String organicTitle, String paidTitle) {
+	private Layout _getLayout() {
+		Layout layout = Mockito.mock(Layout.class);
 
+		Date date = RandomTestUtil.nextDate();
+
+		Mockito.doReturn(
+			date
+		).when(
+			layout
+		).getPublishDate();
+
+		return layout;
+	}
+
+	private ResourceBundle _getResourceBundle() {
 		return new ResourceBundle() {
 
 			@Override
@@ -202,44 +208,27 @@ public class AnalyticsReportsDisplayContextTest {
 
 			@Override
 			protected Object handleGetObject(String key) {
-				if (Objects.equals(key, _ORGANIC_TITLE_KEY)) {
-					return organicTitle;
-				}
-				else if (Objects.equals(key, _PAID_TITLE_KEY)) {
-					return paidTitle;
-				}
-				else if (Objects.equals(key, _HELP_MESSAGE_KEY)) {
-					return helpMessage;
-				}
-
-				return key;
+				return _titles.getOrDefault(key, key);
 			}
 
 		};
 	}
 
-	private ThemeDisplay _getThemeDisplay(Locale locale, Date publishDate) {
-		ThemeDisplay themeDisplay = Mockito.mock(ThemeDisplay.class);
+	private ThemeDisplay _getThemeDisplay(Layout layout) {
+		ThemeDisplay themeDisplay = new ThemeDisplay();
 
-		Mockito.doReturn(
-			locale
-		).when(
-			themeDisplay
-		).getLocale();
+		Company company = Mockito.mock(Company.class);
 
-		Layout layout = Mockito.mock(Layout.class);
+		try {
+			themeDisplay.setCompany(company);
+		}
+		catch (PortalException portalException) {
+			throw new AssertionError("Error found ", portalException);
+		}
 
-		Mockito.doReturn(
-			publishDate
-		).when(
-			layout
-		).getPublishDate();
+		themeDisplay.setLayout(layout);
 
-		Mockito.doReturn(
-			layout
-		).when(
-			themeDisplay
-		).getLayout();
+		themeDisplay.setLocale(LocaleUtil.US);
 
 		return themeDisplay;
 	}
@@ -255,5 +244,13 @@ public class AnalyticsReportsDisplayContextTest {
 	private static final String _ORGANIC_TITLE_KEY = "organic";
 
 	private static final String _PAID_TITLE_KEY = "paid";
+
+	private final Map<String, String> _titles = HashMapBuilder.put(
+		_HELP_MESSAGE_KEY, "helpMessage"
+	).put(
+		_ORGANIC_TITLE_KEY, "organic"
+	).put(
+		_PAID_TITLE_KEY, "paid"
+	).build();
 
 }
