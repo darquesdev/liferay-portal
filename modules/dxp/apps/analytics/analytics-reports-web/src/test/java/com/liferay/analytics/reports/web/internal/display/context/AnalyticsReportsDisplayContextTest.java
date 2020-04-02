@@ -110,24 +110,24 @@ public class AnalyticsReportsDisplayContextTest {
 		Assert.assertEquals(
 			JSONUtil.putAll(
 				JSONUtil.put(
-					"helpMessage", _titles.get(_HELP_MESSAGE_KEY)
+					"helpMessage", _titles.get(_MESSAGE_KEY_HELP)
 				).put(
-					"name", _ORGANIC_TITLE_KEY
+					"name", _TITLE_KEY_ORGANIC
 				).put(
 					"share", organicTrafficShare
 				).put(
-					"title", _titles.get(_ORGANIC_TITLE_KEY)
+					"title", _titles.get(_TITLE_KEY_ORGANIC)
 				).put(
 					"value", organicTrafficAmount
 				),
 				JSONUtil.put(
-					"helpMessage", _titles.get(_HELP_MESSAGE_KEY)
+					"helpMessage", _titles.get(_MESSAGE_KEY_HELP)
 				).put(
-					"name", _PAID_TITLE_KEY
+					"name", _TITLE_KEY_PAID
 				).put(
 					"share", paidTrafficShare
 				).put(
-					"title", _titles.get(_PAID_TITLE_KEY)
+					"title", _titles.get(_TITLE_KEY_PAID)
 				).put(
 					"value", paidTrafficAmount
 				)
@@ -149,7 +149,7 @@ public class AnalyticsReportsDisplayContextTest {
 					new TrafficSource(
 						"search", organicTrafficAmount, organicTrafficShare),
 					new TrafficSource(
-						_PAID_TITLE_KEY, paidTrafficAmount, paidTrafficShare));
+						_TITLE_KEY_PAID, paidTrafficAmount, paidTrafficShare));
 			}
 
 		};
@@ -201,8 +201,8 @@ public class AnalyticsReportsDisplayContextTest {
 			public Enumeration<String> getKeys() {
 				return Collections.enumeration(
 					Arrays.asList(
-						_ORGANIC_TITLE_KEY, _PAID_TITLE_KEY,
-						_HELP_MESSAGE_KEY));
+						_TITLE_KEY_ORGANIC, _TITLE_KEY_PAID,
+						_MESSAGE_KEY_HELP));
 			}
 
 			@Override
@@ -232,20 +232,20 @@ public class AnalyticsReportsDisplayContextTest {
 		return themeDisplay;
 	}
 
-	private static final String _HELP_MESSAGE_KEY =
+	private static final String _MESSAGE_KEY_HELP =
 		"this-number-refers-to-the-volume-of-people-that-find-your-page-" +
 			"through-a-search-engine";
 
-	private static final String _ORGANIC_TITLE_KEY = "organic";
+	private static final String _TITLE_KEY_ORGANIC = "organic";
 
-	private static final String _PAID_TITLE_KEY = "paid";
+	private static final String _TITLE_KEY_PAID = "paid";
 
 	private final Map<String, String> _titles = HashMapBuilder.put(
-		_HELP_MESSAGE_KEY, "helpMessage"
+		_MESSAGE_KEY_HELP, "helpMessage"
 	).put(
-		_ORGANIC_TITLE_KEY, "organic"
+		_TITLE_KEY_ORGANIC, "organic"
 	).put(
-		_PAID_TITLE_KEY, "paid"
+		_TITLE_KEY_PAID, "paid"
 	).build();
 
 }
