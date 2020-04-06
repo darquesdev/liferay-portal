@@ -74,8 +74,17 @@ public class AnalyticsReportsDataProvider {
 		return 107152L;
 	}
 
-	public Long getTotalViews(long plid) {
-		return 187427L;
+	public Long getTotalViews(long companyId, String url)
+		throws PortalException {
+
+		try {
+			return Long.valueOf(
+				_asahFaroBackendClient.doGet(
+					companyId, "api/1.0/pages/read-count?url=" + url));
+		}
+		catch (Exception exception) {
+			throw new PortalException("Unable to get total views", exception);
+		}
 	}
 
 	public List<TrafficSource> getTrafficSources(long companyId, String url)
