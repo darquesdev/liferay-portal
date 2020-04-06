@@ -20,11 +20,11 @@ import com.liferay.analytics.reports.web.internal.constants.AnalyticsReportsPort
 import com.liferay.analytics.reports.web.internal.constants.AnalyticsReportsWebKeys;
 import com.liferay.analytics.reports.web.internal.data.provider.AnalyticsReportsDataProvider;
 import com.liferay.analytics.reports.web.internal.display.context.AnalyticsReportsDisplayContext;
+import com.liferay.analytics.reports.web.internal.layout.seo.CanonicalURLProvider;
 import com.liferay.asset.display.page.constants.AssetDisplayPageWebKeys;
 import com.liferay.info.display.contributor.InfoDisplayContributor;
 import com.liferay.info.display.contributor.InfoDisplayContributorTracker;
 import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
-import com.liferay.layout.seo.kernel.LayoutSEOLink;
 import com.liferay.layout.seo.kernel.LayoutSEOLinkManager;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
@@ -40,11 +40,6 @@ import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.io.IOException;
-
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
@@ -126,10 +121,14 @@ public class AnalyticsReportsPortlet extends MVCPortlet {
 			analyticsReportsInfoItemObject = themeDisplay.getLayout();
 		}
 
+		CanonicalURLProvider canonicalURLProvider = new CanonicalURLProvider(
+			_portal.getHttpServletRequest(renderRequest), _language,
+			_layoutSEOLinkManager, _portal);
+
 		String canonicalURL = null;
 
 		try {
-			canonicalURL = _getCanonicalURL(httpServletRequest, themeDisplay);
+			canonicalURL = canonicalURLProvider.getCanonicalURL();
 		}
 		catch (PortalException portalException) {
 			throw new PortletException(portalException);
@@ -146,32 +145,6 @@ public class AnalyticsReportsPortlet extends MVCPortlet {
 				themeDisplay));
 
 		super.doDispatch(renderRequest, renderResponse);
-	}
-
-	private String _getCanonicalURL(
-			HttpServletRequest httpServletRequest, ThemeDisplay themeDisplay)
-		throws PortalException {
-
-		String canonicalURL = _portal.getCanonicalURL(
-			_portal.getCurrentCompleteURL(httpServletRequest), themeDisplay,
-			themeDisplay.getLayout(), false, false);
-
-		Map<Locale, String> alternateURLs = Collections.emptyMap();
-
-		Set<Locale> availableLocales = _language.getAvailableLocales(
-			themeDisplay.getSiteGroupId());
-
-		if (availableLocales.size() > 1) {
-			alternateURLs = _portal.getAlternateURLs(
-				canonicalURL, themeDisplay, themeDisplay.getLayout());
-		}
-
-		LayoutSEOLink layoutSEOLink =
-			_layoutSEOLinkManager.getCanonicalLayoutSEOLink(
-				themeDisplay.getLayout(), themeDisplay.getLocale(),
-				canonicalURL, alternateURLs);
-
-		return layoutSEOLink.getHref();
 	}
 
 	private InfoDisplayObjectProvider _getInfoDisplayObjectProvider(
