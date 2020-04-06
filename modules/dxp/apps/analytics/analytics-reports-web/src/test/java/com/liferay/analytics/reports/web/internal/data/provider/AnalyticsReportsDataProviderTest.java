@@ -42,6 +42,42 @@ public class AnalyticsReportsDataProviderTest {
 	}
 
 	@Test
+	public void testGetTotalViews() throws Exception {
+		AnalyticsReportsDataProvider analyticsReportsDataProvider =
+			new AnalyticsReportsDataProvider(
+				new AsahFaroBackendClient() {
+
+					@Override
+					public String doGet(long companyId, String path) {
+						return "12345";
+					}
+
+				});
+
+		Long totalViews = analyticsReportsDataProvider.getTotalViews(
+			RandomTestUtil.randomLong(), RandomTestUtil.randomString());
+
+		Assert.assertEquals(Long.valueOf(12345), totalViews);
+	}
+
+	@Test(expected = PortalException.class)
+	public void testGetTotalViewsWithAsahFaroBackendError() throws Exception {
+		AnalyticsReportsDataProvider analyticsReportsDataProvider =
+			new AnalyticsReportsDataProvider(
+				new AsahFaroBackendClient() {
+
+					@Override
+					public String doGet(long companyId, String path) {
+						throw new NestableRuntimeException();
+					}
+
+				});
+
+		analyticsReportsDataProvider.getTotalViews(
+			RandomTestUtil.randomLong(), RandomTestUtil.randomString());
+	}
+
+	@Test
 	public void testGetTrafficSources() throws Exception {
 		AnalyticsReportsDataProvider analyticsReportsDataProvider =
 			new AnalyticsReportsDataProvider(
