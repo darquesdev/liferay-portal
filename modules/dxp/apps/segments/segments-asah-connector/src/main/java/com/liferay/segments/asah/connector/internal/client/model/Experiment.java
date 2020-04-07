@@ -27,6 +27,10 @@ import java.util.List;
  */
 public final class Experiment {
 
+	public String getChannelId() {
+		return _channelId;
+	}
+
 	public Double getConfidenceLevel() {
 		return _confidenceLevel;
 	}
@@ -143,6 +147,10 @@ public final class Experiment {
 		return new Date(_startedDate.getTime());
 	}
 
+	public void setChannelId(String channelId) {
+		_channelId = channelId;
+	}
+
 	public void setConfidenceLevel(Double confidenceLevel) {
 		_confidenceLevel = confidenceLevel;
 	}
@@ -233,6 +241,7 @@ public final class Experiment {
 		}
 	}
 
+	private String _channelId;
 	private Double _confidenceLevel;
 	private Date _createDate;
 	private String _dataSourceId;
