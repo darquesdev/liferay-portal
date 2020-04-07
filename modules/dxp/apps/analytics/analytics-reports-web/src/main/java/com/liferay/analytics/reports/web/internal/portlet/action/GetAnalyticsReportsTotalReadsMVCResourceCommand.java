@@ -21,10 +21,17 @@ import com.liferay.layout.seo.kernel.LayoutSEOLinkManager;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCResourceCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
+import com.liferay.portal.kernel.util.WebKeys;
+
+import java.util.ResourceBundle;
 
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
@@ -55,15 +62,38 @@ public class GetAnalyticsReportsTotalReadsMVCResourceCommand
 			_portal.getHttpServletRequest(resourceRequest), _language,
 			_layoutSEOLinkManager, _portal);
 
-		JSONObject jsonObject = JSONUtil.put(
-			"analyticsReportsTotalReads",
-			_analyticsReportsDataProvider.getTotalReads(
-				_portal.getCompanyId(resourceRequest),
-				canonicalURLProvider.getCanonicalURL()));
+		try {
+			JSONObject jsonObject = JSONUtil.put(
+				"analyticsReportsTotalReads",
+				_analyticsReportsDataProvider.getTotalReads(
+					_portal.getCompanyId(resourceRequest),
+					canonicalURLProvider.getCanonicalURL()));
 
-		JSONPortletResponseUtil.writeJSON(
-			resourceRequest, resourceResponse, jsonObject);
+			JSONPortletResponseUtil.writeJSON(
+				resourceRequest, resourceResponse, jsonObject);
+		}
+		catch (Exception exception) {
+			_log.error(exception, exception);
+
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)resourceRequest.getAttribute(
+					WebKeys.THEME_DISPLAY);
+
+			ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
+				themeDisplay.getLocale(), getClass());
+
+			JSONObject jsonObject = JSONUtil.put(
+				"error",
+				ResourceBundleUtil.getString(
+					resourceBundle, "an-unexpected-error-occurred"));
+
+			JSONPortletResponseUtil.writeJSON(
+				resourceRequest, resourceResponse, jsonObject);
+		}
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		GetAnalyticsReportsTotalReadsMVCResourceCommand.class);
 
 	private static final AnalyticsReportsDataProvider
 		_analyticsReportsDataProvider = new AnalyticsReportsDataProvider();
