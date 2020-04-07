@@ -90,7 +90,7 @@ public class AnalyticsReportsDisplayContextTest {
 			new AnalyticsReportsDisplayContext(
 				analyticsReportsDataProvider, analyticsReportsInfoItem, null,
 				null, null, null, _getResourceBundle(),
-				_getThemeDisplay(layout));
+				_getThemeDisplay(layout), true);
 
 		Map<String, Object> props = analyticsReportsDisplayContext.getProps();
 

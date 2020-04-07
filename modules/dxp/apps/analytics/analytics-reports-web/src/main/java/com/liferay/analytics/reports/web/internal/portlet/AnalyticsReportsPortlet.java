@@ -16,6 +16,7 @@ package com.liferay.analytics.reports.web.internal.portlet;
 
 import com.liferay.analytics.reports.info.item.AnalyticsReportsInfoItem;
 import com.liferay.analytics.reports.info.item.AnalyticsReportsInfoItemTracker;
+import com.liferay.analytics.reports.web.internal.client.AsahFaroBackendClient;
 import com.liferay.analytics.reports.web.internal.constants.AnalyticsReportsPortletKeys;
 import com.liferay.analytics.reports.web.internal.constants.AnalyticsReportsWebKeys;
 import com.liferay.analytics.reports.web.internal.data.provider.AnalyticsReportsDataProvider;
@@ -92,6 +93,9 @@ public class AnalyticsReportsPortlet extends MVCPortlet {
 			return;
 		}
 
+		AsahFaroBackendClient asahFaroBackendClient =
+			new AsahFaroBackendClient();
+
 		InfoDisplayObjectProvider infoDisplayObjectProvider =
 			_getInfoDisplayObjectProvider(httpServletRequest);
 
@@ -137,12 +141,14 @@ public class AnalyticsReportsPortlet extends MVCPortlet {
 		renderRequest.setAttribute(
 			AnalyticsReportsWebKeys.ANALYTICS_REPORTS_DISPLAY_CONTEXT,
 			new AnalyticsReportsDisplayContext(
-				new AnalyticsReportsDataProvider(), analyticsReportsInfoItem,
-				analyticsReportsInfoItemObject, canonicalURL, _portal,
-				renderResponse,
+				new AnalyticsReportsDataProvider(asahFaroBackendClient),
+				analyticsReportsInfoItem, analyticsReportsInfoItemObject,
+				canonicalURL, _portal, renderResponse,
 				ResourceBundleUtil.getBundle(
 					"content.Language", themeDisplay.getLocale(), getClass()),
-				themeDisplay));
+				themeDisplay,
+				asahFaroBackendClient.isValidConnection(
+					themeDisplay.getCompanyId())));
 
 		super.doDispatch(renderRequest, renderResponse);
 	}

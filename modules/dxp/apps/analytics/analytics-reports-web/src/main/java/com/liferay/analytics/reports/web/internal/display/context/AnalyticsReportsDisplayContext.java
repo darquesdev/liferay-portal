@@ -56,7 +56,8 @@ public class AnalyticsReportsDisplayContext {
 		AnalyticsReportsInfoItem analyticsReportsInfoItem,
 		Object analyticsReportsInfoItemObject, String canonicalURL,
 		Portal portal, RenderResponse renderResponse,
-		ResourceBundle resourceBundle, ThemeDisplay themeDisplay) {
+		ResourceBundle resourceBundle, ThemeDisplay themeDisplay,
+		boolean validAnalyticsCloudConnection) {
 
 		_analyticsReportsDataProvider = analyticsReportsDataProvider;
 		_analyticsReportsInfoItem = analyticsReportsInfoItem;
@@ -66,6 +67,7 @@ public class AnalyticsReportsDisplayContext {
 		_renderResponse = renderResponse;
 		_resourceBundle = resourceBundle;
 		_themeDisplay = themeDisplay;
+		_validAnalyticsCloudConnection = validAnalyticsCloudConnection;
 	}
 
 	public Map<String, Object> getData() {
@@ -147,6 +149,8 @@ public class AnalyticsReportsDisplayContext {
 				).build()
 			).put(
 				"timeSpans", _getTimeSpansJSONArray()
+			).put(
+				"validAnalyticsCloudConnection", _validAnalyticsCloudConnection
 			).build()
 		).put(
 			"props", getProps()
@@ -252,5 +256,6 @@ public class AnalyticsReportsDisplayContext {
 	private final RenderResponse _renderResponse;
 	private final ResourceBundle _resourceBundle;
 	private final ThemeDisplay _themeDisplay;
+	private final boolean _validAnalyticsCloudConnection;
 
 }
