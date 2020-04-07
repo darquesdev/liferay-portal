@@ -106,6 +106,7 @@ public class ExperimentUtil {
 		experiment.setCreateDate(segmentsExperiment.getCreateDate());
 		experiment.setDataSourceId(dataSourceId);
 		experiment.setDescription(segmentsExperiment.getDescription());
+		experiment.setDXPGroupId(layout.getGroupId());
 		experiment.setDXPLayoutId(layout.getUuid());
 
 		List<SegmentsExperimentRel> segmentsExperimentRels =

@@ -65,6 +65,11 @@ public final class Experiment {
 		return _dxpExperienceName;
 	}
 
+	@JsonProperty("dxpGroupId")
+	public Long getDXPGroupId() {
+		return _dxpGroupId;
+	}
+
 	@JsonProperty("dxpLayoutId")
 	public String getDXPLayoutId() {
 		return _dxpLayoutId;
@@ -177,6 +182,10 @@ public final class Experiment {
 		_dxpExperienceName = dxpExperienceName;
 	}
 
+	public void setDXPGroupId(Long dxpGroupId) {
+		_dxpGroupId = dxpGroupId;
+	}
+
 	public void setDXPLayoutId(String dxpLayoutId) {
 		_dxpLayoutId = dxpLayoutId;
 	}
@@ -248,6 +257,7 @@ public final class Experiment {
 	private String _description;
 	private String _dxpExperienceId;
 	private String _dxpExperienceName;
+	private Long _dxpGroupId;
 	private String _dxpLayoutId;
 	private String _dxpSegmentId;
 	private String _dxpSegmentName;
