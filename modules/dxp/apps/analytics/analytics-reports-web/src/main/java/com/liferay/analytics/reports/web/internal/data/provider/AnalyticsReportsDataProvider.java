@@ -70,8 +70,17 @@ public class AnalyticsReportsDataProvider {
 		return _getHistoricalJSONObject(timeRange.getIntervalLocalDateTimes());
 	}
 
-	public Long getTotalReads(long plid) {
-		return 107152L;
+	public Long getTotalReads(long companyId, String url)
+		throws PortalException {
+
+		try {
+			return Long.valueOf(
+				_asahFaroBackendClient.doGet(
+					companyId, "api/1.0/pages/read-count?url=" + url));
+		}
+		catch (Exception exception) {
+			throw new PortalException("Unable to get total reads", exception);
+		}
 	}
 
 	public Long getTotalViews(long companyId, String url)
