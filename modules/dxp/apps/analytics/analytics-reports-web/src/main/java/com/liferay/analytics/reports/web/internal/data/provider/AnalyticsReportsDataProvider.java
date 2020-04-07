@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import com.liferay.analytics.reports.web.internal.client.AsahFaroBackendClient;
+import com.liferay.analytics.reports.web.internal.client.AsahFaroBackendClientImpl;
 import com.liferay.analytics.reports.web.internal.model.TimeRange;
 import com.liferay.analytics.reports.web.internal.model.TrafficSource;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -42,7 +43,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class AnalyticsReportsDataProvider {
 
 	public AnalyticsReportsDataProvider() {
-		this(new AsahFaroBackendClient());
+		this(new AsahFaroBackendClientImpl());
 	}
 
 	public AnalyticsReportsDataProvider(
