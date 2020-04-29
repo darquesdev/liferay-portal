@@ -82,8 +82,6 @@ public class AnalyticsReportsDisplayContextTest {
 	public void testGetContextWithInvalidAnalyticsConnection() {
 		LocalDate localDate = LocalDate.now();
 
-		localDate.atStartOfDay();
-
 		AnalyticsReportsDisplayContext analyticsReportsDisplayContext =
 			new AnalyticsReportsDisplayContext(
 				_getAnalyticsReportsConfiguration(true, false),
@@ -116,10 +114,6 @@ public class AnalyticsReportsDisplayContextTest {
 
 	@Test
 	public void testGetContextWithReadsDisabled() {
-		LocalDate localDate = LocalDate.now();
-
-		localDate.atStartOfDay();
-
 		AnalyticsReportsDisplayContext analyticsReportsDisplayContext =
 			new AnalyticsReportsDisplayContext(
 				_getAnalyticsReportsConfiguration(false, false),
