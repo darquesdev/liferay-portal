@@ -15,6 +15,7 @@
 package com.liferay.analytics.reports.web.internal.display.context;
 
 import com.liferay.analytics.reports.info.item.AnalyticsReportsInfoItem;
+import com.liferay.analytics.reports.web.internal.configuration.AnalyticsReportsConfiguration;
 import com.liferay.analytics.reports.web.internal.data.provider.AnalyticsReportsDataProvider;
 import com.liferay.analytics.reports.web.internal.model.TrafficSource;
 import com.liferay.portal.json.JSONFactoryImpl;
@@ -85,6 +86,7 @@ public class AnalyticsReportsDisplayContextTest {
 
 		AnalyticsReportsDisplayContext analyticsReportsDisplayContext =
 			new AnalyticsReportsDisplayContext(
+				_getAnalyticsReportsConfiguration(false, false),
 				_getAnalyticsReportsDataProvider(
 					RandomTestUtil.randomInt(), RandomTestUtil.randomDouble(),
 					RandomTestUtil.randomInt(), RandomTestUtil.randomDouble(),
@@ -130,6 +132,7 @@ public class AnalyticsReportsDisplayContextTest {
 
 		AnalyticsReportsDisplayContext analyticsReportsDisplayContext =
 			new AnalyticsReportsDisplayContext(
+				_getAnalyticsReportsConfiguration(false, true),
 				analyticsReportsDataProvider, analyticsReportsInfoItem, null,
 				null, new PortalImpl(), _getRenderResponse(),
 				_getResourceBundle(), _getThemeDisplay(layout));
@@ -191,6 +194,7 @@ public class AnalyticsReportsDisplayContextTest {
 
 		AnalyticsReportsDisplayContext analyticsReportsDisplayContext =
 			new AnalyticsReportsDisplayContext(
+				_getAnalyticsReportsConfiguration(false, true),
 				analyticsReportsDataProvider, analyticsReportsInfoItem, null,
 				null, new PortalImpl(), _getRenderResponse(),
 				_getResourceBundle(), _getThemeDisplay(layout));
@@ -238,6 +242,24 @@ public class AnalyticsReportsDisplayContextTest {
 				)
 			).toJSONString(),
 			trafficSourcesJSONArray.toJSONString());
+	}
+
+	private AnalyticsReportsConfiguration _getAnalyticsReportsConfiguration(
+		boolean readsEnabled, boolean trafficSourcesEnabled) {
+
+		return new AnalyticsReportsConfiguration() {
+
+			@Override
+			public boolean readsEnabled() {
+				return readsEnabled;
+			}
+
+			@Override
+			public boolean trafficSourcesEnabled() {
+				return trafficSourcesEnabled;
+			}
+
+		};
 	}
 
 	private AnalyticsReportsDataProvider _getAnalyticsReportsDataProvider(
