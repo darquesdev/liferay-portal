@@ -86,6 +86,42 @@ public class AnalyticsReportsDisplayContextTest {
 
 		AnalyticsReportsDisplayContext analyticsReportsDisplayContext =
 			new AnalyticsReportsDisplayContext(
+				_getAnalyticsReportsConfiguration(true, false),
+				_getAnalyticsReportsDataProvider(
+					RandomTestUtil.randomInt(), RandomTestUtil.randomDouble(),
+					RandomTestUtil.randomInt(), RandomTestUtil.randomDouble(),
+					false),
+				_getAnalyticsReportsItem(), null, null, new PortalImpl(),
+				_getRenderResponse(), _getResourceBundle(),
+				_getThemeDisplay(_getLayout()));
+
+		Map<String, Object> data = analyticsReportsDisplayContext.getData();
+
+		Map<String, Object> context = (Map<String, Object>)data.get("context");
+
+		Assert.assertTrue((Boolean)context.get("readsEnabled"));
+
+		Map<String, Object> defaultTimeRange = (Map<String, Object>)context.get(
+			"defaultTimeRange");
+
+		Assert.assertEquals(
+			DateTimeFormatter.ISO_DATE.format(
+				localDate.minus(1, ChronoUnit.DAYS)),
+			defaultTimeRange.get("endDate"));
+		Assert.assertEquals(
+			DateTimeFormatter.ISO_DATE.format(
+				localDate.minus(7, ChronoUnit.DAYS)),
+			defaultTimeRange.get("startDate"));
+	}
+
+	@Test
+	public void testGetContextWithReadsDisabled() {
+		LocalDate localDate = LocalDate.now();
+
+		localDate.atStartOfDay();
+
+		AnalyticsReportsDisplayContext analyticsReportsDisplayContext =
+			new AnalyticsReportsDisplayContext(
 				_getAnalyticsReportsConfiguration(false, false),
 				_getAnalyticsReportsDataProvider(
 					RandomTestUtil.randomInt(), RandomTestUtil.randomDouble(),
@@ -99,17 +135,7 @@ public class AnalyticsReportsDisplayContextTest {
 
 		Map<String, Object> context = (Map<String, Object>)data.get("context");
 
-		Map<String, Object> defaultTimeRange = (Map<String, Object>)context.get(
-			"defaultTimeRange");
-
-		Assert.assertEquals(
-			DateTimeFormatter.ISO_DATE.format(
-				localDate.minus(1, ChronoUnit.DAYS)),
-			defaultTimeRange.get("endDate"));
-		Assert.assertEquals(
-			DateTimeFormatter.ISO_DATE.format(
-				localDate.minus(7, ChronoUnit.DAYS)),
-			defaultTimeRange.get("startDate"));
+		Assert.assertFalse((Boolean)context.get("readsEnabled"));
 	}
 
 	@Test
@@ -172,6 +198,41 @@ public class AnalyticsReportsDisplayContextTest {
 				)
 			).toJSONString(),
 			trafficSourcesJSONArray.toJSONString());
+	}
+
+	@Test
+	public void testGetPropsWithTrafficSourcesDisabled() {
+		int organicTrafficAmount = RandomTestUtil.randomInt();
+		double organicTrafficShare = RandomTestUtil.randomDouble();
+
+		int paidTrafficAmount = RandomTestUtil.randomInt();
+		double paidTrafficShare = RandomTestUtil.randomDouble();
+
+		AnalyticsReportsDataProvider analyticsReportsDataProvider =
+			_getAnalyticsReportsDataProvider(
+				organicTrafficAmount, organicTrafficShare, paidTrafficAmount,
+				paidTrafficShare, false);
+
+		AnalyticsReportsInfoItem analyticsReportsInfoItem =
+			_getAnalyticsReportsItem();
+
+		Layout layout = _getLayout();
+
+		AnalyticsReportsDisplayContext analyticsReportsDisplayContext =
+			new AnalyticsReportsDisplayContext(
+				_getAnalyticsReportsConfiguration(false, false),
+				analyticsReportsDataProvider, analyticsReportsInfoItem, null,
+				null, new PortalImpl(), _getRenderResponse(),
+				_getResourceBundle(), _getThemeDisplay(layout));
+
+		Map<String, Object> data = analyticsReportsDisplayContext.getData();
+
+		Map<String, Object> props = (Map<String, Object>)data.get("props");
+
+		JSONArray trafficSourcesJSONArray = (JSONArray)props.get(
+			"trafficSources");
+
+		Assert.assertEquals("[]", trafficSourcesJSONArray.toJSONString());
 	}
 
 	@Test
