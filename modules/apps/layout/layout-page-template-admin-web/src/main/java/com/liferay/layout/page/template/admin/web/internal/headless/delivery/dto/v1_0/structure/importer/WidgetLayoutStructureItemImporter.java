@@ -117,7 +117,7 @@ public class WidgetLayoutStructureItemImporter
 
 			String namespace = StringUtil.randomId();
 
-			String instanceId = _getPortletInstanceId(layout, namespace, name);
+			String instanceId = _getPortletInstanceId(namespace, layout, name);
 
 			editableValueJSONObject.put(
 				"instanceId", instanceId
@@ -157,7 +157,7 @@ public class WidgetLayoutStructureItemImporter
 	}
 
 	private String _getPortletInstanceId(
-			Layout layout, String namespace, String portletId)
+			String namespace, Layout layout, String portletId)
 		throws PortletIdException {
 
 		Portlet portlet = _portletLocalService.fetchPortletById(
