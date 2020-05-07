@@ -37,14 +37,15 @@ public class JournalArticleAnalyticsReportsInfoItem
 	implements AnalyticsReportsInfoItem<JournalArticle> {
 
 	@Override
-	public String getAuthorName(JournalArticle article) {
-		List<JournalArticle> articles = _journalArticleLocalService.getArticles(
-			article.getGroupId(), article.getArticleId(), 0, 1,
-			new ArticleVersionComparator(true));
+	public String getAuthorName(JournalArticle journalArticle) {
+		List<JournalArticle> journalArticles =
+			_journalArticleLocalService.getArticles(
+				journalArticle.getGroupId(), journalArticle.getArticleId(), 0,
+				1, new ArticleVersionComparator(true));
 
-		article = articles.get(0);
+		journalArticle = journalArticles.get(0);
 
-		User user = _userLocalService.fetchUser(article.getUserId());
+		User user = _userLocalService.fetchUser(journalArticle.getUserId());
 
 		if (user != null) {
 			return user.getFullName();
@@ -54,13 +55,13 @@ public class JournalArticleAnalyticsReportsInfoItem
 	}
 
 	@Override
-	public Date getPublishDate(JournalArticle article) {
-		return article.getDisplayDate();
+	public Date getPublishDate(JournalArticle journalArticle) {
+		return journalArticle.getDisplayDate();
 	}
 
 	@Override
-	public String getTitle(JournalArticle article, Locale locale) {
-		return article.getTitle(locale);
+	public String getTitle(JournalArticle journalArticle, Locale locale) {
+		return journalArticle.getTitle(locale);
 	}
 
 	@Reference
