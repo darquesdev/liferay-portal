@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.service.UserLocalService;
 
 import java.util.Date;
 import java.util.Locale;
+import java.util.Optional;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -35,13 +36,13 @@ public class BlogsAnalyticsReportsInfoItem
 
 	@Override
 	public String getAuthorName(BlogsEntry blogsEntry) {
-		User user = _userLocalService.fetchUser(blogsEntry.getUserId());
-
-		if (user != null) {
-			return user.getFullName();
-		}
-
-		return StringPool.BLANK;
+		return Optional.ofNullable(
+			_userLocalService.fetchUser(blogsEntry.getUserId())
+		).map(
+			User::getFullName
+		).orElse(
+			StringPool.BLANK
+		);
 	}
 
 	@Override
