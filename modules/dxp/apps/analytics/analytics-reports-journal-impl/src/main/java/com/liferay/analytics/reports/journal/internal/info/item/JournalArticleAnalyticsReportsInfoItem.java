@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.service.UserLocalService;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -43,15 +44,17 @@ public class JournalArticleAnalyticsReportsInfoItem
 				journalArticle.getGroupId(), journalArticle.getArticleId(), 0,
 				1, new ArticleVersionComparator(true));
 
-		journalArticle = journalArticles.get(0);
+		Stream<JournalArticle> stream = journalArticles.stream();
 
-		User user = _userLocalService.fetchUser(journalArticle.getUserId());
-
-		if (user != null) {
-			return user.getFullName();
-		}
-
-		return StringPool.BLANK;
+		return stream.findFirst(
+		).map(
+			firstJournalArticle -> _userLocalService.fetchUser(
+				firstJournalArticle.getUserId())
+		).map(
+			User::getFullName
+		).orElse(
+			StringPool.BLANK
+		);
 	}
 
 	@Override
