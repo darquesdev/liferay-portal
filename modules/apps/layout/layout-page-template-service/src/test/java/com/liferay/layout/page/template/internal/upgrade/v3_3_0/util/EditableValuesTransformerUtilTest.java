@@ -192,7 +192,7 @@ public class EditableValuesTransformerUtilTest {
 						"experience_0.json")),
 			_objectMapper.readTree(
 				EditableValuesTransformerUtil.getEditableValues(
-					editableValues, 0)));
+					editableValues, "DfVeKU70nnk5", 0)));
 	}
 
 	private String _read(String fileName) throws Exception {
