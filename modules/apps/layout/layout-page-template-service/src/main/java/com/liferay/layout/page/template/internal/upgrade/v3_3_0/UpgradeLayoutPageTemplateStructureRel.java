@@ -15,7 +15,6 @@
 package com.liferay.layout.page.template.internal.upgrade.v3_3_0;
 
 import com.liferay.fragment.model.FragmentEntryLink;
-import com.liferay.fragment.processor.PortletRegistry;
 import com.liferay.fragment.service.FragmentEntryLinkLocalService;
 import com.liferay.layout.page.template.internal.upgrade.v3_3_0.util.EditableValuesTransformerUtil;
 import com.liferay.layout.page.template.util.LayoutDataConverter;
@@ -33,6 +32,7 @@ import com.liferay.portal.kernel.portlet.PortletIdCodec;
 import com.liferay.portal.kernel.service.PortletPreferencesLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -42,7 +42,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 /**
  * @author Eudaldo Alonso
@@ -51,17 +58,55 @@ public class UpgradeLayoutPageTemplateStructureRel extends UpgradeProcess {
 
 	public UpgradeLayoutPageTemplateStructureRel(
 		FragmentEntryLinkLocalService fragmentEntryLinkLocalService,
-		PortletPreferencesLocalService portletPreferencesLocalService,
-		PortletRegistry portletRegistry) {
+		PortletPreferencesLocalService portletPreferencesLocalService) {
 
 		_fragmentEntryLinkLocalService = fragmentEntryLinkLocalService;
 		_portletPreferencesLocalService = portletPreferencesLocalService;
-		_portletRegistry = portletRegistry;
 	}
 
 	@Override
 	protected void doUpgrade() throws Exception {
 		_upgradeLayoutPageTemplateStructureRel();
+	}
+
+	private List<String> _getFragmentEntryLinkPortletIds(
+		FragmentEntryLink fragmentEntryLink) {
+
+		List<String> portletIds = new ArrayList<>();
+
+		Document document = Jsoup.parseBodyFragment(
+			fragmentEntryLink.getHtml());
+
+		Document.OutputSettings outputSettings = new Document.OutputSettings();
+
+		outputSettings.prettyPrint(false);
+
+		document.outputSettings(outputSettings);
+
+		for (Element element : document.select("*")) {
+			String tagName = element.tagName();
+
+			if (!StringUtil.startsWith(tagName, "lfr-widget-")) {
+				continue;
+			}
+
+			String alias = StringUtil.removeSubstring(tagName, "lfr-widget-");
+
+			String portletName = _portletNames.get(alias);
+
+			if (Validator.isNull(portletName)) {
+				continue;
+			}
+
+			String portletId = PortletIdCodec.encode(
+				PortletIdCodec.decodePortletName(portletName),
+				PortletIdCodec.decodeUserId(portletName),
+				fragmentEntryLink.getNamespace() + element.attr("id"));
+
+			portletIds.add(portletId);
+		}
+
+		return portletIds;
 	}
 
 	private Optional<PortletPreferences> _getPortletPreferencesOptional(
@@ -254,8 +299,7 @@ public class UpgradeLayoutPageTemplateStructureRel extends UpgradeProcess {
 		long segmentsExperienceId) {
 
 		for (String portletId :
-				_portletRegistry.getFragmentEntryLinkPortletIds(
-					fragmentEntryLink)) {
+				_getFragmentEntryLinkPortletIds(fragmentEntryLink)) {
 
 			String instanceId = PortletIdCodec.decodeInstanceId(portletId);
 			String newInstanceId = StringUtil.replace(
@@ -294,9 +338,55 @@ public class UpgradeLayoutPageTemplateStructureRel extends UpgradeProcess {
 	private static final Log _log = LogFactoryUtil.getLog(
 		UpgradeLayoutPageTemplateStructureRel.class);
 
+	private static final Map<String, String> _portletNames = HashMapBuilder.put(
+		"asset-list",
+		"com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet"
+	).put(
+		"breadcrumb",
+		"com_liferay_site_navigation_breadcrumb_web_portlet_" +
+			"SiteNavigationBreadcrumbPortlet"
+	).put(
+		"categories-nav",
+		"com_liferay_asset_categories_navigation_web_portlet_" +
+			"AssetCategoriesNavigationPortlet"
+	).put(
+		"dynamic-data-list",
+		"com_liferay_dynamic_data_lists_web_portlet_DDLDisplayPortlet"
+	).put(
+		"flash", "com_liferay_flash_web_portlet_FlashPortlet"
+	).put(
+		"form",
+		"com_liferay_dynamic_data_mapping_form_web_portlet_DDMFormPortlet"
+	).put(
+		"iframe", "com_liferay_iframe_web_portlet_IFramePortlet"
+	).put(
+		"media-gallery",
+		"com_liferay_document_library_web_portlet_IGDisplayPortlet"
+	).put(
+		"nav",
+		"com_liferay_site_navigation_menu_web_portlet_SiteNavigationMenuPortlet"
+	).put(
+		"polls", "com_liferay_polls_web_portlet_PollsDisplayPortlet"
+	).put(
+		"rss", "com_liferay_rss_web_portlet_RSSPortlet"
+	).put(
+		"site-map",
+		"com_liferay_site_navigation_site_map_web_portlet_" +
+			"SiteNavigationSiteMapPortlet"
+	).put(
+		"tag-cloud",
+		"com_liferay_asset_tags_navigation_web_portlet_AssetTagsCloudPortlet"
+	).put(
+		"tags-nav",
+		"com_liferay_asset_tags_navigation_web_portlet_" +
+			"AssetTagsNavigationPortlet"
+	).put(
+		"web-content",
+		"com_liferay_journal_content_web_portlet_JournalContentPortlet"
+	).build();
+
 	private final FragmentEntryLinkLocalService _fragmentEntryLinkLocalService;
 	private final PortletPreferencesLocalService
 		_portletPreferencesLocalService;
-	private final PortletRegistry _portletRegistry;
 
 }
