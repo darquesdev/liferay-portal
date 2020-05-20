@@ -39,7 +39,7 @@ public class TrafficSourceTest {
 	@Test
 	public void testToJSONObject() {
 		TrafficSource trafficSource = new TrafficSource(
-			RandomTestUtil.randomString(), RandomTestUtil.randomInt(),
+			RandomTestUtil.randomString(), null, RandomTestUtil.randomInt(),
 			RandomTestUtil.randomDouble());
 
 		String helpMessage = RandomTestUtil.randomString();
