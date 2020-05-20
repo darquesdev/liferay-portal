@@ -330,10 +330,11 @@ public class AnalyticsReportsDisplayContextTest {
 
 				return Arrays.asList(
 					new TrafficSource(
-						_TITLE_KEY_ORGANIC, organicTrafficAmount,
+						_TITLE_KEY_ORGANIC, null, organicTrafficAmount,
 						organicTrafficShare),
 					new TrafficSource(
-						_TITLE_KEY_PAID, paidTrafficAmount, paidTrafficShare));
+						_TITLE_KEY_PAID, null, paidTrafficAmount,
+						paidTrafficShare));
 			}
 
 			@Override
