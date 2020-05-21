@@ -72,7 +72,7 @@ public class TrafficSourceTest {
 			).toString(),
 			String.valueOf(
 				trafficSource.toJSONObject(
-					helpMessage, keywordsJSONArray, title)));
+					helpMessage, title)));
 	}
 
 }
