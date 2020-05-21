@@ -108,7 +108,7 @@ public class TrafficSource {
 	}
 
 	public JSONObject toJSONObject(
-		String helpMessage, JSONArray keywordsJSONArray, String title) {
+		String helpMessage, String title) {
 
 		return JSONUtil.put(
 			"helpMessage", helpMessage
