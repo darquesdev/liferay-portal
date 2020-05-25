@@ -2,4 +2,6 @@ dependencies {testIntegrationCompile group: "com.liferay.portal", name: "com.lif
 	testIntegrationCompile project(":test:arquillian-extension-junit-bridge")
 	testIntegrationCompile project(":apps:layout:layout-test-util")
 	testIntegrationCompile project(":core:petra:petra-function")
+	compileOnly project(":apps:info:info-api")
+	compileOnly project(":apps:asset:asset-display-page-api")
 }

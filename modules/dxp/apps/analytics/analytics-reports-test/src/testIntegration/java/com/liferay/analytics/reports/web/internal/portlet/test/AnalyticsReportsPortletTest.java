@@ -17,32 +17,31 @@ package com.liferay.analytics.reports.web.internal.portlet.test;
 import com.liferay.analytics.reports.web.internal.portlet.action.test.util.MockHttpUtil;
 import com.liferay.analytics.reports.web.internal.portlet.action.test.util.MockThemeDisplayUtil;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.asset.display.page.constants.AssetDisplayPageWebKeys;
+import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
 import com.liferay.layout.test.util.LayoutTestUtil;
-import com.liferay.petra.function.UnsafeSupplier;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
-import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
-import javax.portlet.Portlet;
-import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.LayoutSetLocalService;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.portlet.MockLiferayPortletRenderRequest;
 import com.liferay.portal.kernel.test.portlet.MockLiferayPortletRenderResponse;
-import com.liferay.portal.kernel.test.portlet.MockLiferayResourceRequest;
-import com.liferay.portal.kernel.test.portlet.MockLiferayResourceResponse;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
-import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Http;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+
+import java.util.Collections;
+import java.util.Locale;
+
+import javax.portlet.Portlet;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -50,11 +49,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
-
-import java.io.ByteArrayOutputStream;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 
 /**
  * @author Cristina González
@@ -75,14 +69,11 @@ public class AnalyticsReportsPortletTest {
 
 	@Test
 	public void testServeResponse() throws Exception {
-		LocalDate localDate = LocalDate.now();
-
 		ReflectionTestUtil.setFieldValue(
 			_portlet, "_http",
 			MockHttpUtil.geHttp(
 				Collections.singletonMap(
-					"api/seo/1.0/traffic-sources", () -> "..."
-				)));
+					"api/seo/1.0/traffic-sources", () -> "...")));
 
 		try {
 			MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
@@ -90,18 +81,69 @@ public class AnalyticsReportsPortletTest {
 
 			_portlet.render(
 				mockLiferayPortletRenderRequest,
-				new MockLiferayPortletRenderResponse());
+				_getMockLiferayPortletRenderResponse());
 
 			Object analyticsReportsDisplayContext =
 				mockLiferayPortletRenderRequest.getAttribute(
 					"ANALYTICS_REPORTS_DISPLAY_CONTEXT");
 
-			System.out.println(analyticsReportsDisplayContext);
+			Assert.assertNotNull(analyticsReportsDisplayContext);
 		}
 		finally {
-			ReflectionTestUtil.setFieldValue(
-				_portlet, "_http", _http);
+			ReflectionTestUtil.setFieldValue(_portlet, "_http", _http);
 		}
+	}
+
+	private InfoDisplayObjectProvider _getInfoDisplayObjectProvider() {
+		return new InfoDisplayObjectProvider() {
+
+			@Override
+			public long getClassNameId() {
+				return _portal.getClassNameId(
+					"com.liferay.journal.model.JournalArticle");
+			}
+
+			@Override
+			public long getClassPK() {
+				return 0;
+			}
+
+			@Override
+			public long getClassTypeId() {
+				return 0;
+			}
+
+			@Override
+			public String getDescription(Locale locale) {
+				return null;
+			}
+
+			@Override
+			public Object getDisplayObject() {
+				return null;
+			}
+
+			@Override
+			public long getGroupId() {
+				return 0;
+			}
+
+			@Override
+			public String getKeywords(Locale locale) {
+				return null;
+			}
+
+			@Override
+			public String getTitle(Locale locale) {
+				return null;
+			}
+
+			@Override
+			public String getURLTitle(Locale locale) {
+				return null;
+			}
+
+		};
 	}
 
 	private MockLiferayPortletRenderRequest
@@ -111,6 +153,10 @@ public class AnalyticsReportsPortletTest {
 			new MockLiferayPortletRenderRequest();
 
 		try {
+			mockLiferayPortletRenderRequest.setAttribute(
+				AssetDisplayPageWebKeys.INFO_DISPLAY_OBJECT_PROVIDER,
+				_getInfoDisplayObjectProvider());
+
 			mockLiferayPortletRenderRequest.setAttribute(
 				WebKeys.THEME_DISPLAY,
 				MockThemeDisplayUtil.getThemeDisplay(
@@ -127,6 +173,20 @@ public class AnalyticsReportsPortletTest {
 		}
 	}
 
+	private MockLiferayPortletRenderResponse
+		_getMockLiferayPortletRenderResponse() {
+
+		return new MockLiferayPortletRenderResponse() {
+
+			@Override
+			public String getNamespace() {
+				return "com_liferay_analytics_reports_web_internal_portlet_" +
+					"AnalyticsReportsPortlet";
+			}
+
+		};
+	}
+
 	@Inject
 	private CompanyLocalService _companyLocalService;
 
@@ -141,7 +201,12 @@ public class AnalyticsReportsPortletTest {
 	@Inject
 	private LayoutSetLocalService _layoutSetLocalService;
 
-	@Inject(filter = "component.name=com.liferay.analytics.reports.web.internal.portlet.AnalyticsReportsPortlet")
+	@Inject
+	private Portal _portal;
+
+	@Inject(
+		filter = "component.name=com.liferay.analytics.reports.web.internal.portlet.AnalyticsReportsPortlet"
+	)
 	private Portlet _portlet;
 
 }
