@@ -269,6 +269,34 @@ public class SegmentsExperienceLocalServiceTest {
 	}
 
 	@Test
+	public void testFetchSegmentsExperienceExisting() throws Exception {
+		SegmentsExperience segmentsExperience =
+			SegmentsTestUtil.addSegmentsExperience(
+				_group.getGroupId(), _classNameId, _classPK);
+
+		SegmentsExperience existingSegmentsExperience =
+			_segmentsExperienceLocalService.fetchSegmentsExperience(
+				_group.getGroupId(), _classNameId, _classPK,
+				segmentsExperience.getPriority());
+
+		Assert.assertEquals(segmentsExperience, existingSegmentsExperience);
+	}
+
+	@Test
+	public void testFetchSegmentsExperienceMissing() throws Exception {
+		SegmentsExperience segmentsExperience =
+			SegmentsTestUtil.addSegmentsExperience(
+				_group.getGroupId(), _classNameId, _classPK);
+
+		SegmentsExperience existingSegmentsExperience =
+			_segmentsExperienceLocalService.fetchSegmentsExperience(
+				_group.getGroupId(), _classNameId, _classPK,
+				segmentsExperience.getPriority() + 1);
+
+		Assert.assertNull(existingSegmentsExperience);
+	}
+
+	@Test
 	public void testMoveSegmentsExperienceToInvalidPosition() throws Exception {
 		SegmentsExperience segmentsExperience =
 			SegmentsTestUtil.addSegmentsExperience(
