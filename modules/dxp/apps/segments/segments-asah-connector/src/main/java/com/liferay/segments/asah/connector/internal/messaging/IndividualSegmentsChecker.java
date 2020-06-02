@@ -62,7 +62,16 @@ import org.osgi.service.component.annotations.Reference;
 public class IndividualSegmentsChecker {
 
 	public void checkIndividualSegments() {
-		_checkIndividualSegments(_portal.getDefaultCompanyId());
+		List<Company> companies = _companyLocalService.getCompanies();
+
+		Stream<Company> stream = companies.stream();
+
+		stream.filter(
+			company -> AsahUtil.isAnalyticsEnabled(company.getCompanyId())
+		).forEach(
+			company -> _checkIndividualSegments(company.getCompanyId())
+		);
+
 		_checkIndividualSegmentsMemberships();
 	}
 
