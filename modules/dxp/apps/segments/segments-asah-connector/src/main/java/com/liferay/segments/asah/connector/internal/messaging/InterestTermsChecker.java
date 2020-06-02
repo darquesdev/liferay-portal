@@ -22,15 +22,18 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.segments.asah.connector.internal.cache.AsahInterestTermCache;
 import com.liferay.segments.asah.connector.internal.client.AsahFaroBackendClient;
-import com.liferay.segments.asah.connector.internal.client.AsahFaroBackendClientFactory;
+import com.liferay.segments.asah.connector.internal.client.AsahFaroBackendClientImpl;
+import com.liferay.segments.asah.connector.internal.client.JSONWebServiceClient;
 import com.liferay.segments.asah.connector.internal.client.model.Results;
 import com.liferay.segments.asah.connector.internal.client.model.Topic;
+import com.liferay.segments.asah.connector.internal.util.AsahUtil;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -40,19 +43,10 @@ import org.osgi.service.component.annotations.Reference;
 public class InterestTermsChecker {
 
 	public void checkInterestTerms(long companyId, String userId) {
-		if (_asahInterestTermCache.getInterestTerms(userId) != null) {
+		if ((_asahInterestTermCache.getInterestTerms(userId) != null) ||
+			!AsahUtil.isAnalyticsEnabled(companyId)) {
+
 			return;
-		}
-
-		if (_asahFaroBackendClient == null) {
-			Optional<AsahFaroBackendClient> asahFaroBackendClientOptional =
-				_asahFaroBackendClientFactory.createAsahFaroBackendClient();
-
-			if (!asahFaroBackendClientOptional.isPresent()) {
-				return;
-			}
-
-			_asahFaroBackendClient = asahFaroBackendClientOptional.get();
 		}
 
 		Results<Topic> interestTermsResults =
@@ -105,16 +99,27 @@ public class InterestTermsChecker {
 		_asahInterestTermCache.putInterestTerms(userId, terms);
 	}
 
+	@Activate
+	protected void activate() {
+		_asahFaroBackendClient = new AsahFaroBackendClientImpl(
+			_jsonWebServiceClient);
+	}
+
+	@Deactivate
+	protected void deactivate() {
+		_asahFaroBackendClient = null;
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		InterestTermsChecker.class);
 
 	private AsahFaroBackendClient _asahFaroBackendClient;
 
 	@Reference
-	private AsahFaroBackendClientFactory _asahFaroBackendClientFactory;
+	private AsahInterestTermCache _asahInterestTermCache;
 
 	@Reference
-	private AsahInterestTermCache _asahInterestTermCache;
+	private JSONWebServiceClient _jsonWebServiceClient;
 
 	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED)
 	private ModuleServiceLifecycle _moduleServiceLifecycle;

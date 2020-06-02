@@ -22,17 +22,16 @@ import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.segments.asah.connector.internal.client.AsahFaroBackendClient;
-import com.liferay.segments.asah.connector.internal.client.AsahFaroBackendClientFactory;
 import com.liferay.segments.asah.connector.internal.client.model.Experiment;
 import com.liferay.segments.asah.connector.internal.client.model.util.DXPVariantUtil;
 import com.liferay.segments.asah.connector.internal.client.model.util.ExperimentUtil;
+import com.liferay.segments.asah.connector.internal.util.AsahUtil;
 import com.liferay.segments.model.SegmentsExperiment;
 import com.liferay.segments.model.SegmentsExperimentRel;
 import com.liferay.segments.service.SegmentsEntryLocalService;
 import com.liferay.segments.service.SegmentsExperienceLocalService;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author Sarai Díaz
@@ -41,14 +40,14 @@ import java.util.Optional;
 public class AsahSegmentsExperimentProcessor {
 
 	public AsahSegmentsExperimentProcessor(
-		AsahFaroBackendClientFactory asahFaroBackendClientFactory,
+		AsahFaroBackendClient asahFaroBackendClient,
 		CompanyLocalService companyLocalService,
 		GroupLocalService groupLocalService,
 		LayoutLocalService layoutLocalService, Portal portal,
 		SegmentsEntryLocalService segmentsEntryLocalService,
 		SegmentsExperienceLocalService segmentsExperienceLocalService) {
 
-		_asahFaroBackendClientFactory = asahFaroBackendClientFactory;
+		_asahFaroBackendClient = asahFaroBackendClient;
 		_companyLocalService = companyLocalService;
 		_groupLocalService = groupLocalService;
 		_layoutLocalService = layoutLocalService;
@@ -61,18 +60,11 @@ public class AsahSegmentsExperimentProcessor {
 			SegmentsExperiment segmentsExperiment)
 		throws PortalException {
 
-		if (segmentsExperiment == null) {
+		if ((segmentsExperiment == null) ||
+			!AsahUtil.isAnalyticsEnabled(segmentsExperiment.getCompanyId())) {
+
 			return;
 		}
-
-		Optional<AsahFaroBackendClient> asahFaroBackendClientOptional =
-			_asahFaroBackendClientFactory.createAsahFaroBackendClient();
-
-		if (!asahFaroBackendClientOptional.isPresent()) {
-			return;
-		}
-
-		_asahFaroBackendClient = asahFaroBackendClientOptional.get();
 
 		Experiment experiment = _asahFaroBackendClient.addExperiment(
 			segmentsExperiment.getCompanyId(),
@@ -91,18 +83,11 @@ public class AsahSegmentsExperimentProcessor {
 	public void processDeleteSegmentsExperiment(
 		SegmentsExperiment segmentsExperiment) {
 
-		if (segmentsExperiment == null) {
+		if ((segmentsExperiment == null) ||
+			!AsahUtil.isAnalyticsEnabled(segmentsExperiment.getCompanyId())) {
+
 			return;
 		}
-
-		Optional<AsahFaroBackendClient> asahFaroBackendClientOptional =
-			_asahFaroBackendClientFactory.createAsahFaroBackendClient();
-
-		if (!asahFaroBackendClientOptional.isPresent()) {
-			return;
-		}
-
-		_asahFaroBackendClient = asahFaroBackendClientOptional.get();
 
 		_asahFaroBackendClient.deleteExperiment(
 			segmentsExperiment.getCompanyId(),
@@ -113,18 +98,11 @@ public class AsahSegmentsExperimentProcessor {
 			SegmentsExperiment segmentsExperiment)
 		throws PortalException {
 
-		if (segmentsExperiment == null) {
+		if ((segmentsExperiment == null) ||
+			!AsahUtil.isAnalyticsEnabled(segmentsExperiment.getCompanyId())) {
+
 			return;
 		}
-
-		Optional<AsahFaroBackendClient> asahFaroBackendClientOptional =
-			_asahFaroBackendClientFactory.createAsahFaroBackendClient();
-
-		if (!asahFaroBackendClientOptional.isPresent()) {
-			return;
-		}
-
-		_asahFaroBackendClient = asahFaroBackendClientOptional.get();
 
 		_asahFaroBackendClient.updateExperiment(
 			segmentsExperiment.getCompanyId(),
@@ -144,19 +122,11 @@ public class AsahSegmentsExperimentProcessor {
 		throws PortalException {
 
 		if ((segmentsExperiment == null) ||
-			(segmentsExperimentLayout == null)) {
+			(segmentsExperimentLayout == null) ||
+			!AsahUtil.isAnalyticsEnabled(segmentsExperiment.getCompanyId())) {
 
 			return;
 		}
-
-		Optional<AsahFaroBackendClient> asahFaroBackendClientOptional =
-			_asahFaroBackendClientFactory.createAsahFaroBackendClient();
-
-		if (!asahFaroBackendClientOptional.isPresent()) {
-			return;
-		}
-
-		_asahFaroBackendClient = asahFaroBackendClientOptional.get();
 
 		_asahFaroBackendClient.updateExperiment(
 			segmentsExperiment.getCompanyId(),
@@ -175,18 +145,11 @@ public class AsahSegmentsExperimentProcessor {
 			List<SegmentsExperimentRel> segmentsExperimentRels)
 		throws PortalException {
 
-		if (segmentsExperimentRels == null) {
+		if ((segmentsExperimentRels == null) ||
+			!AsahUtil.isAnalyticsEnabled(companyId)) {
+
 			return;
 		}
-
-		Optional<AsahFaroBackendClient> asahFaroBackendClientOptional =
-			_asahFaroBackendClientFactory.createAsahFaroBackendClient();
-
-		if (!asahFaroBackendClientOptional.isPresent()) {
-			return;
-		}
-
-		_asahFaroBackendClient = asahFaroBackendClientOptional.get();
 
 		_asahFaroBackendClient.updateExperimentDXPVariants(
 			companyId, segmentsExperimentKey,
@@ -194,8 +157,7 @@ public class AsahSegmentsExperimentProcessor {
 				LocaleUtil.getSiteDefault(), segmentsExperimentRels));
 	}
 
-	private AsahFaroBackendClient _asahFaroBackendClient;
-	private final AsahFaroBackendClientFactory _asahFaroBackendClientFactory;
+	private final AsahFaroBackendClient _asahFaroBackendClient;
 	private final CompanyLocalService _companyLocalService;
 	private final GroupLocalService _groupLocalService;
 	private final LayoutLocalService _layoutLocalService;
