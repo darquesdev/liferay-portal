@@ -23,6 +23,10 @@ import com.liferay.portal.kernel.util.UnicodeProperties;
 public interface AssetListAssetEntryQueryProcessor {
 
 	public void processAssetEntryQuery(
+		long companyId, String userId, UnicodeProperties unicodeProperties,
+		AssetEntryQuery assetEntryQuery);
+
+	public void processAssetEntryQuery(
 		String userId, UnicodeProperties unicodeProperties,
 		AssetEntryQuery assetEntryQuery);
 
