@@ -23,7 +23,8 @@ import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.segments.asah.connector.internal.client.AsahFaroBackendClientFactory;
+import com.liferay.segments.asah.connector.internal.client.AsahFaroBackendClientImpl;
+import com.liferay.segments.asah.connector.internal.client.JSONWebServiceClient;
 import com.liferay.segments.asah.connector.internal.processor.AsahSegmentsExperimentProcessor;
 import com.liferay.segments.asah.connector.internal.util.AsahUtil;
 import com.liferay.segments.model.SegmentsEntry;
@@ -36,13 +37,14 @@ import java.util.List;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Sarai Díaz
  * @author David Arques
  */
-@Component(immediate = true, service = ModelListener.class)
+@Component(service = ModelListener.class)
 public class SegmentsEntryModelListener
 	extends BaseModelListener<SegmentsEntry> {
 
@@ -80,16 +82,19 @@ public class SegmentsEntryModelListener
 	@Activate
 	protected void activate() {
 		_asahSegmentsExperimentProcessor = new AsahSegmentsExperimentProcessor(
-			_asahFaroBackendClientFactory, _companyLocalService,
-			_groupLocalService, _layoutLocalService, _portal,
-			_segmentsEntryLocalService, _segmentsExperienceLocalService);
+			new AsahFaroBackendClientImpl(_jsonWebServiceClient),
+			_companyLocalService, _groupLocalService, _layoutLocalService,
+			_portal, _segmentsEntryLocalService,
+			_segmentsExperienceLocalService);
+	}
+
+	@Deactivate
+	protected void deactivate() {
+		_asahSegmentsExperimentProcessor = null;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		SegmentsEntryModelListener.class);
-
-	@Reference
-	private AsahFaroBackendClientFactory _asahFaroBackendClientFactory;
 
 	private AsahSegmentsExperimentProcessor _asahSegmentsExperimentProcessor;
 
@@ -98,6 +103,9 @@ public class SegmentsEntryModelListener
 
 	@Reference
 	private GroupLocalService _groupLocalService;
+
+	@Reference
+	private JSONWebServiceClient _jsonWebServiceClient;
 
 	@Reference
 	private LayoutLocalService _layoutLocalService;

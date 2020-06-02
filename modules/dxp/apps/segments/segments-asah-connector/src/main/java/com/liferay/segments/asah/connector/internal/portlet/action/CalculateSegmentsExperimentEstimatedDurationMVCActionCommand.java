@@ -30,8 +30,10 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.segments.asah.connector.internal.client.AsahFaroBackendClient;
-import com.liferay.segments.asah.connector.internal.client.AsahFaroBackendClientFactory;
+import com.liferay.segments.asah.connector.internal.client.AsahFaroBackendClientImpl;
+import com.liferay.segments.asah.connector.internal.client.JSONWebServiceClient;
 import com.liferay.segments.asah.connector.internal.client.model.util.ExperimentSettingsUtil;
+import com.liferay.segments.asah.connector.internal.util.AsahUtil;
 import com.liferay.segments.constants.SegmentsPortletKeys;
 import com.liferay.segments.model.SegmentsExperiment;
 import com.liferay.segments.model.SegmentsExperimentRel;
@@ -41,14 +43,15 @@ import com.liferay.segments.service.SegmentsExperimentRelLocalService;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -64,6 +67,17 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class CalculateSegmentsExperimentEstimatedDurationMVCActionCommand
 	extends BaseMVCActionCommand {
+
+	@Activate
+	protected void activate() {
+		_asahFaroBackendClient = new AsahFaroBackendClientImpl(
+			_jsonWebServiceClient);
+	}
+
+	@Deactivate
+	protected void deactivate() {
+		_asahFaroBackendClient = null;
+	}
 
 	@Override
 	protected void doProcessAction(
@@ -104,15 +118,8 @@ public class CalculateSegmentsExperimentEstimatedDurationMVCActionCommand
 		double confidenceLevel, SegmentsExperiment segmentsExperiment,
 		Map<String, Double> segmentsExperienceKeySplitMap) {
 
-		if (_asahFaroBackendClient == null) {
-			Optional<AsahFaroBackendClient> asahFaroBackendClientOptional =
-				_asahFaroBackendClientFactory.createAsahFaroBackendClient();
-
-			if (!asahFaroBackendClientOptional.isPresent()) {
-				return null;
-			}
-
-			_asahFaroBackendClient = asahFaroBackendClientOptional.get();
+		if (!AsahUtil.isAnalyticsEnabled(segmentsExperiment.getCompanyId())) {
+			return null;
 		}
 
 		return _asahFaroBackendClient.calculateExperimentEstimatedDaysDuration(
@@ -173,7 +180,7 @@ public class CalculateSegmentsExperimentEstimatedDurationMVCActionCommand
 	private AsahFaroBackendClient _asahFaroBackendClient;
 
 	@Reference
-	private AsahFaroBackendClientFactory _asahFaroBackendClientFactory;
+	private JSONWebServiceClient _jsonWebServiceClient;
 
 	@Reference
 	private Portal _portal;
