@@ -14,6 +14,7 @@
 
 package com.liferay.segments.asah.connector.internal.messaging;
 
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -62,7 +63,7 @@ import org.osgi.service.component.annotations.Reference;
 public class IndividualSegmentsChecker {
 
 	public void checkIndividualSegments() {
-		_checkIndividualSegments(_portal.getDefaultCompanyId());
+		_checkIndividualSegments();
 		_checkIndividualSegmentsMemberships();
 	}
 
@@ -244,6 +245,25 @@ public class IndividualSegmentsChecker {
 				"Unable to retrieve individuals for individual segment " +
 					segmentsEntry.getSegmentsEntryKey(),
 				runtimeException);
+		}
+	}
+
+	private void _checkIndividualSegments() {
+		ActionableDynamicQuery actionableDynamicQuery =
+			_companyLocalService.getActionableDynamicQuery();
+
+		actionableDynamicQuery.setPerformActionMethod(
+			(Company company) -> {
+				if (AsahUtil.isAnalyticsEnabled(company.getCompanyId())) {
+					_checkIndividualSegments(company.getCompanyId());
+				}
+			});
+
+		try {
+			actionableDynamicQuery.performActions();
+		}
+		catch (PortalException portalException) {
+			_log.error("Unable to check individual segments", portalException);
 		}
 	}
 
