@@ -91,7 +91,7 @@ public class ContentDashboardAdminPortlet extends MVCPortlet {
 					_portal.getHttpServletRequest(renderRequest),
 					_portal.getLiferayPortletRequest(renderRequest),
 					_portal.getLiferayPortletResponse(renderResponse),
-					searchContainer);
+					contentDashboardAdminDisplayContext);
 
 		renderRequest.setAttribute(
 			ContentDashboardWebKeys.
