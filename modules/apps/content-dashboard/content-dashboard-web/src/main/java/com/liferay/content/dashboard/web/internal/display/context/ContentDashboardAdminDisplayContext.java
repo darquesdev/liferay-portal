@@ -16,6 +16,10 @@ package com.liferay.content.dashboard.web.internal.display.context;
 
 import com.liferay.content.dashboard.web.internal.item.ContentDashboardItem;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
+import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
+
+import javax.portlet.RenderRequest;
 
 /**
  * @author Cristina González
@@ -23,8 +27,10 @@ import com.liferay.portal.kernel.dao.search.SearchContainer;
 public class ContentDashboardAdminDisplayContext {
 
 	public ContentDashboardAdminDisplayContext(
+		RenderRequest renderRequest,
 		SearchContainer<ContentDashboardItem<?>> searchContainer) {
 
+		_renderRequest = renderRequest;
 		_searchContainer = searchContainer;
 	}
 
@@ -32,6 +38,19 @@ public class ContentDashboardAdminDisplayContext {
 		return _searchContainer;
 	}
 
+	public Integer getStatus() {
+		if (_status != null) {
+			return _status;
+		}
+
+		_status = ParamUtil.getInteger(
+			_renderRequest, "status", WorkflowConstants.STATUS_ANY);
+
+		return _status;
+	}
+
+	private final RenderRequest _renderRequest;
 	private final SearchContainer<ContentDashboardItem<?>> _searchContainer;
+	private Integer _status;
 
 }
