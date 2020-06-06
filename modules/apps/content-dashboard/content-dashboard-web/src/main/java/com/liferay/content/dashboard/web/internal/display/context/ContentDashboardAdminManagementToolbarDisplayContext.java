@@ -14,18 +14,22 @@
 
 package com.liferay.content.dashboard.web.internal.display.context;
 
-import com.liferay.content.dashboard.web.internal.item.ContentDashboardItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.display.context.SearchContainerManagementToolbarDisplayContext;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemList;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemListBuilder;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.LabelItem;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.LabelItemListBuilder;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.dao.search.SearchContainer;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.PortletURLUtil;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.portlet.PortletURL;
@@ -42,11 +46,15 @@ public class ContentDashboardAdminManagementToolbarDisplayContext
 		HttpServletRequest httpServletRequest,
 		LiferayPortletRequest liferayPortletRequest,
 		LiferayPortletResponse liferayPortletResponse,
-		SearchContainer<ContentDashboardItem<?>> searchContainer) {
+		ContentDashboardAdminDisplayContext
+			contentDashboardAdminDisplayContext) {
 
 		super(
 			httpServletRequest, liferayPortletRequest, liferayPortletResponse,
-			searchContainer);
+			contentDashboardAdminDisplayContext.getSearchContainer());
+
+		_contentDashboardAdminDisplayContext =
+			contentDashboardAdminDisplayContext;
 	}
 
 	@Override
@@ -54,6 +62,8 @@ public class ContentDashboardAdminManagementToolbarDisplayContext
 		PortletURL clearResultsURL = getPortletURL();
 
 		clearResultsURL.setParameter("keywords", StringPool.BLANK);
+		clearResultsURL.setParameter(
+			"status", String.valueOf(WorkflowConstants.STATUS_ANY));
 
 		return String.valueOf(clearResultsURL);
 	}
@@ -62,8 +72,38 @@ public class ContentDashboardAdminManagementToolbarDisplayContext
 	public List<DropdownItem> getFilterDropdownItems() {
 		return DropdownItemListBuilder.addGroup(
 			dropdownGroupItem -> {
+				dropdownGroupItem.setDropdownItems(
+					_getFilterStatusDropdownItems());
+				dropdownGroupItem.setLabel(
+					LanguageUtil.get(request, "filter-by-status"));
+			}
+		).addGroup(
+			dropdownGroupItem -> {
 				dropdownGroupItem.setDropdownItems(getOrderByDropdownItems());
 				dropdownGroupItem.setLabel(getOrderByDropdownItemsLabel());
+			}
+		).build();
+	}
+
+	@Override
+	public List<LabelItem> getFilterLabelItems() {
+		int status = _contentDashboardAdminDisplayContext.getStatus();
+
+		return LabelItemListBuilder.add(
+			() -> status != WorkflowConstants.STATUS_ANY,
+			labelItem -> {
+				PortletURL removeLabelURL = PortletURLUtil.clone(
+					currentURLObj, liferayPortletResponse);
+
+				removeLabelURL.setParameter("status", (String)null);
+
+				labelItem.putData("removeLabelURL", removeLabelURL.toString());
+
+				labelItem.setCloseable(true);
+
+				labelItem.setLabel(
+					LanguageUtil.get(request, "status") + ": " +
+						_getStatusLabel(status));
 			}
 		).build();
 	}
@@ -84,7 +124,15 @@ public class ContentDashboardAdminManagementToolbarDisplayContext
 
 	@Override
 	public String getSearchActionURL() {
-		return String.valueOf(getPortletURL());
+		PortletURL portletURL = liferayPortletResponse.createRenderURL();
+
+		portletURL.setParameter("orderByCol", getOrderByCol());
+		portletURL.setParameter("orderByType", getOrderByType());
+		portletURL.setParameter(
+			"status",
+			String.valueOf(_contentDashboardAdminDisplayContext.getStatus()));
+
+		return String.valueOf(portletURL);
 	}
 
 	@Override
@@ -102,7 +150,44 @@ public class ContentDashboardAdminManagementToolbarDisplayContext
 		return new String[] {"title", "modified-date"};
 	}
 
+	private List<DropdownItem> _getFilterStatusDropdownItems() {
+		return new DropdownItemList() {
+			{
+				Integer curStatus =
+					_contentDashboardAdminDisplayContext.getStatus();
+
+				for (int status : _getStatuses()) {
+					add(
+						dropdownItem -> {
+							dropdownItem.setActive(curStatus == status);
+							dropdownItem.setHref(
+								getPortletURL(), "status",
+								String.valueOf(status));
+
+							dropdownItem.setLabel(_getStatusLabel(status));
+						});
+				}
+			}
+		};
+	}
+
+	private List<Integer> _getStatuses() {
+		return Arrays.asList(
+			WorkflowConstants.STATUS_ANY, WorkflowConstants.STATUS_DRAFT,
+			WorkflowConstants.STATUS_SCHEDULED,
+			WorkflowConstants.STATUS_APPROVED);
+	}
+
+	private String _getStatusLabel(int status) {
+		String label = WorkflowConstants.getStatusLabel(status);
+
+		return LanguageUtil.get(request, label);
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		ContentDashboardAdminManagementToolbarDisplayContext.class);
+
+	private final ContentDashboardAdminDisplayContext
+		_contentDashboardAdminDisplayContext;
 
 }

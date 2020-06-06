@@ -31,6 +31,7 @@ import com.liferay.portal.kernel.search.SearchContextFactory;
 import com.liferay.portal.kernel.search.SearchResult;
 import com.liferay.portal.kernel.search.SearchResultUtil;
 import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -129,7 +130,11 @@ public class ContentDashboardItemSearchContainerFactory {
 			_portal.getHttpServletRequest(_renderRequest));
 
 		searchContext.setAttribute("latest", Boolean.TRUE);
-		searchContext.setAttribute("status", WorkflowConstants.STATUS_ANY);
+		searchContext.setAttribute(
+			"status",
+			GetterUtil.getInteger(
+				ParamUtil.getString(_renderRequest, "status"),
+				WorkflowConstants.STATUS_ANY));
 		searchContext.setEnd(end);
 		searchContext.setGroupIds(null);
 		searchContext.setKeywords(_getKeywords());
@@ -191,6 +196,8 @@ public class ContentDashboardItemSearchContainerFactory {
 			portletURL.setParameter("orderByType", orderByType);
 		}
 
+		portletURL.setParameter("status", String.valueOf(_getStatus()));
+
 		return portletURL;
 	}
 
@@ -211,6 +218,11 @@ public class ContentDashboardItemSearchContainerFactory {
 		}
 
 		return new Sort(Field.MODIFIED_DATE, Sort.LONG_TYPE, !orderByAsc);
+	}
+
+	private int _getStatus() {
+		return ParamUtil.getInteger(
+			_renderRequest, "status", WorkflowConstants.STATUS_ANY);
 	}
 
 	private Optional<ContentDashboardItem<?>> _toContentDashboardItemOptional(
