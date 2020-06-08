@@ -117,7 +117,7 @@ public class ContentDashboardItemSearchContainerFactory {
 		return stream.map(
 			this::_toContentDashboardItemOptional
 		).filter(
-			optional -> optional.isPresent()
+			Optional::isPresent
 		).map(
 			Optional::get
 		).collect(
@@ -200,12 +200,9 @@ public class ContentDashboardItemSearchContainerFactory {
 					getContentDashboardItemFactoryOptional(
 						searchResult.getClassName());
 
-		return contentDashboardItemFactoryOptional.map(
+		return contentDashboardItemFactoryOptional.flatMap(
 			contentDashboardItemFactory -> _toContentDashboardItemOptional(
-				contentDashboardItemFactory, searchResult)
-		).orElse(
-			Optional.empty()
-		);
+				contentDashboardItemFactory, searchResult));
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
