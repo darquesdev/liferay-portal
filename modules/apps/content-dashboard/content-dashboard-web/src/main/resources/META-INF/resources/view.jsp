@@ -114,6 +114,11 @@ ContentDashboardAdminManagementToolbarDisplayContext contentDashboardAdminManage
 						name="expiration-date"
 						value="<%= contentDashboardItem.getExpirationDate() %>"
 					/>
+
+					<liferay-ui:search-container-column-jsp
+						cssClass="entry-action"
+						path="/content_dashboard_action.jsp"
+					/>
 				</liferay-ui:search-container-row>
 
 				<liferay-ui:search-iterator
