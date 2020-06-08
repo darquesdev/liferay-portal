@@ -26,6 +26,8 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderConstants;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
+import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.portlet.MockLiferayPortletRenderRequest;
 import com.liferay.portal.kernel.test.portlet.MockLiferayPortletRenderResponse;
@@ -35,17 +37,22 @@ import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.rule.Sync;
 import com.liferay.portal.kernel.test.util.CompanyTestUtil;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
+import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletContext;
@@ -78,15 +85,17 @@ public class ContentDashboardAdminPortletTest {
 
 		_permissionChecker = PermissionThreadLocal.getPermissionChecker();
 
-		PermissionThreadLocal.setPermissionChecker(
-			PermissionCheckerFactoryUtil.create(_company.getDefaultUser()));
+		_user = UserTestUtil.getAdminUser(_company.getCompanyId());
 
-		_user = _company.getDefaultUser();
+		PermissionThreadLocal.setPermissionChecker(
+			PermissionCheckerFactoryUtil.create(_user));
 	}
 
 	@AfterClass
-	public static void tearDownClass() {
+	public static void tearDownClass() throws Exception {
 		PermissionThreadLocal.setPermissionChecker(_permissionChecker);
+
+		_companyLocalService.deleteCompany(_company);
 	}
 
 	@Before
@@ -194,6 +203,125 @@ public class ContentDashboardAdminPortletTest {
 			objects.toString(), SearchContainer.DEFAULT_DELTA, objects.size());
 	}
 
+	@Test
+	public void testGetSearchContainerWithStatusAny() throws Exception {
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				_company.getCompanyId(), _group.getGroupId(),
+				_user.getUserId());
+
+		JournalArticle journalArticle1 = JournalTestUtil.addArticleWithWorkflow(
+			_group.getGroupId(), 0, RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(), true, serviceContext);
+
+		JournalArticle journalArticle2 = JournalTestUtil.addArticleWithWorkflow(
+			_group.getGroupId(), 0, RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(), false, serviceContext);
+
+		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
+			_getMockLiferayPortletRenderRequest();
+
+		mockLiferayPortletRenderRequest.setParameter(
+			"status", String.valueOf(WorkflowConstants.STATUS_ANY));
+
+		SearchContainer searchContainer = _getSearchContainer(
+			mockLiferayPortletRenderRequest);
+
+		Assert.assertEquals(2, searchContainer.getTotal());
+
+		List<Object> results = searchContainer.getResults();
+
+		Stream<Object> stream = results.stream();
+
+		Assert.assertTrue(
+			stream.anyMatch(
+				result -> Objects.equals(
+					journalArticle1.getTitle(LocaleUtil.US),
+					ReflectionTestUtil.invoke(
+						result, "getTitle", new Class<?>[] {Locale.class},
+						LocaleUtil.US))));
+
+		stream = results.stream();
+
+		Assert.assertTrue(
+			stream.anyMatch(
+				result -> Objects.equals(
+					journalArticle2.getTitle(LocaleUtil.US),
+					ReflectionTestUtil.invoke(
+						result, "getTitle", new Class<?>[] {Locale.class},
+						LocaleUtil.US))));
+	}
+
+	@Test
+	public void testGetSearchContainerWithStatusApproved() throws Exception {
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				_company.getCompanyId(), _group.getGroupId(),
+				_user.getUserId());
+
+		JournalArticle journalArticle = JournalTestUtil.addArticleWithWorkflow(
+			_group.getGroupId(), 0, RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(), true, serviceContext);
+
+		JournalTestUtil.addArticleWithWorkflow(
+			_group.getGroupId(), 0, RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(), false, serviceContext);
+
+		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
+			_getMockLiferayPortletRenderRequest();
+
+		mockLiferayPortletRenderRequest.setParameter(
+			"status", String.valueOf(WorkflowConstants.STATUS_APPROVED));
+
+		SearchContainer searchContainer = _getSearchContainer(
+			mockLiferayPortletRenderRequest);
+
+		Assert.assertEquals(1, searchContainer.getTotal());
+
+		List<Object> results = searchContainer.getResults();
+
+		Assert.assertEquals(
+			journalArticle.getTitle(LocaleUtil.US),
+			ReflectionTestUtil.invoke(
+				results.get(0), "getTitle", new Class<?>[] {Locale.class},
+				LocaleUtil.US));
+	}
+
+	@Test
+	public void testGetSearchContainerWithStatusDraft() throws Exception {
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				_company.getCompanyId(), _group.getGroupId(),
+				_user.getUserId());
+
+		JournalArticle journalArticle = JournalTestUtil.addArticleWithWorkflow(
+			_group.getGroupId(), 0, RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(), false, serviceContext);
+
+		JournalTestUtil.addArticleWithWorkflow(
+			_group.getGroupId(), 0, RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(), true, serviceContext);
+
+		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
+			_getMockLiferayPortletRenderRequest();
+
+		mockLiferayPortletRenderRequest.setParameter(
+			"status", String.valueOf(WorkflowConstants.STATUS_DRAFT));
+
+		SearchContainer searchContainer = _getSearchContainer(
+			mockLiferayPortletRenderRequest);
+
+		Assert.assertEquals(1, searchContainer.getTotal());
+
+		List<Object> results = searchContainer.getResults();
+
+		Assert.assertEquals(
+			journalArticle.getTitle(LocaleUtil.US),
+			ReflectionTestUtil.invoke(
+				results.get(0), "getTitle", new Class<?>[] {Locale.class},
+				LocaleUtil.US));
+	}
+
 	private MockLiferayPortletRenderRequest
 			_getMockLiferayPortletRenderRequest()
 		throws Exception {
@@ -270,6 +398,10 @@ public class ContentDashboardAdminPortletTest {
 	}
 
 	private static Company _company;
+
+	@Inject
+	private static CompanyLocalService _companyLocalService;
+
 	private static PermissionChecker _permissionChecker;
 	private static User _user;
 
