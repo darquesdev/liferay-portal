@@ -14,6 +14,7 @@
 
 package com.liferay.content.dashboard.web.internal.item;
 
+import com.liferay.asset.display.page.portlet.AssetDisplayPageFriendlyURLProvider;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -33,8 +34,13 @@ public class JournalArticleContentDashboardInfoItemFactory
 		throws PortalException {
 
 		return new JournalArticleContentDashboardItem(
+			_assetDisplayPageFriendlyURLProvider,
 			_journalArticleLocalService.getLatestArticle(classPK));
 	}
+
+	@Reference
+	private AssetDisplayPageFriendlyURLProvider
+		_assetDisplayPageFriendlyURLProvider;
 
 	@Reference
 	private JournalArticleLocalService _journalArticleLocalService;
