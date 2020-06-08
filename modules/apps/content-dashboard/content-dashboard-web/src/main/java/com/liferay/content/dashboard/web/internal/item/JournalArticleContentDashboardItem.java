@@ -14,12 +14,20 @@
 
 package com.liferay.content.dashboard.web.internal.item;
 
+import com.liferay.asset.display.page.portlet.AssetDisplayPageFriendlyURLProvider;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.journal.model.JournalArticle;
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.util.Date;
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * @author Cristina González
@@ -27,7 +35,12 @@ import java.util.Locale;
 public class JournalArticleContentDashboardItem
 	implements ContentDashboardItem<JournalArticle> {
 
-	public JournalArticleContentDashboardItem(JournalArticle journalArticle) {
+	public JournalArticleContentDashboardItem(
+		AssetDisplayPageFriendlyURLProvider assetDisplayPageFriendlyURLProvider,
+		JournalArticle journalArticle) {
+
+		_assetDisplayPageFriendlyURLProvider =
+			assetDisplayPageFriendlyURLProvider;
 		_journalArticle = journalArticle;
 	}
 
@@ -78,6 +91,38 @@ public class JournalArticleContentDashboardItem
 		return _journalArticle.getUserName();
 	}
 
+	@Override
+	public String getViewURL(ThemeDisplay themeDisplay) {
+		try {
+			return Optional.ofNullable(
+				_assetDisplayPageFriendlyURLProvider.getFriendlyURL(
+					JournalArticle.class.getName(),
+					_journalArticle.getResourcePrimKey(), themeDisplay)
+			).orElse(
+				StringPool.BLANK
+			);
+		}
+		catch (PortalException portalException) {
+			_log.error(portalException, portalException);
+
+			return StringPool.BLANK;
+		}
+	}
+
+	@Override
+	public boolean isViewURLEnabled(ThemeDisplay themeDisplay) {
+		if (Validator.isNull(getViewURL(themeDisplay))) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		JournalArticleContentDashboardItem.class);
+
+	private final AssetDisplayPageFriendlyURLProvider
+		_assetDisplayPageFriendlyURLProvider;
 	private final JournalArticle _journalArticle;
 
 }
