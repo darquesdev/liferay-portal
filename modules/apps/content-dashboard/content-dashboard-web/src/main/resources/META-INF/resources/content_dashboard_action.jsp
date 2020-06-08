@@ -18,6 +18,10 @@
 
 <%
 ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
+
+ContentDashboardAdminDisplayContext contentDashboardAdminDisplayContext = (ContentDashboardAdminDisplayContext)request.getAttribute(ContentDashboardWebKeys.CONTENT_DASHBOARD_ADMIN_DISPLAY_CONTEXT);
+
+ContentDashboardItem contentDashboardItem = (ContentDashboardItem)row.getObject();
 %>
 
 <liferay-ui:icon-menu
@@ -27,4 +31,12 @@ ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_
 	message='<%= LanguageUtil.get(request, "actions") %>'
 	showWhenSingleIcon="<%= true %>"
 >
+	<c:choose>
+		<c:when test="<%= contentDashboardItem.isViewURLEnabled(themeDisplay) %>">
+			<liferay-ui:icon
+				message="view"
+				url="<%= contentDashboardAdminDisplayContext.getURLWithBackURL(contentDashboardItem.getViewURL(themeDisplay)) %>"
+			/>
+		</c:when>
+	</c:choose>
 </liferay-ui:icon-menu>
