@@ -47,14 +47,13 @@ public class ContentDashboardItemFactoryTracker {
 	@Activate
 	protected void activate(BundleContext bundleContext) {
 		_serviceTrackerMap =
-			(ServiceTrackerMap<String, ContentDashboardItemFactory<?>>)
-				(ServiceTrackerMap)ServiceTrackerMapFactory.openSingleValueMap(
-					bundleContext, ContentDashboardItemFactory.class, null,
-					ServiceReferenceMapperFactory.create(
-						bundleContext,
-						(contentDashboardItem, emitter) -> emitter.emit(
-							GenericUtil.getGenericClassName(
-								contentDashboardItem))));
+			(ServiceTrackerMap)ServiceTrackerMapFactory.openSingleValueMap(
+				bundleContext, ContentDashboardItemFactory.class, null,
+				ServiceReferenceMapperFactory.create(
+					bundleContext,
+					(contentDashboardItem, emitter) -> emitter.emit(
+						GenericUtil.getGenericClassName(
+							contentDashboardItem))));
 	}
 
 	@Deactivate
