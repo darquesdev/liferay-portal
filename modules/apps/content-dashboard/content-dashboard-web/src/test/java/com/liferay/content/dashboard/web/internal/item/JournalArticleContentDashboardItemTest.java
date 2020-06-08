@@ -14,9 +14,12 @@
 
 package com.liferay.content.dashboard.web.internal.item;
 
+import com.liferay.asset.display.page.portlet.AssetDisplayPageFriendlyURLProvider;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.journal.model.JournalArticle;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
@@ -38,7 +41,7 @@ public class JournalArticleContentDashboardItemTest {
 		JournalArticle journalArticle = _getJournalArticle();
 
 		JournalArticleContentDashboardItem journalArticleContentDashboardItem =
-			new JournalArticleContentDashboardItem(journalArticle);
+			new JournalArticleContentDashboardItem(null, journalArticle);
 
 		Assert.assertEquals(
 			journalArticle.getExpirationDate(),
@@ -50,7 +53,7 @@ public class JournalArticleContentDashboardItemTest {
 		JournalArticle journalArticle = _getJournalArticle();
 
 		JournalArticleContentDashboardItem journalArticleContentDashboardItem =
-			new JournalArticleContentDashboardItem(journalArticle);
+			new JournalArticleContentDashboardItem(null, journalArticle);
 
 		Assert.assertEquals(
 			journalArticle.getModifiedDate(),
@@ -62,7 +65,7 @@ public class JournalArticleContentDashboardItemTest {
 		JournalArticle journalArticle = _getJournalArticle();
 
 		JournalArticleContentDashboardItem journalArticleContentDashboardItem =
-			new JournalArticleContentDashboardItem(journalArticle);
+			new JournalArticleContentDashboardItem(null, journalArticle);
 
 		Assert.assertEquals(
 			journalArticle.getDisplayDate(),
@@ -74,7 +77,7 @@ public class JournalArticleContentDashboardItemTest {
 		JournalArticle journalArticle = _getJournalArticle();
 
 		JournalArticleContentDashboardItem journalArticleContentDashboardItem =
-			new JournalArticleContentDashboardItem(journalArticle);
+			new JournalArticleContentDashboardItem(null, journalArticle);
 
 		Assert.assertEquals(
 			WorkflowConstants.LABEL_APPROVED,
@@ -86,7 +89,7 @@ public class JournalArticleContentDashboardItemTest {
 		JournalArticle journalArticle = _getJournalArticle();
 
 		JournalArticleContentDashboardItem journalArticleContentDashboardItem =
-			new JournalArticleContentDashboardItem(journalArticle);
+			new JournalArticleContentDashboardItem(null, journalArticle);
 
 		Assert.assertEquals(
 			"success", journalArticleContentDashboardItem.getStatusStyle());
@@ -97,7 +100,7 @@ public class JournalArticleContentDashboardItemTest {
 		JournalArticle journalArticle = _getJournalArticle();
 
 		JournalArticleContentDashboardItem journalArticleContentDashboardItem =
-			new JournalArticleContentDashboardItem(journalArticle);
+			new JournalArticleContentDashboardItem(null, journalArticle);
 
 		Assert.assertEquals(
 			"subtype",
@@ -109,11 +112,119 @@ public class JournalArticleContentDashboardItemTest {
 		JournalArticle journalArticle = _getJournalArticle();
 
 		JournalArticleContentDashboardItem journalArticleContentDashboardItem =
-			new JournalArticleContentDashboardItem(journalArticle);
+			new JournalArticleContentDashboardItem(null, journalArticle);
 
 		Assert.assertEquals(
 			journalArticle.getTitle(LocaleUtil.US),
 			journalArticleContentDashboardItem.getTitle(LocaleUtil.US));
+	}
+
+	@Test
+	public void testGetViewURL() throws Exception {
+		JournalArticle journalArticle = _getJournalArticle();
+
+		AssetDisplayPageFriendlyURLProvider
+			assetDisplayPageFriendlyURLProvider = Mockito.mock(
+				AssetDisplayPageFriendlyURLProvider.class);
+
+		Mockito.when(
+			assetDisplayPageFriendlyURLProvider.getFriendlyURL(
+				Mockito.anyString(), Mockito.anyLong(), Mockito.anyObject())
+		).thenReturn(
+			"validURL"
+		);
+
+		JournalArticleContentDashboardItem journalArticleContentDashboardItem =
+			new JournalArticleContentDashboardItem(
+				assetDisplayPageFriendlyURLProvider, journalArticle);
+
+		Assert.assertEquals(
+			"validURL",
+			journalArticleContentDashboardItem.getViewURL(_getThemeDisplay()));
+	}
+
+	@Test
+	public void testGetViewURLWithNullFriendlyURL()
+		throws CloneNotSupportedException {
+
+		JournalArticle journalArticle = _getJournalArticle();
+
+		AssetDisplayPageFriendlyURLProvider
+			assetDisplayPageFriendlyURLProvider = Mockito.mock(
+				AssetDisplayPageFriendlyURLProvider.class);
+
+		JournalArticleContentDashboardItem journalArticleContentDashboardItem =
+			new JournalArticleContentDashboardItem(
+				assetDisplayPageFriendlyURLProvider, journalArticle);
+
+		Assert.assertEquals(
+			StringPool.BLANK,
+			journalArticleContentDashboardItem.getViewURL(_getThemeDisplay()));
+	}
+
+	@Test
+	public void testIsViewURLEnabled() throws Exception {
+		JournalArticle journalArticle = _getJournalArticle();
+
+		AssetDisplayPageFriendlyURLProvider
+			assetDisplayPageFriendlyURLProvider = Mockito.mock(
+				AssetDisplayPageFriendlyURLProvider.class);
+
+		Mockito.when(
+			assetDisplayPageFriendlyURLProvider.getFriendlyURL(
+				Mockito.anyString(), Mockito.anyLong(), Mockito.anyObject())
+		).thenReturn(
+			"validURL"
+		);
+
+		JournalArticleContentDashboardItem journalArticleContentDashboardItem =
+			new JournalArticleContentDashboardItem(
+				assetDisplayPageFriendlyURLProvider, journalArticle);
+
+		Assert.assertTrue(
+			journalArticleContentDashboardItem.isViewURLEnabled(
+				_getThemeDisplay()));
+	}
+
+	@Test
+	public void testIsViewURLEnabledWithNotApprovedVersion() {
+		JournalArticle journalArticle = _getJournalArticle();
+
+		Mockito.when(
+			journalArticle.hasApprovedVersion()
+		).thenReturn(
+			false
+		);
+
+		AssetDisplayPageFriendlyURLProvider
+			assetDisplayPageFriendlyURLProvider = Mockito.mock(
+				AssetDisplayPageFriendlyURLProvider.class);
+
+		JournalArticleContentDashboardItem journalArticleContentDashboardItem =
+			new JournalArticleContentDashboardItem(
+				assetDisplayPageFriendlyURLProvider, journalArticle);
+
+		Assert.assertFalse(
+			journalArticleContentDashboardItem.isViewURLEnabled(null));
+	}
+
+	@Test
+	public void testIsViewURLEnabledWithNullFriendlyURL()
+		throws CloneNotSupportedException {
+
+		JournalArticle journalArticle = _getJournalArticle();
+
+		AssetDisplayPageFriendlyURLProvider
+			assetDisplayPageFriendlyURLProvider = Mockito.mock(
+				AssetDisplayPageFriendlyURLProvider.class);
+
+		JournalArticleContentDashboardItem journalArticleContentDashboardItem =
+			new JournalArticleContentDashboardItem(
+				assetDisplayPageFriendlyURLProvider, journalArticle);
+
+		Assert.assertFalse(
+			journalArticleContentDashboardItem.isViewURLEnabled(
+				_getThemeDisplay()));
 	}
 
 	private JournalArticle _getJournalArticle() {
@@ -140,13 +251,19 @@ public class JournalArticleContentDashboardItemTest {
 		);
 
 		Mockito.when(
-			journalArticle.getModifiedDate()
+			journalArticle.getExpirationDate()
 		).thenReturn(
 			new Date()
 		);
 
 		Mockito.when(
-			journalArticle.getExpirationDate()
+			journalArticle.hasApprovedVersion()
+		).thenReturn(
+			true
+		);
+
+		Mockito.when(
+			journalArticle.getModifiedDate()
 		).thenReturn(
 			new Date()
 		);
@@ -158,6 +275,18 @@ public class JournalArticleContentDashboardItemTest {
 		);
 
 		return journalArticle;
+	}
+
+	private ThemeDisplay _getThemeDisplay() throws CloneNotSupportedException {
+		ThemeDisplay themeDisplay = Mockito.mock(ThemeDisplay.class);
+
+		Mockito.when(
+			themeDisplay.clone()
+		).thenReturn(
+			themeDisplay
+		);
+
+		return themeDisplay;
 	}
 
 }
