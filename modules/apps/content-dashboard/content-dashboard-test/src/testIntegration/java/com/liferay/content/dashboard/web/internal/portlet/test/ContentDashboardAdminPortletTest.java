@@ -16,7 +16,9 @@ package com.liferay.content.dashboard.web.internal.portlet.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.journal.model.JournalArticle;
+import com.liferay.journal.model.JournalArticleConstants;
 import com.liferay.journal.test.util.JournalTestUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
@@ -49,6 +51,11 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -307,6 +314,55 @@ public class ContentDashboardAdminPortletTest {
 
 		mockLiferayPortletRenderRequest.setParameter(
 			"status", String.valueOf(WorkflowConstants.STATUS_DRAFT));
+
+		SearchContainer searchContainer = _getSearchContainer(
+			mockLiferayPortletRenderRequest);
+
+		Assert.assertEquals(1, searchContainer.getTotal());
+
+		List<Object> results = searchContainer.getResults();
+
+		Assert.assertEquals(
+			journalArticle.getTitle(LocaleUtil.US),
+			ReflectionTestUtil.invoke(
+				results.get(0), "getTitle", new Class<?>[] {Locale.class},
+				LocaleUtil.US));
+	}
+
+	@Test
+	public void testGetSearchContainerWithStatusScheduled() throws Exception {
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				_company.getCompanyId(), _group.getGroupId(),
+				_user.getUserId());
+
+		LocalDateTime localDateTime = LocalDateTime.now();
+
+		localDateTime = localDateTime.plusDays(1);
+
+		ZonedDateTime zonedDateTime = localDateTime.atZone(
+			ZoneId.systemDefault());
+
+		Date displayDate = Date.from(zonedDateTime.toInstant());
+
+		JournalArticle journalArticle = JournalTestUtil.addArticle(
+			_group.getGroupId(), 0,
+			JournalArticleConstants.CLASS_NAME_ID_DEFAULT, StringPool.BLANK,
+			true, RandomTestUtil.randomLocaleStringMap(),
+			RandomTestUtil.randomLocaleStringMap(),
+			RandomTestUtil.randomLocaleStringMap(), null,
+			LocaleUtil.getSiteDefault(), displayDate, null, true, true,
+			serviceContext);
+
+		JournalTestUtil.addArticleWithWorkflow(
+			_group.getGroupId(), 0, RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(), true, serviceContext);
+
+		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
+			_getMockLiferayPortletRenderRequest();
+
+		mockLiferayPortletRenderRequest.setParameter(
+			"status", String.valueOf(WorkflowConstants.STATUS_SCHEDULED));
 
 		SearchContainer searchContainer = _getSearchContainer(
 			mockLiferayPortletRenderRequest);
