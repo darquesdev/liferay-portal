@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.content.dashboard.web.internal.display.context;
+package com.liferay.content.dashboard.web.internal.model;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,34 +20,34 @@ import java.util.List;
 /**
  * @author David Arques
  */
-public class AssetCategoriesAggregation {
+public class AssetCategoryMetric {
 
-	public AssetCategoriesAggregation(String key, long docCount) {
+	public AssetCategoryMetric(String key, long value) {
 		_key = key;
-		_docCount = docCount;
-		_childAggregations = Collections.emptyList();
+		_value = value;
+		_assetCategoryMetrics = Collections.emptyList();
 	}
 
-	public List<AssetCategoriesAggregation> getChildAggregations() {
-		return _childAggregations;
-	}
-
-	public long getDocCount() {
-		return _docCount;
+	public List<AssetCategoryMetric> getAssetCategoryMetrics() {
+		return _assetCategoryMetrics;
 	}
 
 	public String getKey() {
 		return _key;
 	}
 
-	public void setChildAggregations(
-		List<AssetCategoriesAggregation> childAggregations) {
-
-		_childAggregations = childAggregations;
+	public long getValue() {
+		return _value;
 	}
 
-	private List<AssetCategoriesAggregation> _childAggregations;
-	private final long _docCount;
+	public void setAssetCategoryMetrics(
+		List<AssetCategoryMetric> assetCategoryMetrics) {
+
+		_assetCategoryMetrics = assetCategoryMetrics;
+	}
+
+	private List<AssetCategoryMetric> _assetCategoryMetrics;
 	private final String _key;
+	private final long _value;
 
 }

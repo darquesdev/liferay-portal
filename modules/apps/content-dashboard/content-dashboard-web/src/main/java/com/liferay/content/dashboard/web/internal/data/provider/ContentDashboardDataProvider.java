@@ -12,28 +12,28 @@
  * details.
  */
 
-package com.liferay.content.dashboard.web.internal.display.context;
+package com.liferay.content.dashboard.web.internal.data.provider;
 
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetVocabulary;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
+import com.liferay.content.dashboard.web.internal.model.AssetCategoryMetric;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ListUtil;
-import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.search.aggregation.Aggregations;
 import com.liferay.portal.search.aggregation.bucket.Bucket;
+import com.liferay.portal.search.aggregation.bucket.IncludeExcludeClause;
 import com.liferay.portal.search.aggregation.bucket.TermsAggregation;
 import com.liferay.portal.search.aggregation.bucket.TermsAggregationResult;
-import com.liferay.portal.search.query.Queries;
+import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.searcher.SearchRequest;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
-import com.liferay.portal.search.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.searcher.SearchResponse;
 import com.liferay.portal.search.searcher.Searcher;
-import com.liferay.portal.search.sort.Sorts;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,20 +43,27 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-
 /**
  * @author David Arques
  */
-@Component(service = {})
-public class ContentDashboardAssetCategoriesAggregator {
+public class ContentDashboardDataProvider {
 
-	@Reference
-	Portal _portal;
+	public ContentDashboardDataProvider(
+		Aggregations aggregations,
+		AssetCategoryLocalService assetCategoryLocalService,
+		AssetVocabularyLocalService assetVocabularyLocalService,
+		SearchContext searchContext, Searcher searcher,
+		SearchRequestBuilderFactory searchRequestBuilderFactory) {
 
-	public List<AssetCategoriesAggregation> aggregate(long companyId) {
+		_aggregations = aggregations;
+		_assetCategoryLocalService = assetCategoryLocalService;
+		_assetVocabularyLocalService = assetVocabularyLocalService;
+		_searchContext = searchContext;
+		_searcher = searcher;
+		_searchRequestBuilderFactory = searchRequestBuilderFactory;
+	}
+
+	public List<AssetCategoryMetric> getAssetCategoryMetrics(long companyId) {
 		List<AssetVocabulary> assetVocabularies = new ArrayList<>(
 			_assetVocabularyLocalService.getCompanyVocabularies(companyId));
 
@@ -84,7 +91,7 @@ public class ContentDashboardAssetCategoriesAggregator {
 		}
 
 		SearchRequestBuilder searchRequestBuilder =
-			_searchRequestBuilderFactory.builder();
+			_searchRequestBuilderFactory.builder(_searchContext);
 
 		SearchRequest searchRequest = searchRequestBuilder.addAggregation(
 			termsAggregation
@@ -99,20 +106,13 @@ public class ContentDashboardAssetCategoriesAggregator {
 		).size(
 			0
 		).withSearchContext(
-			searchContext -> searchContext.setAttribute("latest", Boolean.TRUE)
+			searchContext -> searchContext.setAttribute(
+				"latest", _searchContext.getAttribute("latest"))
 		).build();
 
 		SearchResponse searchResponse = _searcher.search(searchRequest);
 
-		return _toAssetCategoriesAggregations(searchResponse);
-	}
-
-	@Activate
-	protected void activate() {
-		List<AssetCategoriesAggregation> assetCategoriesAggregations =
-			aggregate(_portal.getDefaultCompanyId());
-
-		System.out.println(assetCategoriesAggregations);
+		return _toAssetCategoryMetrics(searchResponse);
 	}
 
 	private Optional<TermsAggregation> _getTermsAggregationOptional(
@@ -145,11 +145,10 @@ public class ContentDashboardAssetCategoriesAggregator {
 		return Optional.of(termsAggregation);
 	}
 
-	private List<AssetCategoriesAggregation> _toAssetCategoriesAggregations(
+	private List<AssetCategoryMetric> _toAssetCategoryMetrics(
 		SearchResponse searchResponse) {
 
-		List<AssetCategoriesAggregation> assetCategoriesAggregations =
-			new ArrayList<>();
+		List<AssetCategoryMetric> assetCategoryMetrics = new ArrayList<>();
 
 		TermsAggregationResult termsAggregationResult =
 			(TermsAggregationResult)searchResponse.getAggregationResult(
@@ -159,53 +158,83 @@ public class ContentDashboardAssetCategoriesAggregator {
 
 		buckets.forEach(
 			bucket -> {
-				AssetCategoriesAggregation assetCategoriesAggregation =
-					new AssetCategoriesAggregation(
+				AssetCategoryMetric assetCategoryMetric =
+					new AssetCategoryMetric(
 						bucket.getKey(), bucket.getDocCount());
 
 				TermsAggregationResult childTermsAggregationResult =
 					(TermsAggregationResult)bucket.getChildAggregationResult(
 						"categories");
 
-				List<AssetCategoriesAggregation>
-					childAssetCategoriesAggregations = new ArrayList<>();
+				List<AssetCategoryMetric> childAssetCategoryMetrics =
+					new ArrayList<>();
 
 				Collection<Bucket> childBuckets =
 					childTermsAggregationResult.getBuckets();
 
 				childBuckets.forEach(
-					childBucket -> childAssetCategoriesAggregations.add(
-						new AssetCategoriesAggregation(
+					childBucket -> childAssetCategoryMetrics.add(
+						new AssetCategoryMetric(
 							childBucket.getKey(), childBucket.getDocCount())));
 
-				assetCategoriesAggregation.setChildAggregations(
-					childAssetCategoriesAggregations);
+				assetCategoryMetric.setAssetCategoryMetrics(
+					childAssetCategoryMetrics);
 
-				assetCategoriesAggregations.add(assetCategoriesAggregation);
+				assetCategoryMetrics.add(assetCategoryMetric);
 			});
 
-		return assetCategoriesAggregations;
+		return assetCategoryMetrics;
 	}
 
-	@Reference
-	private Aggregations _aggregations;
+	private final Aggregations _aggregations;
+	private final AssetCategoryLocalService _assetCategoryLocalService;
+	private final AssetVocabularyLocalService _assetVocabularyLocalService;
+	private final SearchContext _searchContext;
+	private final Searcher _searcher;
+	private final SearchRequestBuilderFactory _searchRequestBuilderFactory;
 
-	@Reference
-	private AssetCategoryLocalService _assetCategoryLocalService;
+	private static class IncludeExcludeClauseImpl
+		implements IncludeExcludeClause {
 
-	@Reference
-	private AssetVocabularyLocalService _assetVocabularyLocalService;
+		public IncludeExcludeClauseImpl(
+			String includeRegex, String excludeRegex) {
 
-	@Reference
-	private Queries _queries;
+			_includeRegex = includeRegex;
+			_excludeRegex = excludeRegex;
+		}
 
-	@Reference
-	private Searcher _searcher;
+		public IncludeExcludeClauseImpl(
+			String[] includedValues, String[] excludedValues) {
 
-	@Reference
-	private SearchRequestBuilderFactory _searchRequestBuilderFactory;
+			_includedValues = includedValues;
+			_excludedValues = excludedValues;
+		}
 
-	@Reference
-	private Sorts _sorts;
+		@Override
+		public String[] getExcludedValues() {
+			return _excludedValues;
+		}
+
+		@Override
+		public String getExcludeRegex() {
+			return _excludeRegex;
+		}
+
+		@Override
+		public String[] getIncludedValues() {
+			return _includedValues;
+		}
+
+		@Override
+		public String getIncludeRegex() {
+			return _includeRegex;
+		}
+
+		private String[] _excludedValues;
+		private String _excludeRegex;
+		private String[] _includedValues;
+		private String _includeRegex;
+
+	}
 
 }
