@@ -14,6 +14,7 @@
 
 package com.liferay.content.dashboard.web.internal.portlet;
 
+import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
 import com.liferay.content.dashboard.web.internal.constants.ContentDashboardPortletKeys;
 import com.liferay.content.dashboard.web.internal.constants.ContentDashboardWebKeys;
 import com.liferay.content.dashboard.web.internal.dao.search.ContentDashboardItemSearchContainerFactory;
@@ -27,6 +28,7 @@ import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.Portal;
@@ -90,7 +92,8 @@ public class ContentDashboardAdminPortlet extends MVCPortlet {
 		ContentDashboardAdminDisplayContext
 			contentDashboardAdminDisplayContext =
 				new ContentDashboardAdminDisplayContext(
-					_http, _itemSelector, _language, liferayPortletRequest,
+					_assetVocabularyLocalService, _groupLocalService, _http,
+					_itemSelector, _language, liferayPortletRequest,
 					liferayPortletResponse, _portal, searchContainer);
 
 		renderRequest.setAttribute(
@@ -114,8 +117,14 @@ public class ContentDashboardAdminPortlet extends MVCPortlet {
 	}
 
 	@Reference
+	private AssetVocabularyLocalService _assetVocabularyLocalService;
+
+	@Reference
 	private ContentDashboardItemFactoryTracker
 		_contentDashboardItemFactoryTracker;
+
+	@Reference
+	private GroupLocalService _groupLocalService;
 
 	@Reference
 	private Http _http;
