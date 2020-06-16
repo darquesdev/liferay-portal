@@ -93,8 +93,9 @@ public class ContentDashboardAdminDisplayContextTest {
 		ContentDashboardAdminDisplayContext
 			contentDashboardAdminDisplayContext =
 				new ContentDashboardAdminDisplayContext(
-					_http, null, _language, mockLiferayPortletRenderRequest,
-					null, new PortalImpl(), null);
+					null, null, _http, null, _language,
+					mockLiferayPortletRenderRequest, null, new PortalImpl(),
+					null);
 
 		ContentDashboardItem contentDashboardItem = Mockito.mock(
 			ContentDashboardItem.class);
@@ -141,8 +142,9 @@ public class ContentDashboardAdminDisplayContextTest {
 		ContentDashboardAdminDisplayContext
 			contentDashboardAdminDisplayContext =
 				new ContentDashboardAdminDisplayContext(
-					_http, null, _language, mockLiferayPortletRenderRequest,
-					null, new PortalImpl(), null);
+					null, null, _http, null, _language,
+					mockLiferayPortletRenderRequest, null, new PortalImpl(),
+					null);
 
 		ContentDashboardItem contentDashboardItem = Mockito.mock(
 			ContentDashboardItem.class);
@@ -189,8 +191,9 @@ public class ContentDashboardAdminDisplayContextTest {
 		ContentDashboardAdminDisplayContext
 			contentDashboardAdminDisplayContext =
 				new ContentDashboardAdminDisplayContext(
-					_http, null, _language, mockLiferayPortletRenderRequest,
-					null, new PortalImpl(), null);
+					null, null, _http, null, _language,
+					mockLiferayPortletRenderRequest, null, new PortalImpl(),
+					null);
 
 		ContentDashboardItem contentDashboardItem = Mockito.mock(
 			ContentDashboardItem.class);
@@ -239,8 +242,9 @@ public class ContentDashboardAdminDisplayContextTest {
 		ContentDashboardAdminDisplayContext
 			contentDashboardAdminDisplayContext =
 				new ContentDashboardAdminDisplayContext(
-					_http, null, _language, mockLiferayPortletRenderRequest,
-					null, new PortalImpl(), null);
+					null, null, _http, null, _language,
+					mockLiferayPortletRenderRequest, null, new PortalImpl(),
+					null);
 
 		ContentDashboardItem contentDashboardItem = Mockito.mock(
 			ContentDashboardItem.class);

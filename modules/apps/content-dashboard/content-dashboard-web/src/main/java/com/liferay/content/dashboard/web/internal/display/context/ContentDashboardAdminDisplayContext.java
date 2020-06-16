@@ -14,6 +14,8 @@
 
 package com.liferay.content.dashboard.web.internal.display.context;
 
+import com.liferay.asset.kernel.model.AssetVocabulary;
+import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
 import com.liferay.content.dashboard.web.internal.item.ContentDashboardItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemList;
@@ -21,13 +23,18 @@ import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.criteria.UUIDItemSelectorReturnType;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.PortletURLUtil;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -40,6 +47,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.portlet.PortletURL;
 
@@ -51,11 +59,15 @@ import javax.servlet.http.HttpServletRequest;
 public class ContentDashboardAdminDisplayContext {
 
 	public ContentDashboardAdminDisplayContext(
-		Http http, ItemSelector itemSelector, Language language,
+		AssetVocabularyLocalService assetVocabularyLocalService,
+		GroupLocalService groupLocalService, Http http,
+		ItemSelector itemSelector, Language language,
 		LiferayPortletRequest liferayPortletRequest,
 		LiferayPortletResponse liferayPortletResponse, Portal portal,
 		SearchContainer<ContentDashboardItem<?>> searchContainer) {
 
+		_assetVocabularyLocalService = assetVocabularyLocalService;
+		_groupLocalService = groupLocalService;
 		_http = http;
 		_itemSelector = itemSelector;
 		_language = language;
@@ -103,6 +115,18 @@ public class ContentDashboardAdminDisplayContext {
 			"checkedUserIds", StringUtil.merge(getAuthorIds()));
 
 		return portletURL.toString();
+	}
+
+	public Map<String, Object> getData() {
+		if (_data != null) {
+			return _data;
+		}
+
+		_data = HashMapBuilder.<String, Object>put(
+			"props", _getProps()
+		).build();
+
+		return _data;
 	}
 
 	public List<DropdownItem> getDropdownItems(
@@ -176,6 +200,24 @@ public class ContentDashboardAdminDisplayContext {
 		return _userId;
 	}
 
+	private Map<String, Object> _getProps() {
+		Group group = _groupLocalService.fetchCompanyGroup(
+			_portal.getCompanyId(_liferayPortletRequest));
+
+		if (group == null) {
+			return Collections.emptyMap();
+		}
+
+		return HashMapBuilder.<String, Object>put(
+			"vocabularies",
+			_getVocabulariesJSONObject(
+				_assetVocabularyLocalService.fetchGroupVocabulary(
+					group.getGroupId(), "audience"),
+				_assetVocabularyLocalService.fetchGroupVocabulary(
+					group.getGroupId(), "stage"))
+		).build();
+	}
+
 	private String _getURLWithBackURL(String url) {
 		String backURL = ParamUtil.getString(_liferayPortletRequest, "backURL");
 
@@ -186,8 +228,43 @@ public class ContentDashboardAdminDisplayContext {
 		return _http.setParameter(url, "p_l_back_url", _currentURL);
 	}
 
+	private JSONObject _getVocabulariesJSONObject(
+		AssetVocabulary assetVocabulary, AssetVocabulary childAssetVocabulary) {
+
+		if ((assetVocabulary == null) && (childAssetVocabulary == null)) {
+			return null;
+		}
+
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+		if (assetVocabulary != null) {
+			jsonObject.put(
+				"vocabularyName",
+				assetVocabulary.getTitle(
+					_portal.getLocale(_liferayPortletRequest)));
+
+			if (childAssetVocabulary != null) {
+				jsonObject.put(
+					"childVocabularyName",
+					childAssetVocabulary.getTitle(
+						_portal.getLocale(_liferayPortletRequest)));
+			}
+		}
+		else {
+			jsonObject.put(
+				"vocabularyName",
+				childAssetVocabulary.getTitle(
+					_portal.getLocale(_liferayPortletRequest)));
+		}
+
+		return jsonObject;
+	}
+
+	private final AssetVocabularyLocalService _assetVocabularyLocalService;
 	private List<Long> _authorIds;
 	private final String _currentURL;
+	private Map<String, Object> _data;
+	private final GroupLocalService _groupLocalService;
 	private final Http _http;
 	private final ItemSelector _itemSelector;
 	private final Language _language;
