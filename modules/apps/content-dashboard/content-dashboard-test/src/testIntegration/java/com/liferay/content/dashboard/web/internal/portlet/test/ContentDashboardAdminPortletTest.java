@@ -72,8 +72,10 @@ import javax.portlet.PortletContext;
 import javax.portlet.PortletRequestDispatcher;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -91,8 +93,8 @@ public class ContentDashboardAdminPortletTest {
 	public static final AggregateTestRule aggregateTestRule =
 		new LiferayIntegrationTestRule();
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeClass
+	public static void setUpClass() throws Exception {
 		_company = CompanyTestUtil.addCompany();
 
 		_permissionChecker = PermissionThreadLocal.getPermissionChecker();
@@ -101,14 +103,17 @@ public class ContentDashboardAdminPortletTest {
 
 		PermissionThreadLocal.setPermissionChecker(
 			PermissionCheckerFactoryUtil.create(_user));
-
-		_group = GroupTestUtil.addGroup(
-			_company.getCompanyId(), _user.getUserId(), 0);
 	}
 
-	@After
-	public void tearDown() throws Exception {
+	@AfterClass
+	public static void tearDownClass() throws Exception {
 		PermissionThreadLocal.setPermissionChecker(_permissionChecker);
+	}
+
+	@Before
+	public void setUp() throws Exception {
+		_group = GroupTestUtil.addGroup(
+			_company.getCompanyId(), _user.getUserId(), 0);
 	}
 
 	@Test
@@ -128,30 +133,40 @@ public class ContentDashboardAdminPortletTest {
 				serviceContext.getUserId(), serviceContext.getScopeGroupId(),
 				"stage", serviceContext);
 
-		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
-			_getMockLiferayPortletRenderRequest();
+		try {
 
-		mockLiferayPortletRenderRequest.setAttribute(
-			WebKeys.COMPANY_ID, _company.getCompanyId());
+			MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
+				_getMockLiferayPortletRenderRequest();
 
-		Map<String, Object> data = _getData(mockLiferayPortletRenderRequest);
+			mockLiferayPortletRenderRequest.setAttribute(
+				WebKeys.COMPANY_ID, _company.getCompanyId());
 
-		Map<String, Object> props = (Map<String, Object>)data.get("props");
+			Map<String, Object> data =
+				_getData(mockLiferayPortletRenderRequest);
 
-		Assert.assertNotNull(props);
+			Map<String, Object> props = (Map<String, Object>) data.get("props");
 
-		JSONObject vocabulariesJSONObject = (JSONObject)props.get(
-			"vocabularies");
+			Assert.assertNotNull(props);
 
-		Assert.assertEquals(
-			JSONUtil.put(
-				"childVocabularyName",
-				childAssetVocabulary.getTitle(LocaleUtil.getSiteDefault())
-			).put(
-				"vocabularyName",
-				assetVocabulary.getTitle(LocaleUtil.getSiteDefault())
-			).toJSONString(),
-			vocabulariesJSONObject.toJSONString());
+			JSONObject vocabulariesJSONObject = (JSONObject) props.get(
+				"vocabularies");
+
+			Assert.assertEquals(
+				JSONUtil.put(
+					"childVocabularyName",
+					childAssetVocabulary.getTitle(LocaleUtil.getSiteDefault())
+				).put(
+					"vocabularyName",
+					assetVocabulary.getTitle(LocaleUtil.getSiteDefault())
+				).toJSONString(),
+				vocabulariesJSONObject.toJSONString());
+		}
+		finally {
+			_assetVocabularyLocalService.deleteAssetVocabulary(
+				assetVocabulary);
+			_assetVocabularyLocalService.deleteAssetVocabulary(
+				childAssetVocabulary);
+		}
 	}
 
 	@Test
@@ -165,8 +180,6 @@ public class ContentDashboardAdminPortletTest {
 		Map<String, Object> data = _getData(mockLiferayPortletRenderRequest);
 
 		Map<String, Object> props = (Map<String, Object>)data.get("props");
-
-		Assert.assertNotNull(props);
 
 		Assert.assertNull(props.get("vocabularies"));
 	}
@@ -183,27 +196,34 @@ public class ContentDashboardAdminPortletTest {
 				serviceContext.getUserId(), serviceContext.getScopeGroupId(),
 				"stage", serviceContext);
 
-		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
-			_getMockLiferayPortletRenderRequest();
+		try {
+			MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
+				_getMockLiferayPortletRenderRequest();
 
-		mockLiferayPortletRenderRequest.setAttribute(
-			WebKeys.COMPANY_ID, _company.getCompanyId());
+			mockLiferayPortletRenderRequest.setAttribute(
+				WebKeys.COMPANY_ID, _company.getCompanyId());
 
-		Map<String, Object> data = _getData(mockLiferayPortletRenderRequest);
+			Map<String, Object> data =
+				_getData(mockLiferayPortletRenderRequest);
 
-		Map<String, Object> props = (Map<String, Object>)data.get("props");
+			Map<String, Object> props = (Map<String, Object>) data.get("props");
 
-		Assert.assertNotNull(props);
+			Assert.assertNotNull(props);
 
-		JSONObject vocabulariesJSONObject = (JSONObject)props.get(
-			"vocabularies");
+			JSONObject vocabulariesJSONObject = (JSONObject) props.get(
+				"vocabularies");
 
-		Assert.assertEquals(
-			JSONUtil.put(
-				"vocabularyName",
-				childAssetVocabulary.getTitle(LocaleUtil.getSiteDefault())
-			).toJSONString(),
-			vocabulariesJSONObject.toJSONString());
+			Assert.assertEquals(
+				JSONUtil.put(
+					"vocabularyName",
+					childAssetVocabulary.getTitle(LocaleUtil.getSiteDefault())
+				).toJSONString(),
+				vocabulariesJSONObject.toJSONString());
+		}
+		finally {
+			_assetVocabularyLocalService.deleteAssetVocabulary(
+				childAssetVocabulary);
+		}
 	}
 
 	@Test
@@ -215,30 +235,37 @@ public class ContentDashboardAdminPortletTest {
 
 		AssetVocabulary assetVocabulary =
 			_assetVocabularyLocalService.addVocabulary(
-				serviceContext.getUserId(), serviceContext.getScopeGroupId(),
+				serviceContext.getUserId(),
+				serviceContext.getScopeGroupId(),
 				"audience", serviceContext);
 
-		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
-			_getMockLiferayPortletRenderRequest();
+		try {
+			MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
+				_getMockLiferayPortletRenderRequest();
 
-		mockLiferayPortletRenderRequest.setAttribute(
-			WebKeys.COMPANY_ID, _company.getCompanyId());
+			mockLiferayPortletRenderRequest.setAttribute(
+				WebKeys.COMPANY_ID, _company.getCompanyId());
 
-		Map<String, Object> data = _getData(mockLiferayPortletRenderRequest);
+			Map<String, Object> data =
+				_getData(mockLiferayPortletRenderRequest);
 
-		Map<String, Object> props = (Map<String, Object>)data.get("props");
+			Map<String, Object> props = (Map<String, Object>) data.get("props");
 
-		Assert.assertNotNull(props);
+			Assert.assertNotNull(props);
 
-		JSONObject vocabulariesJSONObject = (JSONObject)props.get(
-			"vocabularies");
+			JSONObject vocabulariesJSONObject = (JSONObject) props.get(
+				"vocabularies");
 
-		Assert.assertEquals(
-			JSONUtil.put(
-				"vocabularyName",
-				assetVocabulary.getTitle(LocaleUtil.getSiteDefault())
-			).toJSONString(),
-			vocabulariesJSONObject.toJSONString());
+			Assert.assertEquals(
+				JSONUtil.put(
+					"vocabularyName",
+					assetVocabulary.getTitle(LocaleUtil.getSiteDefault())
+				).toJSONString(),
+				vocabulariesJSONObject.toJSONString());
+		}
+		finally {
+			_assetVocabularyLocalService.deleteAssetVocabulary(assetVocabulary);
+		}
 	}
 
 	@Test
@@ -729,26 +756,24 @@ public class ContentDashboardAdminPortletTest {
 		return themeDisplay;
 	}
 
-	@Inject
-	private AssetVocabularyLocalService _assetVocabularyLocalService;
-
-	@DeleteAfterTestRun
-	private Company _company;
+	private static Company _company;
 
 	@Inject
-	private CompanyLocalService _companyLocalService;
+	private static CompanyLocalService _companyLocalService;
+
+	private static PermissionChecker _permissionChecker;
+	private static User _user;
 
 	@DeleteAfterTestRun
 	private Group _group;
 
-	private PermissionChecker _permissionChecker;
+	@Inject
+	private AssetVocabularyLocalService _assetVocabularyLocalService;
 
 	@Inject(
 		filter = "component.name=com.liferay.content.dashboard.web.internal.portlet.ContentDashboardAdminPortlet"
 	)
 	private Portlet _portlet;
-
-	private User _user;
 
 	@Inject
 	private UserLocalService _userLocalService;
