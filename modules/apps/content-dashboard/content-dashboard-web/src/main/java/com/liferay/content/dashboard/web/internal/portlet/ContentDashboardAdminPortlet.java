@@ -14,6 +14,7 @@
 
 package com.liferay.content.dashboard.web.internal.portlet;
 
+import com.liferay.asset.kernel.model.AssetVocabulary;
 import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
 import com.liferay.content.dashboard.web.internal.constants.ContentDashboardPortletKeys;
 import com.liferay.content.dashboard.web.internal.constants.ContentDashboardWebKeys;
@@ -24,6 +25,9 @@ import com.liferay.content.dashboard.web.internal.item.ContentDashboardItem;
 import com.liferay.content.dashboard.web.internal.item.ContentDashboardItemFactoryTracker;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
@@ -34,6 +38,10 @@ import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.Portal;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
@@ -92,7 +100,8 @@ public class ContentDashboardAdminPortlet extends MVCPortlet {
 		ContentDashboardAdminDisplayContext
 			contentDashboardAdminDisplayContext =
 				new ContentDashboardAdminDisplayContext(
-					_assetVocabularyLocalService, _groupLocalService, _http,
+					Collections.singletonMap(
+						"props", _getProps(liferayPortletRequest)), _http,
 					_itemSelector, _language, liferayPortletRequest,
 					liferayPortletResponse, _portal, searchContainer);
 
@@ -114,6 +123,57 @@ public class ContentDashboardAdminPortlet extends MVCPortlet {
 			contentDashboardAdminManagementToolbarDisplayContext);
 
 		super.render(renderRequest, renderResponse);
+	}
+
+	private Map<String, JSONObject> _getProps(
+		LiferayPortletRequest liferayPortletRequest) {
+		Locale locale = _portal.getLocale(liferayPortletRequest);
+
+		return Optional.ofNullable(
+			_groupLocalService.fetchCompanyGroup(
+				_portal.getCompanyId(liferayPortletRequest))
+		).map(
+			group ->
+				Collections.singletonMap(
+					"vocabularies",
+					_getVocabulariesJSONObject(
+						_assetVocabularyLocalService.fetchGroupVocabulary(
+							group.getGroupId(), "audience"),
+						_assetVocabularyLocalService.fetchGroupVocabulary(
+							group.getGroupId(), "stage"), locale)
+				)
+		).orElseGet(
+			Collections::emptyMap
+		);
+
+	}
+
+	private JSONObject _getVocabulariesJSONObject(
+		AssetVocabulary assetVocabulary, AssetVocabulary childAssetVocabulary,
+		Locale locale) {
+
+		if ((assetVocabulary == null) && (childAssetVocabulary == null)) {
+			return null;
+		}
+
+		if (assetVocabulary != null) {
+			JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+			jsonObject.put(
+				"vocabularyName", assetVocabulary.getTitle(locale));
+
+			if (childAssetVocabulary != null) {
+				jsonObject.put(
+					"childVocabularyName",
+					childAssetVocabulary.getTitle(locale));
+			}
+
+			return jsonObject;
+		}
+		else {
+			return JSONUtil.put(
+				"vocabularyName", childAssetVocabulary.getTitle(locale));
+		}
 	}
 
 	@Reference

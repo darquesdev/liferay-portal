@@ -15,6 +15,7 @@
 package com.liferay.content.dashboard.web.internal.data.provider;
 
 import com.liferay.content.dashboard.web.internal.model.AssetCategoryMetric;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.search.aggregation.Aggregations;
@@ -30,6 +31,9 @@ import com.liferay.portal.search.searcher.Searcher;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author David Arques
