@@ -260,7 +260,7 @@ public class ContentDashboardAdminDisplayContextTest {
 
 		Mockito.when(
 			assetVocabularyLocalService.fetchGroupVocabulary(
-				group.getGroupId(), Mockito.anyString())
+				Mockito.anyLong(), Mockito.anyString())
 		).thenReturn(
 			null
 		);
