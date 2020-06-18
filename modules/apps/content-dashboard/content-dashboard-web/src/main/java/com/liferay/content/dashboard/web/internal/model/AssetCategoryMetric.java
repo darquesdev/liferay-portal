@@ -14,8 +14,6 @@
 
 package com.liferay.content.dashboard.web.internal.model;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -23,10 +21,18 @@ import java.util.Objects;
  */
 public class AssetCategoryMetric {
 
-	public AssetCategoryMetric(String key, long value) {
+	public AssetCategoryMetric(String key, String name, long value) {
+		this(key, name, value, null);
+	}
+
+	public AssetCategoryMetric(
+		String key, String name, long value,
+		AssetVocabularyMetric assetVocabularyMetric) {
+
 		_key = key;
+		_name = name;
 		_value = value;
-		_assetCategoryMetrics = Collections.emptyList();
+		_assetVocabularyMetric = assetVocabularyMetric;
 	}
 
 	@Override
@@ -42,8 +48,8 @@ public class AssetCategoryMetric {
 		AssetCategoryMetric assetCategoryMetric = (AssetCategoryMetric)object;
 
 		if (Objects.equals(
-				_assetCategoryMetrics,
-				assetCategoryMetric._assetCategoryMetrics) &&
+				_assetVocabularyMetric,
+				assetCategoryMetric._assetVocabularyMetric) &&
 			Objects.equals(_key, assetCategoryMetric._key) &&
 			Objects.equals(_value, assetCategoryMetric._value)) {
 
@@ -53,12 +59,16 @@ public class AssetCategoryMetric {
 		return false;
 	}
 
-	public List<AssetCategoryMetric> getAssetCategoryMetrics() {
-		return _assetCategoryMetrics;
+	public AssetVocabularyMetric getAssetVocabularyMetric() {
+		return _assetVocabularyMetric;
 	}
 
 	public String getKey() {
 		return _key;
+	}
+
+	public String getName() {
+		return _name;
 	}
 
 	public long getValue() {
@@ -67,17 +77,12 @@ public class AssetCategoryMetric {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(_assetCategoryMetrics, _key, _value);
+		return Objects.hash(_assetVocabularyMetric, _key, _value);
 	}
 
-	public void setAssetCategoryMetrics(
-		List<AssetCategoryMetric> assetCategoryMetrics) {
-
-		_assetCategoryMetrics = assetCategoryMetrics;
-	}
-
-	private List<AssetCategoryMetric> _assetCategoryMetrics;
+	private AssetVocabularyMetric _assetVocabularyMetric;
 	private final String _key;
+	private final String _name;
 	private final long _value;
 
 }
