@@ -16,12 +16,14 @@ package com.liferay.content.dashboard.web.internal.display.context;
 
 import com.liferay.content.dashboard.web.internal.configuration.ContentDashboardConfiguration;
 import com.liferay.content.dashboard.web.internal.item.ContentDashboardItem;
+import com.liferay.content.dashboard.web.internal.model.AssetVocabularyMetric;
 import com.liferay.content.dashboard.web.internal.servlet.taglib.util.ContentDashboardDropdownItemsProvider;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.criteria.UUIDItemSelectorReturnType;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
@@ -36,6 +38,8 @@ import com.liferay.users.admin.item.selector.UserItemSelectorCriterion;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import javax.portlet.PortletURL;
 
@@ -45,6 +49,7 @@ import javax.portlet.PortletURL;
 public class ContentDashboardAdminDisplayContext {
 
 	public ContentDashboardAdminDisplayContext(
+		AssetVocabularyMetric assetVocabularyMetric,
 		ContentDashboardConfiguration contentDashboardConfiguration,
 		ContentDashboardDropdownItemsProvider
 			contentDashboardDropdownItemsProvider,
@@ -52,6 +57,7 @@ public class ContentDashboardAdminDisplayContext {
 		LiferayPortletResponse liferayPortletResponse, Portal portal,
 		SearchContainer<ContentDashboardItem<?>> searchContainer) {
 
+		_assetVocabularyMetric = assetVocabularyMetric;
 		_contentDashboardConfiguration = contentDashboardConfiguration;
 		_contentDashboardDropdownItemsProvider =
 			contentDashboardDropdownItemsProvider;
@@ -98,6 +104,16 @@ public class ContentDashboardAdminDisplayContext {
 		return portletURL.toString();
 	}
 
+	public Map<String, Object> getData() {
+		if (_data != null) {
+			return _data;
+		}
+
+		_data = Collections.singletonMap("props", _getProps());
+
+		return _data;
+	}
+
 	public List<DropdownItem> getDropdownItems(
 		ContentDashboardItem contentDashboardItem) {
 
@@ -134,10 +150,24 @@ public class ContentDashboardAdminDisplayContext {
 		return _contentDashboardConfiguration.auditGraphEnabled();
 	}
 
+	private Map<String, Object> _getProps() {
+		return Collections.singletonMap(
+			"vocabularies",
+			Optional.ofNullable(
+				_assetVocabularyMetric
+			).map(
+				AssetVocabularyMetric::toJSONArray
+			).orElse(
+				JSONFactoryUtil.createJSONArray()
+			));
+	}
+
+	private final AssetVocabularyMetric _assetVocabularyMetric;
 	private List<Long> _authorIds;
 	private final ContentDashboardConfiguration _contentDashboardConfiguration;
 	private final ContentDashboardDropdownItemsProvider
 		_contentDashboardDropdownItemsProvider;
+	private Map<String, Object> _data;
 	private final ItemSelector _itemSelector;
 	private final LiferayPortletRequest _liferayPortletRequest;
 	private final LiferayPortletResponse _liferayPortletResponse;
