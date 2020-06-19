@@ -14,9 +14,13 @@
 
 package com.liferay.content.dashboard.web.internal.model;
 
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONUtil;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * @author David Arques
@@ -76,6 +80,15 @@ public class AssetVocabularyMetric {
 	@Override
 	public int hashCode() {
 		return Objects.hash(_assetCategoryMetrics);
+	}
+
+	public JSONArray toJSONArray() {
+		Stream<AssetCategoryMetric> stream = _assetCategoryMetrics.stream();
+
+		return JSONUtil.putAll(
+			stream.map(
+				assetCategoryMetric -> assetCategoryMetric.toJSONObject(_name)
+			).toArray());
 	}
 
 	private List<AssetCategoryMetric> _assetCategoryMetrics;
