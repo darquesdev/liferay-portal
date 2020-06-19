@@ -14,6 +14,9 @@
 
 package com.liferay.content.dashboard.web.internal.model;
 
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -76,6 +79,16 @@ public class AssetVocabularyMetric {
 	@Override
 	public int hashCode() {
 		return Objects.hash(_assetCategoryMetrics);
+	}
+
+	public JSONArray toJSONArray() {
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+
+		_assetCategoryMetrics.forEach(
+			assetCategoryMetric -> jsonArray.put(
+				assetCategoryMetric.toJSONObject(_name)));
+
+		return jsonArray;
 	}
 
 	private List<AssetCategoryMetric> _assetCategoryMetrics;
