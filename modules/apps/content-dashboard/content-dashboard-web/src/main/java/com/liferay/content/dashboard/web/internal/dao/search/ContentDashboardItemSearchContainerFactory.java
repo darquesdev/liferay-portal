@@ -121,7 +121,8 @@ public class ContentDashboardItemSearchContainerFactory {
 		try {
 			return indexer.search(
 				new ContentDashboardSearchContextBuilder(
-					_portal.getHttpServletRequest(_renderRequest)
+					_portal.getHttpServletRequest(_renderRequest),
+					_portal.getUserId(_renderRequest)
 				).withEnd(
 					end
 				).withSort(
