@@ -189,12 +189,9 @@ public class ContentDashboardItemSearchContainerFactory {
 					getContentDashboardItemFactoryOptional(
 						searchResult.getClassName());
 
-		return contentDashboardItemFactoryOptional.map(
+		return contentDashboardItemFactoryOptional.flatMap(
 			contentDashboardItemFactory -> _toContentDashboardItemOptional(
-				contentDashboardItemFactory, searchResult)
-		).orElse(
-			Optional.empty()
-		);
+				contentDashboardItemFactory, searchResult));
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
