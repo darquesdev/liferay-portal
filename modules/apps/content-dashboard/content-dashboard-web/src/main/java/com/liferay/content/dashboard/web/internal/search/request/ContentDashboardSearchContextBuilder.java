@@ -52,19 +52,13 @@ public class ContentDashboardSearchContextBuilder {
 		SearchContext searchContext = SearchContextFactory.getInstance(
 			_httpServletRequest);
 
-		int status = GetterUtil.getInteger(
-			ParamUtil.getInteger(
-				_httpServletRequest, "status", WorkflowConstants.STATUS_ANY));
-
-		if (status == WorkflowConstants.STATUS_APPROVED) {
-			searchContext.setAttribute("head", Boolean.TRUE);
-		}
-		else {
-			searchContext.setAttribute("latest", Boolean.TRUE);
-		}
-
-		searchContext.setAttribute("status", status);
-
+		searchContext.setAttribute("contextDashboard", Boolean.TRUE);
+		searchContext.setAttribute(
+			"status",
+			GetterUtil.getInteger(
+				ParamUtil.getInteger(
+					_httpServletRequest, "status",
+					WorkflowConstants.STATUS_ANY)));
 		searchContext.setBooleanClauses(
 			Stream.of(
 				_getAuthorIdsBooleanClauseOptional(
@@ -159,7 +153,7 @@ public class ContentDashboardSearchContextBuilder {
 	private BooleanFilter _getMyContentBooleanFilter(long userId) {
 		BooleanFilter booleanFilter = new BooleanFilter();
 
-		booleanFilter.addRequiredTerm("head", false);
+		booleanFilter.addRequiredTerm("latest", true);
 		booleanFilter.addRequiredTerm("userId", userId);
 
 		return booleanFilter;
