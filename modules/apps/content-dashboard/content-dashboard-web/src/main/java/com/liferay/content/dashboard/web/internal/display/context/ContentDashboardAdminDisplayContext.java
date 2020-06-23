@@ -16,6 +16,7 @@ package com.liferay.content.dashboard.web.internal.display.context;
 
 import com.liferay.content.dashboard.web.internal.configuration.ContentDashboardConfiguration;
 import com.liferay.content.dashboard.web.internal.item.ContentDashboardItem;
+import com.liferay.content.dashboard.web.internal.model.AssetVocabularyMetric;
 import com.liferay.content.dashboard.web.internal.servlet.taglib.util.ContentDashboardDropdownItemsProvider;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.item.selector.ItemSelector;
@@ -38,6 +39,7 @@ import com.liferay.users.admin.item.selector.UserItemSelectorCriterion;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.portlet.PortletURL;
 
@@ -47,6 +49,7 @@ import javax.portlet.PortletURL;
 public class ContentDashboardAdminDisplayContext {
 
 	public ContentDashboardAdminDisplayContext(
+		AssetVocabularyMetric assetVocabularyMetric,
 		ContentDashboardConfiguration contentDashboardConfiguration,
 		ContentDashboardDropdownItemsProvider
 			contentDashboardDropdownItemsProvider,
@@ -54,6 +57,7 @@ public class ContentDashboardAdminDisplayContext {
 		LiferayPortletResponse liferayPortletResponse, Portal portal,
 		SearchContainer<ContentDashboardItem<?>> searchContainer) {
 
+		_assetVocabularyMetric = assetVocabularyMetric;
 		_contentDashboardConfiguration = contentDashboardConfiguration;
 		_contentDashboardDropdownItemsProvider =
 			contentDashboardDropdownItemsProvider;
@@ -98,6 +102,16 @@ public class ContentDashboardAdminDisplayContext {
 			"checkedUserIds", StringUtil.merge(getAuthorIds()));
 
 		return portletURL.toString();
+	}
+
+	public Map<String, Object> getData() {
+		if (_data != null) {
+			return _data;
+		}
+
+		_data = Collections.singletonMap("props", _getProps());
+
+		return _data;
 	}
 
 	public List<DropdownItem> getDropdownItems(
@@ -162,10 +176,17 @@ public class ContentDashboardAdminDisplayContext {
 		return _contentDashboardConfiguration.auditGraphEnabled();
 	}
 
+	private Map<String, Object> _getProps() {
+		return Collections.singletonMap(
+			"vocabularies", _assetVocabularyMetric.toJSONArray());
+	}
+
+	private final AssetVocabularyMetric _assetVocabularyMetric;
 	private List<Long> _authorIds;
 	private final ContentDashboardConfiguration _contentDashboardConfiguration;
 	private final ContentDashboardDropdownItemsProvider
 		_contentDashboardDropdownItemsProvider;
+	private Map<String, Object> _data;
 	private final ItemSelector _itemSelector;
 	private final LiferayPortletRequest _liferayPortletRequest;
 	private final LiferayPortletResponse _liferayPortletResponse;
