@@ -107,12 +107,7 @@ public class ContentDashboardDataProvider {
 
 		for (Bucket bucket : termsAggregationResult.getBuckets()) {
 			AssetCategoryMetric assetCategoryMetric = new AssetCategoryMetric(
-				bucket.getKey(), bucket.getDocCount());
-
-			assetCategoryMetric.setAssetCategoryMetrics(
-				_toAssetCategoryMetrics(
-					(TermsAggregationResult)bucket.getChildAggregationResult(
-						"categories")));
+				bucket.getKey(), bucket.getKey(), bucket.getDocCount());
 
 			assetCategoryMetrics.add(assetCategoryMetric);
 		}
@@ -128,7 +123,8 @@ public class ContentDashboardDataProvider {
 		for (Bucket childBucket : termsAggregationResult.getBuckets()) {
 			assetCategoryMetrics.add(
 				new AssetCategoryMetric(
-					childBucket.getKey(), childBucket.getDocCount()));
+					childBucket.getKey(), childBucket.getKey(),
+					childBucket.getDocCount()));
 		}
 
 		return assetCategoryMetrics;
