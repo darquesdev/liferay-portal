@@ -14,18 +14,25 @@
 
 package com.liferay.content.dashboard.web.internal.model;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
  * @author David Arques
  */
 public class AssetVocabularyMetric {
+
+	public static AssetVocabularyMetric empty() {
+		return _EMPTY;
+	}
 
 	public AssetVocabularyMetric(String key, String name) {
 		this(key, name, Collections.emptyList());
@@ -37,7 +44,11 @@ public class AssetVocabularyMetric {
 
 		_key = key;
 		_name = name;
-		_assetCategoryMetrics = assetCategoryMetrics;
+		_assetCategoryMetrics = Optional.ofNullable(
+			assetCategoryMetrics
+		).orElse(
+			Collections.emptyList()
+		);
 	}
 
 	@Override
@@ -82,6 +93,10 @@ public class AssetVocabularyMetric {
 		return Objects.hash(_assetCategoryMetrics);
 	}
 
+	public boolean isEmpty() {
+		return ListUtil.isEmpty(_assetCategoryMetrics);
+	}
+
 	public JSONArray toJSONArray() {
 		Stream<AssetCategoryMetric> stream = _assetCategoryMetrics.stream();
 
@@ -90,6 +105,9 @@ public class AssetVocabularyMetric {
 				assetCategoryMetric -> assetCategoryMetric.toJSONObject(_name)
 			).toArray());
 	}
+
+	private static final AssetVocabularyMetric _EMPTY =
+		new AssetVocabularyMetric(StringPool.BLANK, StringPool.BLANK);
 
 	private List<AssetCategoryMetric> _assetCategoryMetrics;
 	private final String _key;
