@@ -26,11 +26,8 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletURLUtil;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.kernel.search.Hits;
-import com.liferay.portal.kernel.search.HitsImpl;
-import com.liferay.portal.kernel.search.SearchResult;
-import com.liferay.portal.kernel.search.SearchResultUtil;
 import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -80,11 +77,13 @@ public class ContentDashboardItemSearchContainerFactory {
 
 		searchContainer.setOrderByType(_getOrderByType());
 
-		Hits hits = _getHits(
+		SearchResponse searchResponse = _getSearchResponse(
 			searchContainer.getEnd(), searchContainer.getStart());
 
-		searchContainer.setResults(_getContentDashboardItems(hits));
-		searchContainer.setTotal(hits.getLength());
+		searchContainer.setResults(
+			_getContentDashboardItems(searchResponse.getDocuments71()));
+
+		searchContainer.setTotal(searchResponse.getTotalHits());
 
 		return searchContainer;
 	}
@@ -108,11 +107,10 @@ public class ContentDashboardItemSearchContainerFactory {
 		_locale = _portal.getLocale(_renderRequest);
 	}
 
-	private List<ContentDashboardItem<?>> _getContentDashboardItems(Hits hits) {
-		List<SearchResult> searchResults = SearchResultUtil.getSearchResults(
-			hits, _locale);
+	private List<ContentDashboardItem<?>> _getContentDashboardItems(
+		List<Document> documents) {
 
-		Stream<SearchResult> stream = searchResults.stream();
+		Stream<Document> stream = documents.stream();
 
 		return stream.map(
 			this::_toContentDashboardItemOptional
@@ -125,22 +123,6 @@ public class ContentDashboardItemSearchContainerFactory {
 		);
 	}
 
-	private Hits _getHits(int end, int start) {
-		return _toHits(
-			_searcher.search(
-				_contentDashboardSearchRequestBuilderFactory.builder(
-					new ContentDashboardSearchContextBuilder(
-						_portal.getHttpServletRequest(_renderRequest)
-					).withEnd(
-						end
-					).withSort(
-						_getSort(_getOrderByCol(), _getOrderByType())
-					).withStart(
-						start
-					).build()
-				).build()));
-	}
-
 	private String _getOrderByCol() {
 		return ParamUtil.getString(
 			_renderRequest, SearchContainer.DEFAULT_ORDER_BY_COL_PARAM,
@@ -151,6 +133,21 @@ public class ContentDashboardItemSearchContainerFactory {
 		return ParamUtil.getString(
 			_renderRequest, SearchContainer.DEFAULT_ORDER_BY_TYPE_PARAM,
 			"desc");
+	}
+
+	private SearchResponse _getSearchResponse(int end, int start) {
+		return _searcher.search(
+			_contentDashboardSearchRequestBuilderFactory.builder(
+				new ContentDashboardSearchContextBuilder(
+					_portal.getHttpServletRequest(_renderRequest)
+				).withEnd(
+					end
+				).withSort(
+					_getSort(_getOrderByCol(), _getOrderByType())
+				).withStart(
+					start
+				).build()
+			).build());
 	}
 
 	private Sort _getSort(String orderByCol, String orderByType) {
@@ -172,11 +169,12 @@ public class ContentDashboardItemSearchContainerFactory {
 
 	private Optional<ContentDashboardItem<?>> _toContentDashboardItemOptional(
 		ContentDashboardItemFactory<?> contentDashboardItemFactory,
-		SearchResult searchResult) {
+		Document document) {
 
 		try {
 			return Optional.of(
-				contentDashboardItemFactory.create(searchResult.getClassPK()));
+				contentDashboardItemFactory.create(
+					GetterUtil.getLong(document.get(Field.CLASS_PK))));
 		}
 		catch (PortalException portalException) {
 			_log.error(portalException, portalException);
@@ -186,29 +184,28 @@ public class ContentDashboardItemSearchContainerFactory {
 	}
 
 	private Optional<ContentDashboardItem<?>> _toContentDashboardItemOptional(
-		SearchResult searchResult) {
+		Document document) {
+
+		long classNameId = GetterUtil.getLong(
+			document.get(Field.CLASS_NAME_ID));
+
+		String className = _portal.getClassName(classNameId);
+
+		if (className == null) {
+			_log.error(
+				"Unable to get class name from class name ID " + classNameId);
+
+			return Optional.empty();
+		}
 
 		Optional<ContentDashboardItemFactory<?>>
 			contentDashboardItemFactoryOptional =
 				_contentDashboardItemFactoryTracker.
-					getContentDashboardItemFactoryOptional(
-						searchResult.getClassName());
+					getContentDashboardItemFactoryOptional(className);
 
 		return contentDashboardItemFactoryOptional.flatMap(
 			contentDashboardItemFactory -> _toContentDashboardItemOptional(
-				contentDashboardItemFactory, searchResult));
-	}
-
-	private Hits _toHits(SearchResponse searchResponse) {
-		Hits hits = new HitsImpl();
-
-		List<Document> documents = searchResponse.getDocuments71();
-
-		hits.setDocs(documents.toArray(new Document[0]));
-
-		hits.setLength(searchResponse.getTotalHits());
-
-		return hits;
+				contentDashboardItemFactory, document));
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
