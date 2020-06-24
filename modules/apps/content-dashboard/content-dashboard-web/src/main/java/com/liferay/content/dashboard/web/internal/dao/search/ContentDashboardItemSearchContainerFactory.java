@@ -174,7 +174,7 @@ public class ContentDashboardItemSearchContainerFactory {
 		try {
 			return Optional.of(
 				contentDashboardItemFactory.create(
-					GetterUtil.getLong(document.get(Field.CLASS_PK))));
+					GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK))));
 		}
 		catch (PortalException portalException) {
 			_log.error(portalException, portalException);
@@ -186,22 +186,11 @@ public class ContentDashboardItemSearchContainerFactory {
 	private Optional<ContentDashboardItem<?>> _toContentDashboardItemOptional(
 		Document document) {
 
-		long classNameId = GetterUtil.getLong(
-			document.get(Field.CLASS_NAME_ID));
-
-		String className = _portal.getClassName(classNameId);
-
-		if (className == null) {
-			_log.error(
-				"Unable to get class name from class name ID " + classNameId);
-
-			return Optional.empty();
-		}
-
 		Optional<ContentDashboardItemFactory<?>>
 			contentDashboardItemFactoryOptional =
 				_contentDashboardItemFactoryTracker.
-					getContentDashboardItemFactoryOptional(className);
+					getContentDashboardItemFactoryOptional(
+						document.get(Field.ENTRY_CLASS_NAME));
 
 		return contentDashboardItemFactoryOptional.flatMap(
 			contentDashboardItemFactory -> _toContentDashboardItemOptional(
