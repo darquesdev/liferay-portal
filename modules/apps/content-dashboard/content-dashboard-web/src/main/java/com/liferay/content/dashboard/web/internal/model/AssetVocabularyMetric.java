@@ -46,6 +46,8 @@ public class AssetVocabularyMetric {
 		_name = name;
 		_assetCategoryMetrics = Optional.ofNullable(
 			assetCategoryMetrics
+		).map(
+			Collections::unmodifiableList
 		).orElse(
 			Collections.emptyList()
 		);
