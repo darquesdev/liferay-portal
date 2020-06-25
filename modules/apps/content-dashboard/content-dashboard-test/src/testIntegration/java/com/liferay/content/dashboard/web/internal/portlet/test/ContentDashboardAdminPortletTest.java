@@ -122,6 +122,122 @@ public class ContentDashboardAdminPortletTest {
 	}
 
 	@Test
+	public void testGetAuditGraphTitle() throws Exception {
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				_company.getCompanyId(), _company.getGroupId(),
+				_user.getUserId());
+
+		AssetVocabulary assetVocabulary =
+			_assetVocabularyLocalService.fetchGroupVocabulary(
+				serviceContext.getScopeGroupId(), "audience");
+
+		AssetCategory assetCategory = _assetCategoryLocalService.addCategory(
+			_user.getUserId(), _company.getGroupId(),
+			RandomTestUtil.randomString(), assetVocabulary.getVocabularyId(),
+			serviceContext);
+
+		AssetVocabulary childAssetVocabulary =
+			_assetVocabularyLocalService.fetchGroupVocabulary(
+				serviceContext.getScopeGroupId(), "stage");
+
+		AssetCategory childAssetCategory =
+			_assetCategoryLocalService.addCategory(
+				_user.getUserId(), _company.getGroupId(),
+				RandomTestUtil.randomString(),
+				childAssetVocabulary.getVocabularyId(), serviceContext);
+
+		try {
+			JournalArticle journalArticle = JournalTestUtil.addArticle(
+				_user.getUserId(), _group.getGroupId(), 0);
+
+			_journalArticleLocalService.updateAsset(
+				_user.getUserId(), journalArticle,
+				new long[] {
+					assetCategory.getCategoryId(),
+					childAssetCategory.getCategoryId()
+				},
+				new String[0], new long[0], null);
+
+			MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
+				_getMockLiferayPortletRenderRequest();
+
+			mockLiferayPortletRenderRequest.setAttribute(
+				WebKeys.COMPANY_ID, _company.getCompanyId());
+
+			Assert.assertEquals(
+				String.format(
+					"Content per %s and %s",
+					assetVocabulary.getTitle(LocaleUtil.US),
+					childAssetVocabulary.getTitle(LocaleUtil.US)),
+				_getAuditGraphTitle(mockLiferayPortletRenderRequest));
+		}
+		finally {
+			_assetCategoryLocalService.deleteAssetCategory(assetCategory);
+			_assetCategoryLocalService.deleteAssetCategory(childAssetCategory);
+		}
+	}
+
+	@Test
+	public void testGetAuditGraphTitleWithMissingChildAssetVocabularies()
+		throws Exception {
+
+		JournalTestUtil.addArticle(_user.getUserId(), _group.getGroupId(), 0);
+
+		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
+			_getMockLiferayPortletRenderRequest();
+
+		mockLiferayPortletRenderRequest.setAttribute(
+			WebKeys.COMPANY_ID, _company.getCompanyId());
+
+		Assert.assertEquals(
+			"Content", _getAuditGraphTitle(mockLiferayPortletRenderRequest));
+	}
+
+	@Test
+	public void testGetAuditGraphTitleWithMissingChildAssetVocabulary()
+		throws Exception {
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				_company.getCompanyId(), _company.getGroupId(),
+				_user.getUserId());
+
+		AssetVocabulary assetVocabulary =
+			_assetVocabularyLocalService.fetchGroupVocabulary(
+				serviceContext.getScopeGroupId(), "audience");
+
+		AssetCategory assetCategory = _assetCategoryLocalService.addCategory(
+			_user.getUserId(), _company.getGroupId(),
+			RandomTestUtil.randomString(), assetVocabulary.getVocabularyId(),
+			serviceContext);
+
+		try {
+			JournalArticle journalArticle = JournalTestUtil.addArticle(
+				_user.getUserId(), _group.getGroupId(), 0);
+
+			_journalArticleLocalService.updateAsset(
+				_user.getUserId(), journalArticle,
+				new long[] {assetCategory.getCategoryId()}, new String[0],
+				new long[0], null);
+
+			MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
+				_getMockLiferayPortletRenderRequest();
+
+			mockLiferayPortletRenderRequest.setAttribute(
+				WebKeys.COMPANY_ID, _company.getCompanyId());
+
+			Assert.assertEquals(
+				String.format(
+					"Content per %s", assetVocabulary.getTitle(LocaleUtil.US)),
+				_getAuditGraphTitle(mockLiferayPortletRenderRequest));
+		}
+		finally {
+			_assetCategoryLocalService.deleteAssetCategory(assetCategory);
+		}
+	}
+
+	@Test
 	public void testGetProps() throws Exception {
 		ServiceContext serviceContext =
 			ServiceContextTestUtil.getServiceContext(
@@ -869,6 +985,22 @@ public class ContentDashboardAdminPortletTest {
 				LocaleUtil.US));
 	}
 
+	private String _getAuditGraphTitle(
+			MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest)
+		throws Exception {
+
+		MVCPortlet mvcPortlet = (MVCPortlet)_portlet;
+
+		mvcPortlet.render(
+			mockLiferayPortletRenderRequest,
+			new MockLiferayPortletRenderResponse());
+
+		return ReflectionTestUtil.invoke(
+			mockLiferayPortletRenderRequest.getAttribute(
+				"CONTENT_DASHBOARD_ADMIN_DISPLAY_CONTEXT"),
+			"getAuditGraphTitle", new Class<?>[0]);
+	}
+
 	private Map<String, Object> _getData(
 			MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest)
 		throws Exception {
@@ -953,6 +1085,7 @@ public class ContentDashboardAdminPortletTest {
 		ThemeDisplay themeDisplay = new ThemeDisplay();
 
 		themeDisplay.setCompany(_company);
+		themeDisplay.setLocale(LocaleUtil.US);
 		themeDisplay.setPermissionChecker(
 			PermissionThreadLocal.getPermissionChecker());
 		themeDisplay.setUser(_company.getDefaultUser());
