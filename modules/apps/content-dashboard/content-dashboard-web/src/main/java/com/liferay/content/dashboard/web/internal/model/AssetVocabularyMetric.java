@@ -17,7 +17,9 @@ package com.liferay.content.dashboard.web.internal.model;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -87,6 +89,28 @@ public class AssetVocabularyMetric {
 
 	public String getName() {
 		return _name;
+	}
+
+	public List<String> getVocabularyNames() {
+		if (_assetCategoryMetrics.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		Stream<AssetCategoryMetric> stream = _assetCategoryMetrics.stream();
+
+		return stream.findFirst(
+		).map(
+			AssetCategoryMetric::getAssetVocabularyMetric
+		).filter(
+			assetVocabularyMetric -> ListUtil.isNotEmpty(
+				assetVocabularyMetric.getAssetCategoryMetrics())
+		).map(
+			AssetVocabularyMetric::getName
+		).map(
+			name -> Collections.unmodifiableList(Arrays.asList(_name, name))
+		).orElse(
+			Collections.unmodifiableList(Collections.singletonList(_name))
+		);
 	}
 
 	@Override
