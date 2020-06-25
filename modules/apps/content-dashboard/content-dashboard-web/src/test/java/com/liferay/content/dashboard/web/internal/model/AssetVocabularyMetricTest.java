@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -35,6 +36,57 @@ public class AssetVocabularyMetricTest {
 		JSONFactoryUtil jsonFactoryUtil = new JSONFactoryUtil();
 
 		jsonFactoryUtil.setJSONFactory(new JSONFactoryImpl());
+	}
+
+	@Test
+	public void testGetVocabularyNames() {
+		AssetVocabularyMetric childAssetVocabularyMetric =
+			new AssetVocabularyMetric(
+				RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+				Collections.singletonList(
+					new AssetCategoryMetric(
+						RandomTestUtil.randomString(),
+						RandomTestUtil.randomString(),
+						RandomTestUtil.randomLong())));
+
+		AssetVocabularyMetric assetVocabularyMetric = new AssetVocabularyMetric(
+			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+			Collections.singletonList(
+				new AssetCategoryMetric(
+					childAssetVocabularyMetric, RandomTestUtil.randomString(),
+					RandomTestUtil.randomString(),
+					RandomTestUtil.randomLong())));
+
+		Assert.assertEquals(
+			Arrays.asList(
+				assetVocabularyMetric.getName(),
+				childAssetVocabularyMetric.getName()),
+			assetVocabularyMetric.getVocabularyNames());
+	}
+
+	@Test
+	public void testGetVocabularyNamesWithEmptyAssetCategoryMetrics() {
+		AssetVocabularyMetric assetVocabularyMetric = new AssetVocabularyMetric(
+			RandomTestUtil.randomString(), RandomTestUtil.randomString());
+
+		Assert.assertEquals(
+			Collections.emptyList(),
+			assetVocabularyMetric.getVocabularyNames());
+	}
+
+	@Test
+	public void testGetVocabularyNamesWithEmptyAssetVocabulary() {
+		AssetVocabularyMetric assetVocabularyMetric = new AssetVocabularyMetric(
+			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+			Collections.singletonList(
+				new AssetCategoryMetric(
+					RandomTestUtil.randomString(),
+					RandomTestUtil.randomString(),
+					RandomTestUtil.randomLong())));
+
+		Assert.assertEquals(
+			Collections.singletonList(assetVocabularyMetric.getName()),
+			assetVocabularyMetric.getVocabularyNames());
 	}
 
 	@Test
