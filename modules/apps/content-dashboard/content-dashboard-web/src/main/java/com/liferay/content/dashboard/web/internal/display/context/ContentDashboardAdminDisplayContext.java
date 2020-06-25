@@ -14,6 +14,7 @@
 
 package com.liferay.content.dashboard.web.internal.display.context;
 
+import com.liferay.asset.kernel.model.AssetVocabulary;
 import com.liferay.content.dashboard.web.internal.configuration.ContentDashboardConfiguration;
 import com.liferay.content.dashboard.web.internal.item.ContentDashboardItem;
 import com.liferay.content.dashboard.web.internal.model.AssetVocabularyMetric;
@@ -49,6 +50,7 @@ import javax.portlet.PortletURL;
 public class ContentDashboardAdminDisplayContext {
 
 	public ContentDashboardAdminDisplayContext(
+		List<AssetVocabulary> assetVocabularies,
 		AssetVocabularyMetric assetVocabularyMetric,
 		ContentDashboardConfiguration contentDashboardConfiguration,
 		ContentDashboardDropdownItemsProvider
@@ -57,6 +59,7 @@ public class ContentDashboardAdminDisplayContext {
 		LiferayPortletResponse liferayPortletResponse, Portal portal,
 		SearchContainer<ContentDashboardItem<?>> searchContainer) {
 
+		_assetVocabularies = assetVocabularies;
 		_assetVocabularyMetric = assetVocabularyMetric;
 		_contentDashboardConfiguration = contentDashboardConfiguration;
 		_contentDashboardDropdownItemsProvider =
@@ -66,6 +69,10 @@ public class ContentDashboardAdminDisplayContext {
 		_liferayPortletResponse = liferayPortletResponse;
 		_portal = portal;
 		_searchContainer = searchContainer;
+	}
+
+	public List<AssetVocabulary> getAssetVocabularies() {
+		return _assetVocabularies;
 	}
 
 	public List<Long> getAuthorIds() {
@@ -180,6 +187,7 @@ public class ContentDashboardAdminDisplayContext {
 			"vocabularies", _assetVocabularyMetric.toJSONArray());
 	}
 
+	private final List<AssetVocabulary> _assetVocabularies;
 	private final AssetVocabularyMetric _assetVocabularyMetric;
 	private List<Long> _authorIds;
 	private final ContentDashboardConfiguration _contentDashboardConfiguration;
