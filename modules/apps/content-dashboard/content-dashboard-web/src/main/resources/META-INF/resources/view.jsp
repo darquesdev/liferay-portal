@@ -28,7 +28,7 @@ ContentDashboardAdminManagementToolbarDisplayContext contentDashboardAdminManage
 	>
 		<div class="sheet">
 			<h2 class="sheet-title">
-				<%= LanguageUtil.format(request, "content-per-audience-and-stage-x", 0, false) %>
+				<%= contentDashboardAdminDisplayContext.getAuditGraphTitle() %>
 			</h2>
 
 			<div id="audit-graph">

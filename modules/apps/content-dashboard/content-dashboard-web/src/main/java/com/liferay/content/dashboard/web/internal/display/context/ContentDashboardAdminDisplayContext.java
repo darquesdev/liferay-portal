@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.users.admin.item.selector.UserItemSelectorCriterion;
@@ -40,6 +41,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.portlet.PortletURL;
 
@@ -55,6 +57,7 @@ public class ContentDashboardAdminDisplayContext {
 			contentDashboardDropdownItemsProvider,
 		ItemSelector itemSelector, LiferayPortletRequest liferayPortletRequest,
 		LiferayPortletResponse liferayPortletResponse, Portal portal,
+		ResourceBundle resourceBundle,
 		SearchContainer<ContentDashboardItem<?>> searchContainer) {
 
 		_assetVocabularyMetric = assetVocabularyMetric;
@@ -65,7 +68,26 @@ public class ContentDashboardAdminDisplayContext {
 		_liferayPortletRequest = liferayPortletRequest;
 		_liferayPortletResponse = liferayPortletResponse;
 		_portal = portal;
+		_resourceBundle = resourceBundle;
 		_searchContainer = searchContainer;
+	}
+
+	public String getAuditGraphTitle() {
+		List<String> vocabularyNames =
+			_assetVocabularyMetric.getVocabularyNames();
+
+		if (vocabularyNames.size() == 2) {
+			return ResourceBundleUtil.getString(
+				_resourceBundle, "content-per-x-and-x", vocabularyNames.get(0),
+				vocabularyNames.get(1));
+		}
+		else if (vocabularyNames.size() == 1) {
+			return ResourceBundleUtil.getString(
+				_resourceBundle, "content-per-x", vocabularyNames.get(0));
+		}
+		else {
+			return ResourceBundleUtil.getString(_resourceBundle, "content");
+		}
 	}
 
 	public List<Long> getAuthorIds() {
@@ -193,6 +215,7 @@ public class ContentDashboardAdminDisplayContext {
 	private final LiferayPortletRequest _liferayPortletRequest;
 	private final LiferayPortletResponse _liferayPortletResponse;
 	private final Portal _portal;
+	private final ResourceBundle _resourceBundle;
 	private long _scopeId;
 	private final SearchContainer<ContentDashboardItem<?>> _searchContainer;
 	private Integer _status;

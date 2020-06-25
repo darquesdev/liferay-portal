@@ -38,6 +38,7 @@ import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.search.aggregation.Aggregations;
 import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.searcher.Searcher;
@@ -125,7 +126,10 @@ public class ContentDashboardAdminPortlet extends MVCPortlet {
 						_http, _language, liferayPortletRequest,
 						liferayPortletResponse, _portal),
 					_itemSelector, liferayPortletRequest,
-					liferayPortletResponse, _portal, searchContainer);
+					liferayPortletResponse, _portal,
+					ResourceBundleUtil.getBundle(
+						_portal.getLocale(renderRequest), getClass()),
+					searchContainer);
 
 		renderRequest.setAttribute(
 			ContentDashboardWebKeys.CONTENT_DASHBOARD_ADMIN_DISPLAY_CONTEXT,
