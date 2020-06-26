@@ -32,6 +32,7 @@ import com.liferay.item.selector.ItemSelector;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.language.LanguageConstants;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
@@ -135,6 +136,9 @@ public class ContentDashboardAdminPortlet extends MVCPortlet {
 						_http, _language, liferayPortletRequest,
 						liferayPortletResponse, _portal),
 					_ffContentDashboardConfiguration, _itemSelector,
+					_language.get(
+						_portal.getLocale(liferayPortletRequest),
+						LanguageConstants.KEY_DIR),
 					liferayPortletRequest, liferayPortletResponse, _portal,
 					ResourceBundleUtil.getBundle(
 						_portal.getLocale(renderRequest), getClass()),
