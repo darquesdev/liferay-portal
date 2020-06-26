@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.language.LanguageConstants;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
@@ -162,9 +163,6 @@ public class ContentDashboardAdminPortletTest {
 			MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
 				_getMockLiferayPortletRenderRequest();
 
-			mockLiferayPortletRenderRequest.setAttribute(
-				WebKeys.COMPANY_ID, _company.getCompanyId());
-
 			Assert.assertEquals(
 				String.format(
 					"Content per %s and %s",
@@ -186,9 +184,6 @@ public class ContentDashboardAdminPortletTest {
 
 		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
 			_getMockLiferayPortletRenderRequest();
-
-		mockLiferayPortletRenderRequest.setAttribute(
-			WebKeys.COMPANY_ID, _company.getCompanyId());
 
 		Assert.assertEquals(
 			"Content", _getAuditGraphTitle(mockLiferayPortletRenderRequest));
@@ -224,9 +219,6 @@ public class ContentDashboardAdminPortletTest {
 			MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
 				_getMockLiferayPortletRenderRequest();
 
-			mockLiferayPortletRenderRequest.setAttribute(
-				WebKeys.COMPANY_ID, _company.getCompanyId());
-
 			Assert.assertEquals(
 				String.format(
 					"Content per %s", assetVocabulary.getTitle(LocaleUtil.US)),
@@ -235,6 +227,35 @@ public class ContentDashboardAdminPortletTest {
 		finally {
 			_assetCategoryLocalService.deleteAssetCategory(assetCategory);
 		}
+	}
+
+	@Test
+	public void testGetContextWithLtrLanguageDirection() throws Exception {
+		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
+			_getMockLiferayPortletRenderRequest();
+
+		Map<String, Object> data = _getData(mockLiferayPortletRenderRequest);
+
+		Map<String, Object> context = (Map<String, Object>)data.get("context");
+
+		Assert.assertNotNull(context);
+		Assert.assertEquals(
+			LanguageConstants.VALUE_LTR, context.get("languageDirection"));
+	}
+
+	@Test
+	public void testGetContextWithRtlLanguageDirection() throws Exception {
+		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
+			_getMockLiferayPortletRenderRequest(
+				LocaleUtil.fromLanguageId("ar_SA"));
+
+		Map<String, Object> data = _getData(mockLiferayPortletRenderRequest);
+
+		Map<String, Object> context = (Map<String, Object>)data.get("context");
+
+		Assert.assertNotNull(context);
+		Assert.assertEquals(
+			LanguageConstants.VALUE_RTL, context.get("languageDirection"));
 	}
 
 	@Test
@@ -277,9 +298,6 @@ public class ContentDashboardAdminPortletTest {
 
 			MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
 				_getMockLiferayPortletRenderRequest();
-
-			mockLiferayPortletRenderRequest.setAttribute(
-				WebKeys.COMPANY_ID, _company.getCompanyId());
 
 			Map<String, Object> data = _getData(
 				mockLiferayPortletRenderRequest);
@@ -363,9 +381,6 @@ public class ContentDashboardAdminPortletTest {
 			MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
 				_getMockLiferayPortletRenderRequest();
 
-			mockLiferayPortletRenderRequest.setAttribute(
-				WebKeys.COMPANY_ID, _company.getCompanyId());
-
 			Map<String, Object> data = _getData(
 				mockLiferayPortletRenderRequest);
 
@@ -426,9 +441,6 @@ public class ContentDashboardAdminPortletTest {
 			MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
 				_getMockLiferayPortletRenderRequest();
 
-			mockLiferayPortletRenderRequest.setAttribute(
-				WebKeys.COMPANY_ID, _company.getCompanyId());
-
 			Map<String, Object> data = _getData(
 				mockLiferayPortletRenderRequest);
 
@@ -457,9 +469,6 @@ public class ContentDashboardAdminPortletTest {
 
 		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
 			_getMockLiferayPortletRenderRequest();
-
-		mockLiferayPortletRenderRequest.setAttribute(
-			WebKeys.COMPANY_ID, _company.getCompanyId());
 
 		Map<String, Object> data = _getData(mockLiferayPortletRenderRequest);
 
@@ -501,9 +510,6 @@ public class ContentDashboardAdminPortletTest {
 
 			MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
 				_getMockLiferayPortletRenderRequest();
-
-			mockLiferayPortletRenderRequest.setAttribute(
-				WebKeys.COMPANY_ID, _company.getCompanyId());
 
 			Map<String, Object> data = _getData(
 				mockLiferayPortletRenderRequest);
@@ -1021,8 +1027,18 @@ public class ContentDashboardAdminPortletTest {
 			_getMockLiferayPortletRenderRequest()
 		throws Exception {
 
+		return _getMockLiferayPortletRenderRequest(LocaleUtil.US);
+	}
+
+	private MockLiferayPortletRenderRequest _getMockLiferayPortletRenderRequest(
+			Locale locale)
+		throws Exception {
+
 		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
 			new MockLiferayPortletRenderRequest();
+
+		mockLiferayPortletRenderRequest.setAttribute(
+			WebKeys.COMPANY_ID, _company.getCompanyId());
 
 		mockLiferayPortletRenderRequest.setAttribute(
 			StringBundler.concat(
@@ -1060,7 +1076,7 @@ public class ContentDashboardAdminPortletTest {
 				}));
 
 		mockLiferayPortletRenderRequest.setAttribute(
-			WebKeys.THEME_DISPLAY, _getThemeDisplay());
+			WebKeys.THEME_DISPLAY, _getThemeDisplay(locale));
 
 		return mockLiferayPortletRenderRequest;
 	}
@@ -1081,11 +1097,11 @@ public class ContentDashboardAdminPortletTest {
 			"getSearchContainer", new Class<?>[0]);
 	}
 
-	private ThemeDisplay _getThemeDisplay() throws Exception {
+	private ThemeDisplay _getThemeDisplay(Locale locale) throws Exception {
 		ThemeDisplay themeDisplay = new ThemeDisplay();
 
 		themeDisplay.setCompany(_company);
-		themeDisplay.setLocale(LocaleUtil.US);
+		themeDisplay.setLocale(locale);
 		themeDisplay.setPermissionChecker(
 			PermissionThreadLocal.getPermissionChecker());
 		themeDisplay.setUser(_company.getDefaultUser());
