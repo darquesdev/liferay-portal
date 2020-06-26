@@ -55,13 +55,13 @@ public class AnalyticsReportsDataProvider {
 			String response = _asahFaroBackendClient.doGet(
 				companyId,
 				String.format(
-					"api/1.0/pages/read-counts?endDate=%s&interval=D&" +
-						"startDate=%s&url=%s",
+					"api/1.0/pages/read-counts?canonicalUrl=%s&endDate=%s&" +
+						"interval=D&startDate=%s",
+					HtmlUtil.escapeURL(url),
 					DateTimeFormatter.ISO_DATE.format(
 						timeRange.getEndLocalDate()),
 					DateTimeFormatter.ISO_DATE.format(
-						timeRange.getStartLocalDate()),
-					HtmlUtil.escapeURL(url)));
+						timeRange.getStartLocalDate())));
 
 			return _objectMapper.readValue(response, HistoricalMetric.class);
 		}
@@ -79,13 +79,13 @@ public class AnalyticsReportsDataProvider {
 			String response = _asahFaroBackendClient.doGet(
 				companyId,
 				String.format(
-					"api/1.0/pages/view-counts?endDate=%s&interval=D&" +
-						"startDate=%s&url=%s",
+					"api/1.0/pages/view-counts?canonicalUrl=%s&endDate=%s&" +
+						"interval=D&startDate=%s",
+					HtmlUtil.escapeURL(url),
 					DateTimeFormatter.ISO_DATE.format(
 						timeRange.getEndLocalDate()),
 					DateTimeFormatter.ISO_DATE.format(
-						timeRange.getStartLocalDate()),
-					HtmlUtil.escapeURL(url)));
+						timeRange.getStartLocalDate())));
 
 			return _objectMapper.readValue(response, HistoricalMetric.class);
 		}
@@ -102,7 +102,8 @@ public class AnalyticsReportsDataProvider {
 			long totalReads = GetterUtil.getLong(
 				_asahFaroBackendClient.doGet(
 					companyId,
-					"api/1.0/pages/read-count?url=" + HtmlUtil.escapeURL(url)));
+					"api/1.0/pages/read-count?canonicalUrl=" +
+						HtmlUtil.escapeURL(url)));
 
 			return Math.max(0, totalReads - _getTodayReads(companyId, url));
 		}
@@ -118,7 +119,8 @@ public class AnalyticsReportsDataProvider {
 			long totalViews = GetterUtil.getLong(
 				_asahFaroBackendClient.doGet(
 					companyId,
-					"api/1.0/pages/view-count?url=" + HtmlUtil.escapeURL(url)));
+					"api/1.0/pages/view-count?canonicalUrl=" +
+						HtmlUtil.escapeURL(url)));
 
 			return Math.max(0, totalViews - _getTodayViews(companyId, url));
 		}
