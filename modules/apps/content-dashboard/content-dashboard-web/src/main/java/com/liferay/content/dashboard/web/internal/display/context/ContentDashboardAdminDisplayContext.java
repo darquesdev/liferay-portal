@@ -14,6 +14,8 @@
 
 package com.liferay.content.dashboard.web.internal.display.context;
 
+import static com.liferay.portal.kernel.json.JSONUtil.put;
+
 import com.liferay.content.dashboard.web.internal.configuration.ContentDashboardConfiguration;
 import com.liferay.content.dashboard.web.internal.item.ContentDashboardItem;
 import com.liferay.content.dashboard.web.internal.model.AssetVocabularyMetric;
@@ -25,11 +27,13 @@ import com.liferay.item.selector.criteria.UUIDItemSelectorReturnType;
 import com.liferay.item.selector.criteria.group.criterion.GroupItemSelectorCriterion;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.LanguageConstants;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
@@ -41,6 +45,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 import javax.portlet.PortletURL;
@@ -55,7 +60,8 @@ public class ContentDashboardAdminDisplayContext {
 		ContentDashboardConfiguration contentDashboardConfiguration,
 		ContentDashboardDropdownItemsProvider
 			contentDashboardDropdownItemsProvider,
-		ItemSelector itemSelector, LiferayPortletRequest liferayPortletRequest,
+		ItemSelector itemSelector, String languageDirection,
+		LiferayPortletRequest liferayPortletRequest,
 		LiferayPortletResponse liferayPortletResponse, Portal portal,
 		ResourceBundle resourceBundle,
 		SearchContainer<ContentDashboardItem<?>> searchContainer) {
@@ -65,6 +71,7 @@ public class ContentDashboardAdminDisplayContext {
 		_contentDashboardDropdownItemsProvider =
 			contentDashboardDropdownItemsProvider;
 		_itemSelector = itemSelector;
+		_languageDirection = languageDirection;
 		_liferayPortletRequest = liferayPortletRequest;
 		_liferayPortletResponse = liferayPortletResponse;
 		_portal = portal;
@@ -133,7 +140,11 @@ public class ContentDashboardAdminDisplayContext {
 			return _data;
 		}
 
-		_data = Collections.singletonMap("props", _getProps());
+		_data = HashMapBuilder.<String, Object>put(
+			"context", _getContext()
+		).put(
+			"props", _getProps()
+		).build();
 
 		return _data;
 	}
@@ -200,6 +211,12 @@ public class ContentDashboardAdminDisplayContext {
 		return _contentDashboardConfiguration.auditGraphEnabled();
 	}
 
+	private Map<String, Object> _getContext() {
+		return Collections.singletonMap(
+			"rtl",
+			Objects.equals(LanguageConstants.VALUE_RTL, _languageDirection));
+	}
+
 	private Map<String, Object> _getProps() {
 		return Collections.singletonMap(
 			"vocabularies", _assetVocabularyMetric.toJSONArray());
@@ -212,6 +229,7 @@ public class ContentDashboardAdminDisplayContext {
 		_contentDashboardDropdownItemsProvider;
 	private Map<String, Object> _data;
 	private final ItemSelector _itemSelector;
+	private final String _languageDirection;
 	private final LiferayPortletRequest _liferayPortletRequest;
 	private final LiferayPortletResponse _liferayPortletResponse;
 	private final Portal _portal;
