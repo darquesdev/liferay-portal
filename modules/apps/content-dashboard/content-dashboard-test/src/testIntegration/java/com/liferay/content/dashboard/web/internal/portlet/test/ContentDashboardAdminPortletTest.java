@@ -238,6 +238,39 @@ public class ContentDashboardAdminPortletTest {
 	}
 
 	@Test
+	public void testGetContextWithLtrLanguageDirection() throws Exception {
+		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
+			_getMockLiferayPortletRenderRequest();
+
+		mockLiferayPortletRenderRequest.setAttribute(
+			WebKeys.COMPANY_ID, _company.getCompanyId());
+
+		Map<String, Object> data = _getData(mockLiferayPortletRenderRequest);
+
+		Map<String, Object> context = (Map<String, Object>)data.get("context");
+
+		Assert.assertNotNull(context);
+		Assert.assertFalse((Boolean)context.get("rtl"));
+	}
+
+	@Test
+	public void testGetContextWithRtlLanguageDirection() throws Exception {
+		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
+			_getMockLiferayPortletRenderRequest(
+				LocaleUtil.fromLanguageId("ar_SA"));
+
+		mockLiferayPortletRenderRequest.setAttribute(
+			WebKeys.COMPANY_ID, _company.getCompanyId());
+
+		Map<String, Object> data = _getData(mockLiferayPortletRenderRequest);
+
+		Map<String, Object> context = (Map<String, Object>)data.get("context");
+
+		Assert.assertNotNull(context);
+		Assert.assertTrue((Boolean)context.get("rtl"));
+	}
+
+	@Test
 	public void testGetProps() throws Exception {
 		ServiceContext serviceContext =
 			ServiceContextTestUtil.getServiceContext(
@@ -1021,6 +1054,13 @@ public class ContentDashboardAdminPortletTest {
 			_getMockLiferayPortletRenderRequest()
 		throws Exception {
 
+		return _getMockLiferayPortletRenderRequest(LocaleUtil.US);
+	}
+
+	private MockLiferayPortletRenderRequest _getMockLiferayPortletRenderRequest(
+			Locale locale)
+		throws Exception {
+
 		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
 			new MockLiferayPortletRenderRequest();
 
@@ -1060,7 +1100,7 @@ public class ContentDashboardAdminPortletTest {
 				}));
 
 		mockLiferayPortletRenderRequest.setAttribute(
-			WebKeys.THEME_DISPLAY, _getThemeDisplay());
+			WebKeys.THEME_DISPLAY, _getThemeDisplay(locale));
 
 		return mockLiferayPortletRenderRequest;
 	}
@@ -1081,11 +1121,11 @@ public class ContentDashboardAdminPortletTest {
 			"getSearchContainer", new Class<?>[0]);
 	}
 
-	private ThemeDisplay _getThemeDisplay() throws Exception {
+	private ThemeDisplay _getThemeDisplay(Locale locale) throws Exception {
 		ThemeDisplay themeDisplay = new ThemeDisplay();
 
 		themeDisplay.setCompany(_company);
-		themeDisplay.setLocale(LocaleUtil.US);
+		themeDisplay.setLocale(locale);
 		themeDisplay.setPermissionChecker(
 			PermissionThreadLocal.getPermissionChecker());
 		themeDisplay.setUser(_company.getDefaultUser());
