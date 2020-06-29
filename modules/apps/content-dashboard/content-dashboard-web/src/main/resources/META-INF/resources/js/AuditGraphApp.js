@@ -17,13 +17,15 @@ import React from 'react';
 import AuditBarChart from './components/AuditBarChart';
 import EmptyAuditBarChart from './components/EmptyAuditBarChart';
 
-export default function ({props}) {
+export default function ({context, props}) {
+	const {languageDirection} = context;
 	const {vocabularies} = props;
 
-	const rtl = false;
-
 	return vocabularies.length ? (
-		<AuditBarChart rtl={rtl} vocabularies={vocabularies} />
+		<AuditBarChart
+			rtl={languageDirection === 'rtl'}
+			vocabularies={vocabularies}
+		/>
 	) : (
 		<EmptyAuditBarChart />
 	);
