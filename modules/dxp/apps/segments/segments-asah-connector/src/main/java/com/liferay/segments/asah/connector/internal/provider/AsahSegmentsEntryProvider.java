@@ -23,6 +23,8 @@ import com.liferay.portal.kernel.messaging.DestinationConfiguration;
 import com.liferay.portal.kernel.messaging.DestinationFactory;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageBus;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -143,7 +145,11 @@ public class AsahSegmentsEntryProvider implements SegmentsEntryProvider {
 					"Asah segments cache not found for user ID " + userId);
 			}
 
-			_sendMessage(userId);
+			Group group = _groupLocalService.fetchGroup(groupId);
+
+			if (group != null) {
+				_sendMessage(group.getCompanyId(), userId);
+			}
 
 			return new long[0];
 		}
@@ -172,10 +178,11 @@ public class AsahSegmentsEntryProvider implements SegmentsEntryProvider {
 		_destinationServiceRegistration.unregister();
 	}
 
-	private void _sendMessage(String userId) {
+	private void _sendMessage(long companyId, String userId) {
 		Message message = new Message();
 
-		message.setPayload(userId);
+		message.put("companyId", companyId);
+		message.put("userId", userId);
 
 		_messageBus.sendMessage(
 			SegmentsAsahDestinationNames.INDIVIDUAL_SEGMENTS, message);
@@ -191,6 +198,9 @@ public class AsahSegmentsEntryProvider implements SegmentsEntryProvider {
 	private DestinationFactory _destinationFactory;
 
 	private ServiceRegistration<Destination> _destinationServiceRegistration;
+
+	@Reference
+	private GroupLocalService _groupLocalService;
 
 	@Reference
 	private MessageBus _messageBus;

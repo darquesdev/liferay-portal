@@ -35,14 +35,14 @@ public class IndividualSegmentsMessageListener extends BaseMessageListener {
 
 	@Override
 	protected void doReceive(Message message) throws Exception {
-		String userId = (String)message.getPayload();
+		String userId = message.getString("userId");
 
 		if (Validator.isNull(userId)) {
 			return;
 		}
 
 		_individualSegmentsChecker.checkIndividualSegments(
-			_portal.getDefaultCompanyId(), userId);
+			message.getLong("companyId"), userId);
 	}
 
 	@Reference
