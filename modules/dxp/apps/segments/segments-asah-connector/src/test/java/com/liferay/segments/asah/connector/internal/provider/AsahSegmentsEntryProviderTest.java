@@ -19,6 +19,8 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageBus;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.segments.asah.connector.internal.cache.AsahSegmentsEntryCache;
@@ -52,6 +54,10 @@ public class AsahSegmentsEntryProviderTest {
 		ReflectionTestUtil.setFieldValue(
 			_asahSegmentsEntryProvider, "_asahSegmentsEntryCache",
 			_asahSegmentsEntryCache);
+
+		ReflectionTestUtil.setFieldValue(
+			_asahSegmentsEntryProvider, "_groupLocalService",
+			_groupLocalService);
 
 		ReflectionTestUtil.setFieldValue(
 			_asahSegmentsEntryProvider, "_messageBus", _messageBus);
@@ -181,6 +187,14 @@ public class AsahSegmentsEntryProviderTest {
 
 	@Test
 	public void testGetSegmentsEntryIdsWithUncachedUserSegments() {
+		long groupId = RandomTestUtil.randomLong();
+
+		Mockito.when(
+			_groupLocalService.fetchGroup(groupId)
+		).thenReturn(
+			Mockito.mock(Group.class)
+		);
+
 		String userId = RandomTestUtil.randomString();
 
 		Mockito.when(
@@ -199,7 +213,7 @@ public class AsahSegmentsEntryProviderTest {
 		Assert.assertArrayEquals(
 			new long[0],
 			_asahSegmentsEntryProvider.getSegmentsEntryIds(
-				RandomTestUtil.randomLong(), RandomTestUtil.randomString(),
+				groupId, RandomTestUtil.randomString(),
 				RandomTestUtil.randomLong(), context));
 
 		Mockito.verify(
@@ -227,6 +241,9 @@ public class AsahSegmentsEntryProviderTest {
 
 	private final AsahSegmentsEntryProvider _asahSegmentsEntryProvider =
 		new AsahSegmentsEntryProvider();
+
+	@Mock
+	private GroupLocalService _groupLocalService;
 
 	@Mock
 	private MessageBus _messageBus;
