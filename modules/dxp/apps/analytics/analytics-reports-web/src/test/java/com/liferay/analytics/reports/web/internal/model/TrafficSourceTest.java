@@ -40,7 +40,7 @@ public class TrafficSourceTest {
 	@Test
 	public void testToJSONObject() {
 		TrafficSource trafficSource = new TrafficSource(
-			RandomTestUtil.randomString(), null, RandomTestUtil.randomInt(),
+			RandomTestUtil.randomString(), null, RandomTestUtil.randomLong(),
 			RandomTestUtil.randomDouble());
 
 		String helpMessage = RandomTestUtil.randomString();
@@ -68,15 +68,15 @@ public class TrafficSourceTest {
 		TrafficSource trafficSource = new TrafficSource(
 			RandomTestUtil.randomString(),
 			Arrays.asList(
-				new SearchKeyword("liferay", 1, 3600, 2882),
-				new SearchKeyword("liferay portal", 1, 556, 850),
-				new SearchKeyword("liferay inc", 1, 755, 855),
-				new SearchKeyword("what is liferay", 1, 390, 312),
-				new SearchKeyword("liferay development services", 1, 390, 310),
-				new SearchKeyword("com liferay portal", 1, 50, 40),
-				new SearchKeyword("liferay portal server", 1, 50, 40),
-				new SearchKeyword("liferay india", 1, 390, 312)),
-			RandomTestUtil.randomInt(), RandomTestUtil.randomDouble());
+				new SearchKeyword("liferay", 1, 3600, 2882L),
+				new SearchKeyword("liferay portal", 1, 556, 850L),
+				new SearchKeyword("liferay inc", 1, 755, 855L),
+				new SearchKeyword("what is liferay", 1, 390, 312L),
+				new SearchKeyword("liferay development services", 1, 390, 310L),
+				new SearchKeyword("com liferay portal", 1, 50, 40L),
+				new SearchKeyword("liferay portal server", 1, 50, 40L),
+				new SearchKeyword("liferay india", 1, 390, 312L)),
+			RandomTestUtil.randomLong(), RandomTestUtil.randomDouble());
 
 		String helpMessage = RandomTestUtil.randomString();
 		String title = RandomTestUtil.randomString();
@@ -94,7 +94,7 @@ public class TrafficSourceTest {
 					).put(
 						"searchVolume", 3600
 					).put(
-						"traffic", 2882
+						"traffic", 2882L
 					),
 					JSONUtil.put(
 						"keyword", "liferay inc"
@@ -103,7 +103,7 @@ public class TrafficSourceTest {
 					).put(
 						"searchVolume", 755
 					).put(
-						"traffic", 855
+						"traffic", 855L
 					),
 					JSONUtil.put(
 						"keyword", "liferay portal"
@@ -112,7 +112,7 @@ public class TrafficSourceTest {
 					).put(
 						"searchVolume", 556
 					).put(
-						"traffic", 850
+						"traffic", 850L
 					),
 					JSONUtil.put(
 						"keyword", "what is liferay"
@@ -121,7 +121,7 @@ public class TrafficSourceTest {
 					).put(
 						"searchVolume", 390
 					).put(
-						"traffic", 312
+						"traffic", 312L
 					),
 					JSONUtil.put(
 						"keyword", "liferay india"
@@ -130,7 +130,7 @@ public class TrafficSourceTest {
 					).put(
 						"searchVolume", 390
 					).put(
-						"traffic", 312
+						"traffic", 312L
 					))
 			).put(
 				"name", trafficSource.getName()

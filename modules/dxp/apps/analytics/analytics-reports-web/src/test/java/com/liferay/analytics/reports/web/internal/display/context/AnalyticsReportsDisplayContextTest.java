@@ -89,7 +89,7 @@ public class AnalyticsReportsDisplayContextTest {
 				_getAnalyticsReportsDataProvider(
 					null, RandomTestUtil.randomInt(),
 					RandomTestUtil.randomDouble(), null,
-					RandomTestUtil.randomInt(), RandomTestUtil.randomDouble(),
+					RandomTestUtil.randomLong(), RandomTestUtil.randomDouble(),
 					false),
 				_getAnalyticsReportsItem(), null, null, new PortalImpl(),
 				_getRenderResponse(), _getResourceBundle(),
@@ -122,7 +122,7 @@ public class AnalyticsReportsDisplayContextTest {
 				_getAnalyticsReportsDataProvider(
 					null, RandomTestUtil.randomInt(),
 					RandomTestUtil.randomDouble(), null,
-					RandomTestUtil.randomInt(), RandomTestUtil.randomDouble(),
+					RandomTestUtil.randomLong(), RandomTestUtil.randomDouble(),
 					false),
 				_getAnalyticsReportsItem(), null, null, new PortalImpl(),
 				_getRenderResponse(), _getResourceBundle(),
@@ -137,10 +137,10 @@ public class AnalyticsReportsDisplayContextTest {
 
 	@Test
 	public void testGetPropsWithInvalidAnalyticsConnection() {
-		int organicTrafficAmount = RandomTestUtil.randomInt();
+		long organicTrafficAmount = RandomTestUtil.randomLong();
 		double organicTrafficShare = RandomTestUtil.randomDouble();
 
-		int paidTrafficAmount = RandomTestUtil.randomInt();
+		long paidTrafficAmount = RandomTestUtil.randomLong();
 		double paidTrafficShare = RandomTestUtil.randomDouble();
 
 		AnalyticsReportsDataProvider analyticsReportsDataProvider =
@@ -199,10 +199,10 @@ public class AnalyticsReportsDisplayContextTest {
 
 	@Test
 	public void testGetPropsWithTrafficSourcesDisabled() {
-		int organicTrafficAmount = RandomTestUtil.randomInt();
+		long organicTrafficAmount = RandomTestUtil.randomLong();
 		double organicTrafficShare = RandomTestUtil.randomDouble();
 
-		int paidTrafficAmount = RandomTestUtil.randomInt();
+		long paidTrafficAmount = RandomTestUtil.randomLong();
 		double paidTrafficShare = RandomTestUtil.randomDouble();
 
 		AnalyticsReportsDataProvider analyticsReportsDataProvider =
@@ -234,19 +234,19 @@ public class AnalyticsReportsDisplayContextTest {
 
 	@Test
 	public void testGetPropsWithValidAnalyticsConnection() {
-		int organicTrafficAmount = RandomTestUtil.randomInt();
+		long organicTrafficAmount = RandomTestUtil.randomLong();
 		double organicTrafficShare = RandomTestUtil.randomDouble();
 
-		int paidTrafficAmount = RandomTestUtil.randomInt();
+		long paidTrafficAmount = RandomTestUtil.randomLong();
 		double paidTrafficShare = RandomTestUtil.randomDouble();
 
 		SearchKeyword organicSearchKeyword = new SearchKeyword(
 			RandomTestUtil.randomString(), RandomTestUtil.randomInt(),
-			RandomTestUtil.randomInt(), RandomTestUtil.randomInt());
+			RandomTestUtil.randomInt(), RandomTestUtil.randomLong());
 
 		SearchKeyword paidSearchKeyword = new SearchKeyword(
 			RandomTestUtil.randomString(), RandomTestUtil.randomInt(),
-			RandomTestUtil.randomInt(), RandomTestUtil.randomInt());
+			RandomTestUtil.randomInt(), RandomTestUtil.randomLong());
 
 		AnalyticsReportsDataProvider analyticsReportsDataProvider =
 			_getAnalyticsReportsDataProvider(
@@ -358,9 +358,9 @@ public class AnalyticsReportsDisplayContextTest {
 	}
 
 	private AnalyticsReportsDataProvider _getAnalyticsReportsDataProvider(
-		List<SearchKeyword> organicSearchKeywords, int organicTrafficAmount,
+		List<SearchKeyword> organicSearchKeywords, long organicTrafficAmount,
 		double organicTrafficShare, List<SearchKeyword> paidSearchKeywords,
-		int paidTrafficAmount, double paidTrafficShare,
+		long paidTrafficAmount, double paidTrafficShare,
 		boolean validAnalyticsConnection) {
 
 		return new AnalyticsReportsDataProvider(Mockito.mock(Http.class)) {

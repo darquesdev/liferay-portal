@@ -36,7 +36,7 @@ public class TrafficSource {
 	}
 
 	public TrafficSource(
-		String name, List<SearchKeyword> searchKeywords, int trafficAmount,
+		String name, List<SearchKeyword> searchKeywords, long trafficAmount,
 		double trafficShare) {
 
 		_name = name;
@@ -77,7 +77,7 @@ public class TrafficSource {
 		return _searchKeywords;
 	}
 
-	public int getTrafficAmount() {
+	public long getTrafficAmount() {
 		return _trafficAmount;
 	}
 
@@ -99,7 +99,7 @@ public class TrafficSource {
 		_searchKeywords = searchKeywords;
 	}
 
-	public void setTrafficAmount(int trafficAmount) {
+	public void setTrafficAmount(long trafficAmount) {
 		_trafficAmount = trafficAmount;
 	}
 
@@ -132,7 +132,7 @@ public class TrafficSource {
 
 		Stream<SearchKeyword> stream = _searchKeywords.stream();
 
-		Comparator<SearchKeyword> comparator = Comparator.comparingInt(
+		Comparator<SearchKeyword> comparator = Comparator.comparingLong(
 			SearchKeyword::getTraffic);
 
 		stream.sorted(
@@ -148,7 +148,7 @@ public class TrafficSource {
 
 	private String _name;
 	private List<SearchKeyword> _searchKeywords;
-	private int _trafficAmount;
+	private long _trafficAmount;
 	private double _trafficShare;
 
 }

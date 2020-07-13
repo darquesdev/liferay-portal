@@ -28,7 +28,7 @@ public class SearchKeyword {
 	}
 
 	public SearchKeyword(
-		String keyword, int position, int searchVolume, int traffic) {
+		String keyword, int position, int searchVolume, long traffic) {
 
 		_keyword = keyword;
 		_position = position;
@@ -71,7 +71,7 @@ public class SearchKeyword {
 		return _searchVolume;
 	}
 
-	public int getTraffic() {
+	public long getTraffic() {
 		return _traffic;
 	}
 
@@ -92,7 +92,7 @@ public class SearchKeyword {
 		_searchVolume = searchVolume;
 	}
 
-	public void setTraffic(int traffic) {
+	public void setTraffic(long traffic) {
 		_traffic = traffic;
 	}
 
@@ -111,6 +111,6 @@ public class SearchKeyword {
 	private String _keyword;
 	private int _position;
 	private int _searchVolume;
-	private int _traffic;
+	private long _traffic;
 
 }

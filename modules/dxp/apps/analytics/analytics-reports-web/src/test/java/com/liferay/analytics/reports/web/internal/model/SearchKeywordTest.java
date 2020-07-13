@@ -39,7 +39,7 @@ public class SearchKeywordTest {
 	public void testToJSONObject() {
 		SearchKeyword searchKeyword = new SearchKeyword(
 			RandomTestUtil.randomString(), RandomTestUtil.randomInt(),
-			RandomTestUtil.randomInt(), RandomTestUtil.randomInt());
+			RandomTestUtil.randomInt(), RandomTestUtil.randomLong());
 
 		Assert.assertEquals(
 			JSONUtil.put(

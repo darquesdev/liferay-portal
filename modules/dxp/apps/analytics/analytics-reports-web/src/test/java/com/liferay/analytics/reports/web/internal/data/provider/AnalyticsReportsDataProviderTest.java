@@ -236,10 +236,11 @@ public class AnalyticsReportsDataProviderTest {
 		Assert.assertEquals(
 			trafficSources.toString(), 2, trafficSources.size());
 		Assert.assertEquals(
-			new TrafficSource("organic", null, 3849, 94.25D),
+			new TrafficSource("organic", null, 3849L, 94.25D),
 			trafficSources.get(0));
 		Assert.assertEquals(
-			new TrafficSource("paid", null, 235, 5.75D), trafficSources.get(1));
+			new TrafficSource("paid", null, 235L, 5.75D),
+			trafficSources.get(1));
 	}
 
 	@Test(expected = PortalException.class)
@@ -320,16 +321,16 @@ public class AnalyticsReportsDataProviderTest {
 			new TrafficSource(
 				"organic",
 				Arrays.asList(
-					new SearchKeyword("liferay", 1, 3600, 2880),
-					new SearchKeyword("liferay portal", 1, 390, 312)),
-				3192, 93.93D),
+					new SearchKeyword("liferay", 1, 3600, 2880L),
+					new SearchKeyword("liferay portal", 1, 390, 312L)),
+				3192L, 93.93D),
 			trafficSources.get(0));
 		Assert.assertEquals(
 			new TrafficSource(
 				"paid",
 				Collections.singletonList(
-					new SearchKeyword("dxp enterprises", 1, 4400, 206)),
-				206, 6.07D),
+					new SearchKeyword("dxp enterprises", 1, 4400, 206L)),
+				206L, 6.07D),
 			trafficSources.get(1));
 	}
 
