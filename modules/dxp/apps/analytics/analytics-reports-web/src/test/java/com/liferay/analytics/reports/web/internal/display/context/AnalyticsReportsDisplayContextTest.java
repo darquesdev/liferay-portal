@@ -17,6 +17,7 @@ package com.liferay.analytics.reports.web.internal.display.context;
 import com.liferay.analytics.reports.info.item.AnalyticsReportsInfoItem;
 import com.liferay.analytics.reports.web.internal.configuration.AnalyticsReportsConfiguration;
 import com.liferay.analytics.reports.web.internal.data.provider.AnalyticsReportsDataProvider;
+import com.liferay.analytics.reports.web.internal.model.CountrySearchKeywords;
 import com.liferay.analytics.reports.web.internal.model.SearchKeyword;
 import com.liferay.analytics.reports.web.internal.model.TrafficSource;
 import com.liferay.portal.json.JSONFactoryImpl;
@@ -289,19 +290,28 @@ public class AnalyticsReportsDisplayContextTest {
 		Assert.assertEquals(
 			JSONUtil.putAll(
 				JSONUtil.put(
-					"helpMessage", _titles.get(_MESSAGE_KEY_HELP_PAID)
-				).put(
-					"keywords",
+					"countryKeywords",
 					JSONUtil.putAll(
 						JSONUtil.put(
-							"keyword", paidSearchKeyword.getKeyword()
+							"countryCode", "us"
 						).put(
-							"position", paidSearchKeyword.getPosition()
+							"countryName", "United States"
 						).put(
-							"searchVolume", paidSearchKeyword.getSearchVolume()
-						).put(
-							"traffic", paidSearchKeyword.getTraffic()
+							"keywords",
+							JSONUtil.putAll(
+								JSONUtil.put(
+									"keyword", paidSearchKeyword.getKeyword()
+								).put(
+									"position", paidSearchKeyword.getPosition()
+								).put(
+									"searchVolume",
+									paidSearchKeyword.getSearchVolume()
+								).put(
+									"traffic", paidSearchKeyword.getTraffic()
+								))
 						))
+				).put(
+					"helpMessage", _titles.get(_MESSAGE_KEY_HELP_PAID)
 				).put(
 					"name", _TITLE_KEY_PAID
 				).put(
@@ -312,20 +322,29 @@ public class AnalyticsReportsDisplayContextTest {
 					"value", paidTrafficAmount
 				),
 				JSONUtil.put(
-					"helpMessage", _titles.get(_MESSAGE_KEY_HELP_ORGANIC)
-				).put(
-					"keywords",
+					"countryKeywords",
 					JSONUtil.putAll(
 						JSONUtil.put(
-							"keyword", organicSearchKeyword.getKeyword()
+							"countryCode", "us"
 						).put(
-							"position", organicSearchKeyword.getPosition()
+							"countryName", "United States"
 						).put(
-							"searchVolume",
-							organicSearchKeyword.getSearchVolume()
-						).put(
-							"traffic", organicSearchKeyword.getTraffic()
+							"keywords",
+							JSONUtil.putAll(
+								JSONUtil.put(
+									"keyword", organicSearchKeyword.getKeyword()
+								).put(
+									"position",
+									organicSearchKeyword.getPosition()
+								).put(
+									"searchVolume",
+									organicSearchKeyword.getSearchVolume()
+								).put(
+									"traffic", organicSearchKeyword.getTraffic()
+								))
 						))
+				).put(
+					"helpMessage", _titles.get(_MESSAGE_KEY_HELP_ORGANIC)
 				).put(
 					"name", _TITLE_KEY_ORGANIC
 				).put(
@@ -371,11 +390,16 @@ public class AnalyticsReportsDisplayContextTest {
 
 				return Arrays.asList(
 					new TrafficSource(
-						_TITLE_KEY_ORGANIC, organicSearchKeywords,
-						organicTrafficAmount, organicTrafficShare),
+						Collections.singletonList(
+							new CountrySearchKeywords(
+								"us", organicSearchKeywords)),
+						_TITLE_KEY_ORGANIC, organicTrafficAmount,
+						organicTrafficShare),
 					new TrafficSource(
-						_TITLE_KEY_PAID, paidSearchKeywords, paidTrafficAmount,
-						paidTrafficShare));
+						Collections.singletonList(
+							new CountrySearchKeywords(
+								"us", paidSearchKeywords)),
+						_TITLE_KEY_PAID, paidTrafficAmount, paidTrafficShare));
 			}
 
 			@Override

@@ -18,8 +18,10 @@ import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -40,42 +42,7 @@ public class TrafficSourceTest {
 	@Test
 	public void testToJSONObject() {
 		TrafficSource trafficSource = new TrafficSource(
-			RandomTestUtil.randomString(), null, RandomTestUtil.randomLong(),
-			RandomTestUtil.randomDouble());
-
-		String helpMessage = RandomTestUtil.randomString();
-		String title = RandomTestUtil.randomString();
-
-		Assert.assertEquals(
-			JSONUtil.put(
-				"helpMessage", helpMessage
-			).put(
-				"keywords", JSONFactoryUtil.createJSONArray()
-			).put(
-				"name", trafficSource.getName()
-			).put(
-				"share", trafficSource.getTrafficShare()
-			).put(
-				"title", title
-			).put(
-				"value", trafficSource.getTrafficAmount()
-			).toString(),
-			String.valueOf(trafficSource.toJSONObject(helpMessage, title)));
-	}
-
-	@Test
-	public void testToJSONObjectWithSearchKeywords() {
-		TrafficSource trafficSource = new TrafficSource(
-			RandomTestUtil.randomString(),
-			Arrays.asList(
-				new SearchKeyword("liferay", 1, 3600, 2882L),
-				new SearchKeyword("liferay portal", 1, 556, 850L),
-				new SearchKeyword("liferay inc", 1, 755, 855L),
-				new SearchKeyword("what is liferay", 1, 390, 312L),
-				new SearchKeyword("liferay development services", 1, 390, 310L),
-				new SearchKeyword("com liferay portal", 1, 50, 40L),
-				new SearchKeyword("liferay portal server", 1, 50, 40L),
-				new SearchKeyword("liferay india", 1, 390, 312L)),
+			Collections.emptyList(), RandomTestUtil.randomString(),
 			RandomTestUtil.randomLong(), RandomTestUtil.randomDouble());
 
 		String helpMessage = RandomTestUtil.randomString();
@@ -83,55 +50,9 @@ public class TrafficSourceTest {
 
 		Assert.assertEquals(
 			JSONUtil.put(
-				"helpMessage", helpMessage
+				"countryKeywords", JSONFactoryUtil.createJSONArray()
 			).put(
-				"keywords",
-				JSONUtil.putAll(
-					JSONUtil.put(
-						"keyword", "liferay"
-					).put(
-						"position", 1
-					).put(
-						"searchVolume", 3600
-					).put(
-						"traffic", 2882L
-					),
-					JSONUtil.put(
-						"keyword", "liferay inc"
-					).put(
-						"position", 1
-					).put(
-						"searchVolume", 755
-					).put(
-						"traffic", 855L
-					),
-					JSONUtil.put(
-						"keyword", "liferay portal"
-					).put(
-						"position", 1
-					).put(
-						"searchVolume", 556
-					).put(
-						"traffic", 850L
-					),
-					JSONUtil.put(
-						"keyword", "what is liferay"
-					).put(
-						"position", 1
-					).put(
-						"searchVolume", 390
-					).put(
-						"traffic", 312L
-					),
-					JSONUtil.put(
-						"keyword", "liferay india"
-					).put(
-						"position", 1
-					).put(
-						"searchVolume", 390
-					).put(
-						"traffic", 312L
-					))
+				"helpMessage", helpMessage
 			).put(
 				"name", trafficSource.getName()
 			).put(
@@ -141,7 +62,121 @@ public class TrafficSourceTest {
 			).put(
 				"value", trafficSource.getTrafficAmount()
 			).toString(),
-			String.valueOf(trafficSource.toJSONObject(helpMessage, title)));
+			String.valueOf(
+				trafficSource.toJSONObject(helpMessage, LocaleUtil.US, title)));
+	}
+
+	@Test
+	public void testToJSONObjectWithCountrySearchKeywords() {
+		TrafficSource trafficSource = new TrafficSource(
+			Arrays.asList(
+				new CountrySearchKeywords(
+					"us",
+					Arrays.asList(
+						new SearchKeyword("liferay", 1, 3600, 2882L),
+						new SearchKeyword("liferay inc", 1, 755, 855L),
+						new SearchKeyword("liferay portal", 1, 556, 850L),
+						new SearchKeyword("what is liferay", 1, 390, 312L),
+						new SearchKeyword("liferay india", 1, 390, 312L),
+						new SearchKeyword(
+							"liferay development services", 1, 390, 310L))),
+				new CountrySearchKeywords(
+					"es",
+					Collections.singletonList(
+						new SearchKeyword("liferay portal", 1, 3600, 2882L)))),
+			RandomTestUtil.randomString(), RandomTestUtil.randomLong(),
+			RandomTestUtil.randomDouble());
+
+		String helpMessage = RandomTestUtil.randomString();
+		String title = RandomTestUtil.randomString();
+
+		Assert.assertEquals(
+			JSONUtil.put(
+				"countryKeywords",
+				JSONUtil.putAll(
+					JSONUtil.put(
+						"countryCode", "us"
+					).put(
+						"countryName", "United States"
+					).put(
+						"keywords",
+						JSONUtil.putAll(
+							JSONUtil.put(
+								"keyword", "liferay"
+							).put(
+								"position", 1
+							).put(
+								"searchVolume", 3600
+							).put(
+								"traffic", 2882L
+							),
+							JSONUtil.put(
+								"keyword", "liferay inc"
+							).put(
+								"position", 1
+							).put(
+								"searchVolume", 755
+							).put(
+								"traffic", 855L
+							),
+							JSONUtil.put(
+								"keyword", "liferay portal"
+							).put(
+								"position", 1
+							).put(
+								"searchVolume", 556
+							).put(
+								"traffic", 850L
+							),
+							JSONUtil.put(
+								"keyword", "what is liferay"
+							).put(
+								"position", 1
+							).put(
+								"searchVolume", 390
+							).put(
+								"traffic", 312L
+							),
+							JSONUtil.put(
+								"keyword", "liferay india"
+							).put(
+								"position", 1
+							).put(
+								"searchVolume", 390
+							).put(
+								"traffic", 312L
+							))
+					),
+					JSONUtil.put(
+						"countryCode", "es"
+					).put(
+						"countryName", "Spain"
+					).put(
+						"keywords",
+						JSONUtil.putAll(
+							JSONUtil.put(
+								"keyword", "liferay portal"
+							).put(
+								"position", 1
+							).put(
+								"searchVolume", 3600
+							).put(
+								"traffic", 2882L
+							))
+					))
+			).put(
+				"helpMessage", helpMessage
+			).put(
+				"name", trafficSource.getName()
+			).put(
+				"share", trafficSource.getTrafficShare()
+			).put(
+				"title", title
+			).put(
+				"value", trafficSource.getTrafficAmount()
+			).toString(),
+			String.valueOf(
+				trafficSource.toJSONObject(helpMessage, LocaleUtil.US, title)));
 	}
 
 }

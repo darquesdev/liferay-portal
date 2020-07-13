@@ -14,6 +14,7 @@
 
 package com.liferay.analytics.reports.web.internal.data.provider;
 
+import com.liferay.analytics.reports.web.internal.model.CountrySearchKeywords;
 import com.liferay.analytics.reports.web.internal.model.HistogramMetric;
 import com.liferay.analytics.reports.web.internal.model.HistoricalMetric;
 import com.liferay.analytics.reports.web.internal.model.SearchKeyword;
@@ -216,14 +217,14 @@ public class AnalyticsReportsDataProviderTest {
 							JSONUtil.put(
 								"name", "organic"
 							).put(
-								"trafficAmount", 3849
+								"trafficAmount", 3849L
 							).put(
 								"trafficShare", 94.25D
 							),
 							JSONUtil.put(
 								"name", "paid"
 							).put(
-								"trafficAmount", 235
+								"trafficAmount", 235L
 							).put(
 								"trafficShare", 5.75D
 							)
@@ -236,10 +237,10 @@ public class AnalyticsReportsDataProviderTest {
 		Assert.assertEquals(
 			trafficSources.toString(), 2, trafficSources.size());
 		Assert.assertEquals(
-			new TrafficSource("organic", null, 3849L, 94.25D),
+			new TrafficSource(null, "organic", 3849L, 94.25D),
 			trafficSources.get(0));
 		Assert.assertEquals(
-			new TrafficSource("paid", null, 235L, 5.75D),
+			new TrafficSource(null, "paid", 235L, 5.75D),
 			trafficSources.get(1));
 	}
 
@@ -255,7 +256,9 @@ public class AnalyticsReportsDataProviderTest {
 	}
 
 	@Test
-	public void testGetTrafficSourcesWithSearchKeywords() throws Exception {
+	public void testGetTrafficSourcesWithCountrySearchKeywords()
+		throws Exception {
+
 		AnalyticsReportsDataProvider analyticsReportsDataProvider =
 			new AnalyticsReportsDataProvider(
 				_getHttp(
@@ -263,49 +266,65 @@ public class AnalyticsReportsDataProviderTest {
 						"/traffic-sources",
 						JSONUtil.putAll(
 							JSONUtil.put(
-								"keywords",
+								"countryKeywords",
 								JSONUtil.putAll(
 									JSONUtil.put(
-										"keyword", "liferay"
+										"countryCode", "us"
 									).put(
-										"position", 1
+										"countryName", "United States"
 									).put(
-										"searchVolume", 3600
-									).put(
-										"traffic", 2880
-									),
-									JSONUtil.put(
-										"keyword", "liferay portal"
-									).put(
-										"position", 1
-									).put(
-										"searchVolume", 390
-									).put(
-										"traffic", 312
+										"keywords",
+										JSONUtil.putAll(
+											JSONUtil.put(
+												"keyword", "liferay"
+											).put(
+												"position", 1
+											).put(
+												"searchVolume", 3600
+											).put(
+												"traffic", 2880L
+											),
+											JSONUtil.put(
+												"keyword", "liferay portal"
+											).put(
+												"position", 1
+											).put(
+												"searchVolume", 390
+											).put(
+												"traffic", 312L
+											))
 									))
 							).put(
 								"name", "organic"
 							).put(
-								"trafficAmount", 3192
+								"trafficAmount", 3192L
 							).put(
 								"trafficShare", 93.93D
 							),
 							JSONUtil.put(
-								"keywords",
+								"countryKeywords",
 								JSONUtil.putAll(
 									JSONUtil.put(
-										"keyword", "dxp enterprises"
+										"countryCode", "us"
 									).put(
-										"position", 1
+										"countryName", "United States"
 									).put(
-										"searchVolume", 4400
-									).put(
-										"traffic", 206
+										"keywords",
+										JSONUtil.putAll(
+											JSONUtil.put(
+												"keyword", "dxp enterprises"
+											).put(
+												"position", 1
+											).put(
+												"searchVolume", 4400
+											).put(
+												"traffic", 206L
+											))
 									))
 							).put(
 								"name", "paid"
 							).put(
-								"trafficAmount", 206
+								"trafficAmount", 206L
 							).put(
 								"trafficShare", 6.07D
 							)
@@ -319,18 +338,24 @@ public class AnalyticsReportsDataProviderTest {
 			trafficSources.toString(), 2, trafficSources.size());
 		Assert.assertEquals(
 			new TrafficSource(
-				"organic",
-				Arrays.asList(
-					new SearchKeyword("liferay", 1, 3600, 2880L),
-					new SearchKeyword("liferay portal", 1, 390, 312L)),
-				3192L, 93.93D),
+				Collections.singletonList(
+					new CountrySearchKeywords(
+						"us",
+						Arrays.asList(
+							new SearchKeyword("liferay", 1, 3600, 2880L),
+							new SearchKeyword(
+								"liferay portal", 1, 390, 312L)))),
+				"organic", 3192L, 93.93D),
 			trafficSources.get(0));
 		Assert.assertEquals(
 			new TrafficSource(
-				"paid",
 				Collections.singletonList(
-					new SearchKeyword("dxp enterprises", 1, 4400, 206L)),
-				206L, 6.07D),
+					new CountrySearchKeywords(
+						"us",
+						Collections.singletonList(
+							new SearchKeyword(
+								"dxp enterprises", 1, 4400, 206L)))),
+				"paid", 206L, 6.07D),
 			trafficSources.get(1));
 	}
 
