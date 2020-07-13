@@ -296,7 +296,8 @@ public class AnalyticsReportsDisplayContext {
 					).findFirst(
 					).map(
 						trafficSource -> trafficSource.toJSONObject(
-							helpMessageMap.get(name), title)
+							helpMessageMap.get(name), _themeDisplay.getLocale(),
+							title)
 					).orElse(
 						JSONUtil.put(
 							"helpMessage", helpMessageMap.get(name)
