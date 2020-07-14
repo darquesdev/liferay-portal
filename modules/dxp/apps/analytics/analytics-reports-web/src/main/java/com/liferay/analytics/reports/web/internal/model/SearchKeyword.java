@@ -104,7 +104,7 @@ public class SearchKeyword {
 		).put(
 			"searchVolume", getSearchVolume()
 		).put(
-			"traffic", getTraffic()
+			"traffic", (int)getTraffic()
 		);
 	}
 
