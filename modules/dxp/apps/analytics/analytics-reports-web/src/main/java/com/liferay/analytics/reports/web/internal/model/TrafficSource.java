@@ -125,7 +125,7 @@ public class TrafficSource {
 		).put(
 			"title", title
 		).put(
-			"value", getTrafficAmount()
+			"value", Math.toIntExact(getTrafficAmount())
 		);
 	}
 
