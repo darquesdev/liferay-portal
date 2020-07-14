@@ -307,7 +307,8 @@ public class AnalyticsReportsDisplayContextTest {
 									"searchVolume",
 									paidSearchKeyword.getSearchVolume()
 								).put(
-									"traffic", paidSearchKeyword.getTraffic()
+									"traffic",
+									(int)paidSearchKeyword.getTraffic()
 								))
 						))
 				).put(
@@ -319,7 +320,7 @@ public class AnalyticsReportsDisplayContextTest {
 				).put(
 					"title", _titles.get(_TITLE_KEY_PAID)
 				).put(
-					"value", paidTrafficAmount
+					"value", (int)paidTrafficAmount
 				),
 				JSONUtil.put(
 					"countryKeywords",
@@ -340,7 +341,8 @@ public class AnalyticsReportsDisplayContextTest {
 									"searchVolume",
 									organicSearchKeyword.getSearchVolume()
 								).put(
-									"traffic", organicSearchKeyword.getTraffic()
+									"traffic",
+									(int)organicSearchKeyword.getTraffic()
 								))
 						))
 				).put(
@@ -352,7 +354,7 @@ public class AnalyticsReportsDisplayContextTest {
 				).put(
 					"title", _titles.get(_TITLE_KEY_ORGANIC)
 				).put(
-					"value", organicTrafficAmount
+					"value", (int)organicTrafficAmount
 				)
 			).toJSONString(),
 			trafficSourcesJSONArray.toJSONString());

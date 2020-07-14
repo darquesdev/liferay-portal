@@ -49,7 +49,7 @@ public class SearchKeywordTest {
 			).put(
 				"searchVolume", searchKeyword.getSearchVolume()
 			).put(
-				"traffic", searchKeyword.getTraffic()
+				"traffic", (int)searchKeyword.getTraffic()
 			).toString(),
 			String.valueOf(searchKeyword.toJSONObject()));
 	}

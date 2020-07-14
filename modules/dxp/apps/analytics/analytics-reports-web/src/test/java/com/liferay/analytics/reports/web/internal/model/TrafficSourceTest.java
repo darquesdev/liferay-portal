@@ -60,7 +60,7 @@ public class TrafficSourceTest {
 			).put(
 				"title", title
 			).put(
-				"value", trafficSource.getTrafficAmount()
+				"value", (int)trafficSource.getTrafficAmount()
 			).toString(),
 			String.valueOf(
 				trafficSource.toJSONObject(helpMessage, LocaleUtil.US, title)));
@@ -108,7 +108,7 @@ public class TrafficSourceTest {
 							).put(
 								"searchVolume", 3600
 							).put(
-								"traffic", 2882L
+								"traffic", 2882
 							),
 							JSONUtil.put(
 								"keyword", "liferay inc"
@@ -117,7 +117,7 @@ public class TrafficSourceTest {
 							).put(
 								"searchVolume", 755
 							).put(
-								"traffic", 855L
+								"traffic", 855
 							),
 							JSONUtil.put(
 								"keyword", "liferay portal"
@@ -126,7 +126,7 @@ public class TrafficSourceTest {
 							).put(
 								"searchVolume", 556
 							).put(
-								"traffic", 850L
+								"traffic", 850
 							),
 							JSONUtil.put(
 								"keyword", "what is liferay"
@@ -135,7 +135,7 @@ public class TrafficSourceTest {
 							).put(
 								"searchVolume", 390
 							).put(
-								"traffic", 312L
+								"traffic", 312
 							),
 							JSONUtil.put(
 								"keyword", "liferay india"
@@ -144,7 +144,7 @@ public class TrafficSourceTest {
 							).put(
 								"searchVolume", 390
 							).put(
-								"traffic", 312L
+								"traffic", 312
 							))
 					),
 					JSONUtil.put(
@@ -161,7 +161,7 @@ public class TrafficSourceTest {
 							).put(
 								"searchVolume", 3600
 							).put(
-								"traffic", 2882L
+								"traffic", 2882
 							))
 					))
 			).put(
@@ -173,7 +173,7 @@ public class TrafficSourceTest {
 			).put(
 				"title", title
 			).put(
-				"value", trafficSource.getTrafficAmount()
+				"value", (int)trafficSource.getTrafficAmount()
 			).toString(),
 			String.valueOf(
 				trafficSource.toJSONObject(helpMessage, LocaleUtil.US, title)));
