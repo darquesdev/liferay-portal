@@ -39,7 +39,7 @@ public class SearchKeywordTest {
 	public void testToJSONObject() {
 		SearchKeyword searchKeyword = new SearchKeyword(
 			RandomTestUtil.randomString(), RandomTestUtil.randomInt(),
-			RandomTestUtil.randomInt(), RandomTestUtil.randomLong());
+			RandomTestUtil.randomInt(), RandomTestUtil.randomInt());
 
 		Assert.assertEquals(
 			JSONUtil.put(
@@ -49,9 +49,18 @@ public class SearchKeywordTest {
 			).put(
 				"searchVolume", searchKeyword.getSearchVolume()
 			).put(
-				"traffic", searchKeyword.getTraffic()
+				"traffic", Math.toIntExact(searchKeyword.getTraffic())
 			).toString(),
 			String.valueOf(searchKeyword.toJSONObject()));
+	}
+
+	@Test(expected = ArithmeticException.class)
+	public void testToJSONObjectWithLongTraffic() {
+		SearchKeyword searchKeyword = new SearchKeyword(
+			RandomTestUtil.randomString(), RandomTestUtil.randomInt(),
+			RandomTestUtil.randomInt(), Long.MAX_VALUE);
+
+		searchKeyword.toJSONObject();
 	}
 
 }

@@ -90,7 +90,7 @@ public class AnalyticsReportsDisplayContextTest {
 				_getAnalyticsReportsDataProvider(
 					null, RandomTestUtil.randomInt(),
 					RandomTestUtil.randomDouble(), null,
-					RandomTestUtil.randomLong(), RandomTestUtil.randomDouble(),
+					RandomTestUtil.randomInt(), RandomTestUtil.randomDouble(),
 					false),
 				_getAnalyticsReportsItem(), null, null, new PortalImpl(),
 				_getRenderResponse(), _getResourceBundle(),
@@ -123,7 +123,7 @@ public class AnalyticsReportsDisplayContextTest {
 				_getAnalyticsReportsDataProvider(
 					null, RandomTestUtil.randomInt(),
 					RandomTestUtil.randomDouble(), null,
-					RandomTestUtil.randomLong(), RandomTestUtil.randomDouble(),
+					RandomTestUtil.randomInt(), RandomTestUtil.randomDouble(),
 					false),
 				_getAnalyticsReportsItem(), null, null, new PortalImpl(),
 				_getRenderResponse(), _getResourceBundle(),
@@ -138,10 +138,10 @@ public class AnalyticsReportsDisplayContextTest {
 
 	@Test
 	public void testGetPropsWithInvalidAnalyticsConnection() {
-		long organicTrafficAmount = RandomTestUtil.randomLong();
+		long organicTrafficAmount = RandomTestUtil.randomInt();
 		double organicTrafficShare = RandomTestUtil.randomDouble();
 
-		long paidTrafficAmount = RandomTestUtil.randomLong();
+		long paidTrafficAmount = RandomTestUtil.randomInt();
 		double paidTrafficShare = RandomTestUtil.randomDouble();
 
 		AnalyticsReportsDataProvider analyticsReportsDataProvider =
@@ -200,10 +200,10 @@ public class AnalyticsReportsDisplayContextTest {
 
 	@Test
 	public void testGetPropsWithTrafficSourcesDisabled() {
-		long organicTrafficAmount = RandomTestUtil.randomLong();
+		long organicTrafficAmount = RandomTestUtil.randomInt();
 		double organicTrafficShare = RandomTestUtil.randomDouble();
 
-		long paidTrafficAmount = RandomTestUtil.randomLong();
+		long paidTrafficAmount = RandomTestUtil.randomInt();
 		double paidTrafficShare = RandomTestUtil.randomDouble();
 
 		AnalyticsReportsDataProvider analyticsReportsDataProvider =
@@ -235,19 +235,19 @@ public class AnalyticsReportsDisplayContextTest {
 
 	@Test
 	public void testGetPropsWithValidAnalyticsConnection() {
-		long organicTrafficAmount = RandomTestUtil.randomLong();
+		long organicTrafficAmount = RandomTestUtil.randomInt();
 		double organicTrafficShare = RandomTestUtil.randomDouble();
 
-		long paidTrafficAmount = RandomTestUtil.randomLong();
+		long paidTrafficAmount = RandomTestUtil.randomInt();
 		double paidTrafficShare = RandomTestUtil.randomDouble();
 
 		SearchKeyword organicSearchKeyword = new SearchKeyword(
 			RandomTestUtil.randomString(), RandomTestUtil.randomInt(),
-			RandomTestUtil.randomInt(), RandomTestUtil.randomLong());
+			RandomTestUtil.randomInt(), RandomTestUtil.randomInt());
 
 		SearchKeyword paidSearchKeyword = new SearchKeyword(
 			RandomTestUtil.randomString(), RandomTestUtil.randomInt(),
-			RandomTestUtil.randomInt(), RandomTestUtil.randomLong());
+			RandomTestUtil.randomInt(), RandomTestUtil.randomInt());
 
 		AnalyticsReportsDataProvider analyticsReportsDataProvider =
 			_getAnalyticsReportsDataProvider(
@@ -307,7 +307,9 @@ public class AnalyticsReportsDisplayContextTest {
 									"searchVolume",
 									paidSearchKeyword.getSearchVolume()
 								).put(
-									"traffic", paidSearchKeyword.getTraffic()
+									"traffic",
+									Math.toIntExact(
+										paidSearchKeyword.getTraffic())
 								))
 						))
 				).put(
@@ -319,7 +321,7 @@ public class AnalyticsReportsDisplayContextTest {
 				).put(
 					"title", _titles.get(_TITLE_KEY_PAID)
 				).put(
-					"value", paidTrafficAmount
+					"value", Math.toIntExact(paidTrafficAmount)
 				),
 				JSONUtil.put(
 					"countryKeywords",
@@ -340,7 +342,9 @@ public class AnalyticsReportsDisplayContextTest {
 									"searchVolume",
 									organicSearchKeyword.getSearchVolume()
 								).put(
-									"traffic", organicSearchKeyword.getTraffic()
+									"traffic",
+									Math.toIntExact(
+										organicSearchKeyword.getTraffic())
 								))
 						))
 				).put(
@@ -352,7 +356,7 @@ public class AnalyticsReportsDisplayContextTest {
 				).put(
 					"title", _titles.get(_TITLE_KEY_ORGANIC)
 				).put(
-					"value", organicTrafficAmount
+					"value", Math.toIntExact(organicTrafficAmount)
 				)
 			).toJSONString(),
 			trafficSourcesJSONArray.toJSONString());
