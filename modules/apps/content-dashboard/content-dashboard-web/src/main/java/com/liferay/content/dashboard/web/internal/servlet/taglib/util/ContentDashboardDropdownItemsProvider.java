@@ -136,7 +136,12 @@ public class ContentDashboardDropdownItemsProvider {
 
 				DropdownItem dropdownItem = new DropdownItem();
 
-				dropdownItem.putData("action", "showMetrics");
+				dropdownItem.setData(
+					HashMapBuilder.<String, Object>put(
+						"action", "showMetrics"
+					).put(
+						"fetchURL", "temp"
+					).build());
 				dropdownItem.setLabel(_language.get(locale, "metrics"));
 
 				return dropdownItem;
