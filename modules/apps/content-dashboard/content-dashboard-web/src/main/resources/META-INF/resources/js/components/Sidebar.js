@@ -12,6 +12,7 @@
  * details.
  */
 
+import {useTimeout} from 'frontend-js-react-web';
 import {ClayButtonWithIcon} from '@clayui/button';
 import ClayLayout from '@clayui/layout';
 import classNames from 'classnames';
@@ -57,16 +58,18 @@ const SidebarHeader = ({children, subtitle, title}) => {
 const Sidebar = ({children, onClose = noop, open = true}) => {
 	const [isOpen, setIsOpen] = useState(false);
 
+	const delay = useTimeout();
+
 	// Wait until the component is rendered to show it so animation happens
 
 	useEffect(() => {
 		if (open !== false) {
-			setTimeout(() => setIsOpen(true), 100);
+			delay(() => setIsOpen(true), 100);
 		}
 		else {
 			setIsOpen(false);
 		}
-	}, [open]);
+	}, [delay, open]);
 
 	return (
 		<div
