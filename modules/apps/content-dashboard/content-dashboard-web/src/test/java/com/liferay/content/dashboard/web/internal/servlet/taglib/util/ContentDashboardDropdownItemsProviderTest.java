@@ -14,6 +14,7 @@
 
 package com.liferay.content.dashboard.web.internal.servlet.taglib.util;
 
+import com.liferay.content.dashboard.item.action.ContentDashboardItemActionTracker;
 import com.liferay.content.dashboard.web.internal.item.ContentDashboardItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.petra.string.StringPool;
@@ -96,7 +97,8 @@ public class ContentDashboardDropdownItemsProviderTest {
 		ContentDashboardDropdownItemsProvider
 			contentDashboardDropdownItemsProvider =
 				new ContentDashboardDropdownItemsProvider(
-					_http, _language, mockLiferayPortletRenderRequest,
+					_getContentDashboardItemActionTracker(), _http, _language,
+					mockLiferayPortletRenderRequest,
 					new MockLiferayPortletRenderResponse(), new PortalImpl());
 
 		ContentDashboardItem contentDashboardItem = Mockito.mock(
@@ -150,7 +152,8 @@ public class ContentDashboardDropdownItemsProviderTest {
 		ContentDashboardDropdownItemsProvider
 			contentDashboardDropdownItemsProvider =
 				new ContentDashboardDropdownItemsProvider(
-					_http, _language, mockLiferayPortletRenderRequest,
+					_getContentDashboardItemActionTracker(), _http, _language,
+					mockLiferayPortletRenderRequest,
 					new MockLiferayPortletRenderResponse(), new PortalImpl());
 
 		ContentDashboardItem contentDashboardItem = Mockito.mock(
@@ -206,7 +209,8 @@ public class ContentDashboardDropdownItemsProviderTest {
 		ContentDashboardDropdownItemsProvider
 			contentDashboardDropdownItemsProvider =
 				new ContentDashboardDropdownItemsProvider(
-					_http, _language, mockLiferayPortletRenderRequest,
+					_getContentDashboardItemActionTracker(), _http, _language,
+					mockLiferayPortletRenderRequest,
 					new MockLiferayPortletRenderResponse(), new PortalImpl());
 
 		ContentDashboardItem contentDashboardItem = Mockito.mock(
@@ -264,7 +268,8 @@ public class ContentDashboardDropdownItemsProviderTest {
 		ContentDashboardDropdownItemsProvider
 			contentDashboardDropdownItemsProvider =
 				new ContentDashboardDropdownItemsProvider(
-					_http, _language, mockLiferayPortletRenderRequest,
+					_getContentDashboardItemActionTracker(), _http, _language,
+					mockLiferayPortletRenderRequest,
 					new MockLiferayPortletRenderResponse(), new PortalImpl());
 
 		ContentDashboardItem contentDashboardItem = Mockito.mock(
@@ -301,6 +306,13 @@ public class ContentDashboardDropdownItemsProviderTest {
 		Assert.assertEquals(
 			"validURL",
 			_http.getPath(String.valueOf(viewDropdownItem.get("href"))));
+	}
+
+	private ContentDashboardItemActionTracker
+		_getContentDashboardItemActionTracker() {
+
+		return (className, classPK, httpServletRequest, locale) ->
+			Collections.emptyList();
 	}
 
 	private static Http _http;
