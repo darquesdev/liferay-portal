@@ -14,21 +14,14 @@
 
 package com.liferay.content.dashboard.web.internal.item.action;
 
-import com.liferay.content.dashboard.item.action.ContentDashboardItemAction;
 import com.liferay.content.dashboard.item.action.ContentDashboardItemActionProvider;
 import com.liferay.content.dashboard.item.action.ContentDashboardItemActionTracker;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -43,30 +36,14 @@ public class ContentDashboardItemActionTrackerImpl
 	implements ContentDashboardItemActionTracker {
 
 	@Override
-	public List<ContentDashboardItemAction> getContentDashboardItemActions(
-		String className, long classPK, HttpServletRequest httpServletRequest,
-		Locale locale) {
+	public <T> List<ContentDashboardItemActionProvider<T>>
+		getContentDashboardItemActionProviders(String className) {
 
-		Collection<ContentDashboardItemActionProvider>
+		Map<String, ContentDashboardItemActionProvider<?>>
 			contentDashboardItemActionProviders =
-				_contentDashboardItemActionProviders.values();
+				_contentDashboardItemActionProvidersMap.get(className);
 
-		Stream<ContentDashboardItemActionProvider> stream =
-			contentDashboardItemActionProviders.stream();
-
-		return stream.map(
-			contentDashboardItemActionProvider ->
-				contentDashboardItemActionProvider.
-					getContentDashboardItemAction(
-						className, classPK, httpServletRequest, locale)
-		).filter(
-			Optional::isPresent
-		).map(
-			Optional::get
-		).collect(
-			Collectors.collectingAndThen(
-				Collectors.toList(), Collections::unmodifiableList)
-		);
+		return new ArrayList(contentDashboardItemActionProviders.values());
 	}
 
 	@Reference(
@@ -74,21 +51,53 @@ public class ContentDashboardItemActionTrackerImpl
 		policy = ReferencePolicy.DYNAMIC
 	)
 	protected void setContentDashboardItemActionProvider(
-		ContentDashboardItemActionProvider contentDashboardItemActionProvider) {
+		ContentDashboardItemActionProvider<?>
+			contentDashboardItemActionProvider,
+		Map<String, Object> properties) {
 
-		_contentDashboardItemActionProviders.put(
+		String className = (String)properties.get("model.class.name");
+
+		Map<String, ContentDashboardItemActionProvider<?>>
+			contentDashboardItemActionProviders =
+				_contentDashboardItemActionProvidersMap.get(className);
+
+		if (contentDashboardItemActionProviders == null) {
+			contentDashboardItemActionProviders = new HashMap<>();
+		}
+
+		contentDashboardItemActionProviders.put(
 			contentDashboardItemActionProvider.getKey(),
 			contentDashboardItemActionProvider);
+
+		_contentDashboardItemActionProvidersMap.put(
+			className, contentDashboardItemActionProviders);
 	}
 
 	protected void unsetContentDashboardItemActionProvider(
-		ContentDashboardItemActionProvider contentDashboardItemActionProvider) {
+		ContentDashboardItemActionProvider<?>
+			contentDashboardItemActionProvider,
+		Map<String, Object> properties) {
 
-		_contentDashboardItemActionProviders.remove(
+		String className = (String)properties.get("model.class.name");
+
+		Map<String, ContentDashboardItemActionProvider<?>>
+			contentDashboardItemActionProviders =
+				_contentDashboardItemActionProvidersMap.get(className);
+
+		if (contentDashboardItemActionProviders == null) {
+			return;
+		}
+
+		contentDashboardItemActionProviders.remove(
 			contentDashboardItemActionProvider.getKey());
+
+		if (contentDashboardItemActionProviders.isEmpty()) {
+			_contentDashboardItemActionProvidersMap.remove(className);
+		}
 	}
 
-	private final Map<String, ContentDashboardItemActionProvider>
-		_contentDashboardItemActionProviders = new ConcurrentHashMap<>();
+	private final Map
+		<String, Map<String, ContentDashboardItemActionProvider<?>>>
+			_contentDashboardItemActionProvidersMap = new ConcurrentHashMap<>();
 
 }
