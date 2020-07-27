@@ -128,8 +128,8 @@ public class ContentDashboardAdminPortlet extends MVCPortlet {
 					contentDashboardDataProvider.getAssetVocabularyMetric(
 						assetVocabularies),
 					new ContentDashboardDropdownItemsProvider(
-						_contentDashboardItemActionTracker, _http, _language,
-						liferayPortletRequest, liferayPortletResponse, _portal),
+						_http, _language, liferayPortletRequest,
+						liferayPortletResponse, _portal),
 					_contentDashboardItemTypeFactoryTracker, _itemSelector,
 					_language.get(
 						_portal.getLocale(liferayPortletRequest),
@@ -171,10 +171,6 @@ public class ContentDashboardAdminPortlet extends MVCPortlet {
 
 	@Reference
 	private AssetVocabularyLocalService _assetVocabularyLocalService;
-
-	@Reference
-	private ContentDashboardItemActionTracker
-		_contentDashboardItemActionTracker;
 
 	@Reference
 	private ContentDashboardItemFactoryTracker
