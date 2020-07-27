@@ -120,11 +120,11 @@ public class ContentDashboardDropdownItemsProvider {
 					HashMapBuilder.<String, Object>put(
 						"action", "showInfo"
 					).put(
+						"actionURL", String.valueOf(resourceURL)
+					).put(
 						"className", contentDashboardItem.getClassName()
 					).put(
 						"classPK", contentDashboardItem.getClassPK()
-					).put(
-						"fetchURL", String.valueOf(resourceURL)
 					).build());
 
 				dropdownItem.setLabel(_language.get(locale, "info"));
@@ -172,7 +172,6 @@ public class ContentDashboardDropdownItemsProvider {
 				"actionURL", contentDashboardItemAction.getUrl()
 			).build());
 
-		dropdownItem.setHref(contentDashboardItemAction.getUrl());
 		dropdownItem.setLabel(contentDashboardItemAction.getLabel());
 
 		return dropdownItem;
