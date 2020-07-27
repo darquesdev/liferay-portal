@@ -31,20 +31,26 @@ public class ContentDashboardItemActionTest {
 		String url = RandomTestUtil.randomString();
 
 		ContentDashboardItemAction contentDashboardItemAction =
-			new ContentDashboardItemAction(label, name, url);
+			new ContentDashboardItemAction(
+				label, name, ContentDashboardItemAction.Type.VIEW_EMBEDDED,
+				url);
 
 		Assert.assertEquals(label, contentDashboardItemAction.getLabel());
 		Assert.assertEquals(name, contentDashboardItemAction.getName());
+		Assert.assertEquals(
+			ContentDashboardItemAction.Type.VIEW_EMBEDDED,
+			contentDashboardItemAction.getType());
 		Assert.assertEquals(url, contentDashboardItemAction.getUrl());
 	}
 
 	@Test
 	public void testCreationWithNullProperties() {
 		ContentDashboardItemAction contentDashboardItemAction =
-			new ContentDashboardItemAction(null, null, null);
+			new ContentDashboardItemAction(null, null, null, null);
 
 		Assert.assertNull(contentDashboardItemAction.getLabel());
 		Assert.assertNull(contentDashboardItemAction.getName());
+		Assert.assertNull(contentDashboardItemAction.getType());
 		Assert.assertNull(contentDashboardItemAction.getUrl());
 	}
 

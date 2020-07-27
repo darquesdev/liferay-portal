@@ -19,9 +19,12 @@ package com.liferay.content.dashboard.item.action;
  */
 public class ContentDashboardItemAction {
 
-	public ContentDashboardItemAction(String label, String name, String url) {
+	public ContentDashboardItemAction(
+		String label, String name, Type type, String url) {
+
 		_label = label;
 		_name = name;
+		_type = type;
 		_url = url;
 	}
 
@@ -33,12 +36,23 @@ public class ContentDashboardItemAction {
 		return _name;
 	}
 
+	public Type getType() {
+		return _type;
+	}
+
 	public String getUrl() {
 		return _url;
 	}
 
+	public enum Type {
+
+		VIEW_EMBEDDED
+
+	}
+
 	private final String _label;
 	private final String _name;
+	private final Type _type;
 	private final String _url;
 
 }

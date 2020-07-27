@@ -14,14 +14,13 @@
 
 package com.liferay.content.dashboard.item.action;
 
-import java.util.List;
-
 /**
  * @author David Arques
  */
-public interface ContentDashboardItemActionTracker {
+public class ContentDashboardItemActionProviderException extends Exception {
 
-	public <T> List<ContentDashboardItemActionProvider<T>>
-		getContentDashboardItemActionProviders(String className);
+	public ContentDashboardItemActionProviderException(Throwable cause) {
+		super(cause);
+	}
 
 }

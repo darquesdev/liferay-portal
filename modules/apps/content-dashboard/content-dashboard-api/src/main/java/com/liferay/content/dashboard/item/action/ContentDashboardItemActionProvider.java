@@ -14,19 +14,16 @@
 
 package com.liferay.content.dashboard.item.action;
 
-import java.util.Locale;
-import java.util.Optional;
-
 import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author David Arques
  */
-public interface ContentDashboardItemActionProvider {
+public interface ContentDashboardItemActionProvider<T> {
 
-	public Optional<ContentDashboardItemAction> getContentDashboardItemAction(
-		String className, long classPK, HttpServletRequest httpServletRequest,
-		Locale locale);
+	public ContentDashboardItemAction getContentDashboardItemAction(
+			T t, HttpServletRequest httpServletRequest)
+		throws ContentDashboardItemActionProviderException;
 
 	public String getKey();
 
