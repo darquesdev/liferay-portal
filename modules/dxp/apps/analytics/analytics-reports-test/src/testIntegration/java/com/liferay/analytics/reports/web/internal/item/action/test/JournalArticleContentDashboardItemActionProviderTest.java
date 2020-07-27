@@ -30,15 +30,12 @@ import com.liferay.journal.test.util.JournalTestUtil;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
-import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
-import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
-import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -58,8 +55,6 @@ import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 
-import java.util.Optional;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.Assert;
@@ -75,7 +70,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
  * @author Cristina González
  */
 @RunWith(Arquillian.class)
-public class AnalyticsReportsContentDashboardItemActionProviderTest {
+public class JournalArticleContentDashboardItemActionProviderTest {
 
 	@ClassRule
 	@Rule
@@ -118,18 +113,10 @@ public class AnalyticsReportsContentDashboardItemActionProviderTest {
 
 	@Test
 	public void testGetContentDashboardItemAction() throws Exception {
-		Optional<ContentDashboardItemAction>
-			contentDashboardItemActionOptional =
-				_contentDashboardItemActionProvider.
-					getContentDashboardItemAction(
-						JournalArticle.class.getName(),
-						_journalArticle.getResourcePrimKey(),
-						_getHttpServletRequest(TestPropsValues.getUser()),
-						LocaleUtil.US);
-
-		Assert.assertTrue(contentDashboardItemActionOptional.isPresent());
 		ContentDashboardItemAction contentDashboardItemAction =
-			contentDashboardItemActionOptional.get();
+			_contentDashboardItemActionProvider.getContentDashboardItemAction(
+				_journalArticle,
+				_getHttpServletRequest(TestPropsValues.getUser()));
 
 		Assert.assertEquals(
 			"View Metrics", contentDashboardItemAction.getLabel());
@@ -144,13 +131,10 @@ public class AnalyticsReportsContentDashboardItemActionProviderTest {
 		User user = UserTestUtil.addUser();
 
 		try {
-			Assert.assertEquals(
-				Optional.empty(),
+			Assert.assertNull(
 				_contentDashboardItemActionProvider.
 					getContentDashboardItemAction(
-						JournalArticle.class.getName(),
-						_journalArticle.getResourcePrimKey(),
-						_getHttpServletRequest(user), LocaleUtil.US));
+						_journalArticle, _getHttpServletRequest(user)));
 		}
 		finally {
 			_userLocalService.deleteUser(user);
@@ -213,7 +197,6 @@ public class AnalyticsReportsContentDashboardItemActionProviderTest {
 		return themeDisplay;
 	}
 
-
 	@Inject
 	private AssetDisplayPageEntryLocalService
 		_assetDisplayPageEntryLocalService;
@@ -225,9 +208,9 @@ public class AnalyticsReportsContentDashboardItemActionProviderTest {
 	private CompanyLocalService _companyLocalService;
 
 	@Inject(
-		filter = "component.name=com.liferay.analytics.reports.web.internal.item.action.AnalyticsReportsContentDashboardItemActionProvider"
+		filter = "component.name=com.liferay.content.dashboard.item.action.JournalArticleContentDashboardItemActionProvider"
 	)
-	private ContentDashboardItemActionProvider
+	private ContentDashboardItemActionProvider<JournalArticle>
 		_contentDashboardItemActionProvider;
 
 	@DeleteAfterTestRun
