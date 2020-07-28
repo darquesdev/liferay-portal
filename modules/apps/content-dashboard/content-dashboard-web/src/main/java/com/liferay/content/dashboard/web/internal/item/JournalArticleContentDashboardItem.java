@@ -17,6 +17,10 @@ package com.liferay.content.dashboard.web.internal.item;
 import com.liferay.asset.display.page.portlet.AssetDisplayPageFriendlyURLProvider;
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetTag;
+import com.liferay.content.dashboard.item.action.ContentDashboardItemAction;
+import com.liferay.content.dashboard.item.action.ContentDashboardItemActionException;
+import com.liferay.content.dashboard.item.action.ContentDashboardItemActionProvider;
+import com.liferay.content.dashboard.web.internal.item.action.ContentDashboardItemActionTracker;
 import com.liferay.content.dashboard.web.internal.item.type.ContentDashboardItemType;
 import com.liferay.info.display.url.provider.InfoEditURLProvider;
 import com.liferay.journal.model.JournalArticle;
@@ -44,6 +48,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -59,6 +64,7 @@ public class JournalArticleContentDashboardItem
 	public JournalArticleContentDashboardItem(
 		List<AssetCategory> assetCategories, List<AssetTag> assetTags,
 		AssetDisplayPageFriendlyURLProvider assetDisplayPageFriendlyURLProvider,
+		ContentDashboardItemActionTracker contentDashboardItemActionTracker,
 		ContentDashboardItemType contentDashboardItemType, Group group,
 		InfoEditURLProvider<JournalArticle> infoEditURLProvider,
 		JournalArticle journalArticle, Language language,
@@ -82,6 +88,7 @@ public class JournalArticleContentDashboardItem
 
 		_assetDisplayPageFriendlyURLProvider =
 			assetDisplayPageFriendlyURLProvider;
+		_contentDashboardItemActionTracker = contentDashboardItemActionTracker;
 		_contentDashboardItemType = contentDashboardItemType;
 		_group = group;
 		_infoEditURLProvider = infoEditURLProvider;
@@ -129,6 +136,42 @@ public class JournalArticleContentDashboardItem
 	@Override
 	public Long getClassPK() {
 		return _journalArticle.getResourcePrimKey();
+	}
+
+	@Override
+	public List<ContentDashboardItemAction> getContentDashboardItemActions(
+		HttpServletRequest httpServletRequest) {
+
+		List<ContentDashboardItemActionProvider<JournalArticle>>
+			contentDashboardItemActionProviders =
+				_contentDashboardItemActionTracker.
+					getContentDashboardItemActionProviders(getClassName());
+
+		Stream<ContentDashboardItemActionProvider<JournalArticle>> stream =
+			contentDashboardItemActionProviders.stream();
+
+		return stream.map(
+			contentDashboardItemActionProvider -> {
+				try {
+					return contentDashboardItemActionProvider.
+						getContentDashboardItemAction(
+							_journalArticle, httpServletRequest);
+				}
+				catch (ContentDashboardItemActionException
+							contentDashboardItemActionException) {
+
+					_log.error(
+						contentDashboardItemActionException,
+						contentDashboardItemActionException);
+
+					return null;
+				}
+			}
+		).filter(
+			Objects::nonNull
+		).collect(
+			Collectors.toList()
+		);
 	}
 
 	@Override
@@ -372,6 +415,8 @@ public class JournalArticleContentDashboardItem
 	private final AssetDisplayPageFriendlyURLProvider
 		_assetDisplayPageFriendlyURLProvider;
 	private final List<AssetTag> _assetTags;
+	private final ContentDashboardItemActionTracker
+		_contentDashboardItemActionTracker;
 	private final ContentDashboardItemType _contentDashboardItemType;
 	private final Group _group;
 	private final InfoEditURLProvider<JournalArticle> _infoEditURLProvider;

@@ -14,6 +14,7 @@
 
 package com.liferay.content.dashboard.web.internal.servlet.taglib.util;
 
+import com.liferay.content.dashboard.item.action.ContentDashboardItemAction;
 import com.liferay.content.dashboard.web.internal.item.ContentDashboardItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemList;
@@ -63,7 +64,7 @@ public class ContentDashboardDropdownItemsProvider {
 
 		Locale locale = _portal.getLocale(_liferayPortletRequest);
 
-		return DropdownItemList.of(
+		DropdownItemList dropdownItems = DropdownItemList.of(
 			() -> {
 				if (!contentDashboardItem.isViewURLEnabled(
 						httpServletRequest)) {
@@ -124,21 +125,17 @@ public class ContentDashboardDropdownItemsProvider {
 				dropdownItem.setLabel(_language.get(locale, "info"));
 
 				return dropdownItem;
-			},
-			() -> {
-				if (!contentDashboardItem.isViewURLEnabled(
-						httpServletRequest)) {
-
-					return null;
-				}
-
-				DropdownItem dropdownItem = new DropdownItem();
-
-				dropdownItem.putData("action", "showMetrics");
-				dropdownItem.setLabel(_language.get(locale, "metrics"));
-
-				return dropdownItem;
 			});
+
+		List<ContentDashboardItemAction> contentDashboardItemActions =
+			contentDashboardItem.getContentDashboardItemActions(
+				httpServletRequest);
+
+		contentDashboardItemActions.forEach(
+			contentDashboardItemAction -> dropdownItems.add(
+				_toDropdownItem(contentDashboardItemAction)));
+
+		return dropdownItems;
 	}
 
 	private String _getURLWithBackURL(String url) {
@@ -149,6 +146,23 @@ public class ContentDashboardDropdownItemsProvider {
 		}
 
 		return _http.setParameter(url, "p_l_back_url", _currentURL);
+	}
+
+	private DropdownItem _toDropdownItem(
+		ContentDashboardItemAction contentDashboardItemAction) {
+
+		DropdownItem dropdownItem = new DropdownItem();
+
+		dropdownItem.setData(
+			HashMapBuilder.<String, Object>put(
+				"action", contentDashboardItemAction.getName()
+			).put(
+				"fetchURL", contentDashboardItemAction.getURL()
+			).build());
+
+		dropdownItem.setLabel(contentDashboardItemAction.getLabel());
+
+		return dropdownItem;
 	}
 
 	private final String _currentURL;

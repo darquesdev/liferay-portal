@@ -14,6 +14,7 @@
 
 package com.liferay.content.dashboard.web.internal.servlet.taglib.util;
 
+import com.liferay.content.dashboard.item.action.ContentDashboardItemAction;
 import com.liferay.content.dashboard.web.internal.item.ContentDashboardItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.petra.string.StringPool;
@@ -37,6 +38,7 @@ import com.liferay.portal.util.PortalImpl;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -244,6 +246,87 @@ public class ContentDashboardDropdownItemsProviderTest {
 			backURL,
 			_http.getParameter(
 				String.valueOf(viewDropdownItem.get("href")), "p_l_back_url"));
+	}
+
+	@Test
+	public void testGetViewMetrics() {
+		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
+			new MockLiferayPortletRenderRequest();
+
+		MockLiferayPortletURL mockLiferayPortletURL =
+			new MockLiferayPortletURL();
+
+		mockLiferayPortletRenderRequest.setAttribute(
+			"null" + StringPool.DASH + WebKeys.CURRENT_PORTLET_URL,
+			mockLiferayPortletURL);
+
+		mockLiferayPortletRenderRequest.setAttribute(
+			WebKeys.LOCALE, LocaleUtil.US);
+
+		ContentDashboardDropdownItemsProvider
+			contentDashboardDropdownItemsProvider =
+				new ContentDashboardDropdownItemsProvider(
+					_http, _language, mockLiferayPortletRenderRequest,
+					new MockLiferayPortletRenderResponse(), new PortalImpl());
+
+		ContentDashboardItem contentDashboardItem = Mockito.mock(
+			ContentDashboardItem.class);
+
+		ContentDashboardItemAction contentDashboardItemAction =
+			new ContentDashboardItemAction() {
+
+				@Override
+				public String getLabel() {
+					return "View Metrics";
+				}
+
+				@Override
+				public String getName() {
+					return "viewMetrics";
+				}
+
+				@Override
+				public Type getType() {
+					return ContentDashboardItemAction.Type.VIEW_IN_PANEL;
+				}
+
+				@Override
+				public String getURL() {
+					return "validURL";
+				}
+
+			};
+
+		Mockito.when(
+			contentDashboardItem.getContentDashboardItemActions(
+				Mockito.any(HttpServletRequest.class))
+		).thenReturn(
+			Collections.singletonList(contentDashboardItemAction)
+		);
+
+		List<DropdownItem> dropdownItems =
+			contentDashboardDropdownItemsProvider.getDropdownItems(
+				contentDashboardItem);
+
+		Stream<DropdownItem> stream = dropdownItems.stream();
+
+		DropdownItem viewMetricsDropdownItem = stream.filter(
+			dropdownItem -> Objects.equals(
+				String.valueOf(dropdownItem.get("label")),
+				contentDashboardItemAction.getLabel())
+		).findFirst(
+		).orElseThrow(
+			AssertionError::new
+		);
+
+		Map<String, Object> data =
+			(Map<String, Object>)viewMetricsDropdownItem.get("data");
+
+		Assert.assertEquals(
+			contentDashboardItemAction.getName(), data.get("action"));
+
+		Assert.assertEquals(
+			contentDashboardItemAction.getURL(), data.get("fetchURL"));
 	}
 
 	@Test
