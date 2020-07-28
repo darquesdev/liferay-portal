@@ -17,7 +17,7 @@ package com.liferay.analytics.reports.web.internal.item.action;
 import com.liferay.analytics.reports.info.action.AnalyticsReportsContentDashboardItemActionProvider;
 import com.liferay.analytics.reports.info.item.AnalyticsReportsInfoItem;
 import com.liferay.analytics.reports.info.item.AnalyticsReportsInfoItemTracker;
-import com.liferay.analytics.reports.web.internal.constants.AnalyticsReportsPortletKeys;
+import com.liferay.analytics.reports.web.internal.util.AnalyticsReportsUtil;
 import com.liferay.asset.display.page.util.AssetDisplayPageUtil;
 import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
 import com.liferay.asset.kernel.model.AssetRenderer;
@@ -31,7 +31,6 @@ import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.model.Layout;
-import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletURLFactory;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
@@ -44,8 +43,6 @@ import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.ResourceBundle;
 
-import javax.portlet.PortletURL;
-import javax.portlet.RenderRequest;
 import javax.portlet.WindowStateException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -76,24 +73,10 @@ public class AnalyticsReportsContentDashboardItemActionProviderImpl
 			ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
 				_portal.getLocale(httpServletRequest), getClass());
 
-			PortletURL portletURL = _portletURLFactory.create(
-				httpServletRequest,
-				AnalyticsReportsPortletKeys.ANALYTICS_REPORTS,
-				RenderRequest.RENDER_PHASE);
-
-			portletURL.setParameter("mvcPath", "/analytics_reports_panel.jsp");
-
-			portletURL.setWindowState(LiferayWindowState.EXCLUSIVE);
-
-			portletURL.setParameter(
-				"classNameId",
-				String.valueOf(
-					_classNameLocalService.getClassNameId(className)));
-
-			portletURL.setParameter("classPK", String.valueOf(classPK));
-
 			return new AnalyticsReportsContentDashboardItemAction(
-				resourceBundle, portletURL.toString());
+				resourceBundle,
+				AnalyticsReportsUtil.getAnalyticsReportsPanelURL(
+					httpServletRequest, _portletURLFactory));
 		}
 		catch (PortalException | WindowStateException exception) {
 			throw new ContentDashboardItemActionException(exception);

@@ -29,7 +29,6 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.model.Layout;
-import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletURLFactory;
@@ -61,8 +60,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-import javax.portlet.PortletURL;
-import javax.portlet.RenderRequest;
 import javax.portlet.WindowStateException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -134,32 +131,15 @@ public class AnalyticsReportsProductNavigationControlMenuEntry
 			values.put("cssClass", "active");
 		}
 		else {
-			PortletURL portletURL = _portletURLFactory.create(
-				httpServletRequest,
-				AnalyticsReportsPortletKeys.ANALYTICS_REPORTS,
-				RenderRequest.RENDER_PHASE);
-
-			portletURL.setParameter("mvcPath", "/analytics_reports_panel.jsp");
-
 			try {
-				portletURL.setWindowState(LiferayWindowState.EXCLUSIVE);
+				values.put(
+					"analyticsReportsPanelURL",
+					AnalyticsReportsUtil.getAnalyticsReportsPanelURL(
+						httpServletRequest, _portletURLFactory));
 			}
 			catch (WindowStateException windowStateException) {
 				ReflectionUtil.throwException(windowStateException);
 			}
-
-			InfoDisplayObjectProvider<?> infoDisplayObjectProvider =
-				(InfoDisplayObjectProvider<?>)httpServletRequest.getAttribute(
-					AssetDisplayPageWebKeys.INFO_DISPLAY_OBJECT_PROVIDER);
-
-			portletURL.setParameter(
-				"classNameId",
-				String.valueOf(infoDisplayObjectProvider.getClassNameId()));
-			portletURL.setParameter(
-				"classPK",
-				String.valueOf(infoDisplayObjectProvider.getClassPK()));
-
-			values.put("analyticsReportsPanelURL", portletURL.toString());
 
 			values.put("cssClass", StringPool.BLANK);
 		}

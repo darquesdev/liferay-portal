@@ -14,10 +14,21 @@
 
 package com.liferay.analytics.reports.web.internal.util;
 
+import com.liferay.analytics.reports.web.internal.constants.AnalyticsReportsPortletKeys;
+import com.liferay.asset.display.page.constants.AssetDisplayPageWebKeys;
+import com.liferay.info.display.contributor.InfoDisplayObjectProvider;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.portlet.LiferayWindowState;
+import com.liferay.portal.kernel.portlet.PortletURLFactory;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.Validator;
+
+import javax.portlet.PortletURL;
+import javax.portlet.RenderRequest;
+import javax.portlet.WindowStateException;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Sarai Díaz
@@ -26,6 +37,32 @@ public class AnalyticsReportsUtil {
 
 	public static final String ANALYTICS_CLOUD_TRIAL_URL =
 		"https://www.liferay.com/products/analytics-cloud/get-started";
+
+	public static String getAnalyticsReportsPanelURL(
+			HttpServletRequest httpServletRequest,
+			PortletURLFactory portletURLFactory)
+		throws WindowStateException {
+
+		PortletURL portletURL = portletURLFactory.create(
+			httpServletRequest, AnalyticsReportsPortletKeys.ANALYTICS_REPORTS,
+			RenderRequest.RENDER_PHASE);
+
+		portletURL.setParameter("mvcPath", "/analytics_reports_panel.jsp");
+
+		portletURL.setWindowState(LiferayWindowState.EXCLUSIVE);
+
+		InfoDisplayObjectProvider<?> infoDisplayObjectProvider =
+			(InfoDisplayObjectProvider<?>)httpServletRequest.getAttribute(
+				AssetDisplayPageWebKeys.INFO_DISPLAY_OBJECT_PROVIDER);
+
+		portletURL.setParameter(
+			"classNameId",
+			String.valueOf(infoDisplayObjectProvider.getClassNameId()));
+		portletURL.setParameter(
+			"classPK", String.valueOf(infoDisplayObjectProvider.getClassPK()));
+
+		return portletURL.toString();
+	}
 
 	public static String getAsahFaroBackendDataSourceId(long companyId) {
 		return PrefsPropsUtil.getString(
