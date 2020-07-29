@@ -12,7 +12,7 @@
  *
  */
 
-package com.liferay.analytics.reports.info.action;
+package com.liferay.analytics.reports.info.action.provider;
 
 import com.liferay.content.dashboard.item.action.ContentDashboardItemAction;
 import com.liferay.content.dashboard.item.action.exception.ContentDashboardItemActionException;
