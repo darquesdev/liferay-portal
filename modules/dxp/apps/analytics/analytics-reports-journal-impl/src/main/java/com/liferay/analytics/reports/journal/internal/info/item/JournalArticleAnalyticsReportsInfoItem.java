@@ -25,12 +25,14 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.UserConstants;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.Portal;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
@@ -45,19 +47,34 @@ public class JournalArticleAnalyticsReportsInfoItem
 
 	@Override
 	public String getAuthorName(JournalArticle journalArticle) {
-		List<JournalArticle> journalArticles =
-			_journalArticleLocalService.getArticles(
-				journalArticle.getGroupId(), journalArticle.getArticleId(), 0,
-				1, new ArticleVersionComparator(true));
-
-		Stream<JournalArticle> stream = journalArticles.stream();
-
-		return stream.findFirst(
-		).map(
-			firstJournalArticle -> _userLocalService.fetchUser(
-				firstJournalArticle.getUserId())
+		return _getUser(
+			journalArticle
 		).map(
 			User::getFullName
+		).orElse(
+			StringPool.BLANK
+		);
+	}
+
+	@Override
+	public String getAuthorPortraitURL(
+		JournalArticle journalArticle, String imagePath) {
+
+		return _getUser(
+			journalArticle
+		).map(
+			user -> {
+				try {
+					return UserConstants.getPortraitURL(
+						imagePath, user.isMale(), user.getPortraitId(),
+						user.getUserUuid());
+				}
+				catch (PortalException portalException) {
+					_log.error(portalException, portalException);
+
+					return StringPool.BLANK;
+				}
+			}
 		).orElse(
 			StringPool.BLANK
 		);
@@ -102,6 +119,21 @@ public class JournalArticleAnalyticsReportsInfoItem
 
 			return journalArticle.getDisplayDate();
 		}
+	}
+
+	private Optional<User> _getUser(JournalArticle journalArticle) {
+		List<JournalArticle> journalArticles =
+			_journalArticleLocalService.getArticles(
+				journalArticle.getGroupId(), journalArticle.getArticleId(), 0,
+				1, new ArticleVersionComparator(true));
+
+		Stream<JournalArticle> stream = journalArticles.stream();
+
+		return stream.findFirst(
+		).flatMap(
+			firstJournalArticle -> Optional.ofNullable(
+				_userLocalService.fetchUser(firstJournalArticle.getUserId()))
+		);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

@@ -16,8 +16,12 @@ package com.liferay.analytics.reports.web.internal.info.item;
 
 import com.liferay.analytics.reports.info.item.AnalyticsReportsInfoItem;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.UserConstants;
 import com.liferay.portal.kernel.service.UserLocalService;
 
 import java.util.Date;
@@ -45,6 +49,24 @@ public class LayoutAnalyticsReportsInfoItem
 	}
 
 	@Override
+	public String getAuthorPortraitURL(Layout layout, String imagePath) {
+		User user = _userLocalService.fetchUser(layout.getUserId());
+
+		if (user != null) {
+			try {
+				return UserConstants.getPortraitURL(
+					imagePath, user.isMale(), user.getPortraitId(),
+					user.getUserUuid());
+			}
+			catch (PortalException portalException) {
+				_log.error(portalException, portalException);
+			}
+		}
+
+		return StringPool.BLANK;
+	}
+
+	@Override
 	public Date getPublishDate(Layout layout) {
 		return layout.getPublishDate();
 	}
@@ -53,6 +75,9 @@ public class LayoutAnalyticsReportsInfoItem
 	public String getTitle(Layout layout, Locale locale) {
 		return layout.getTitle(locale);
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		LayoutAnalyticsReportsInfoItem.class);
 
 	@Reference
 	private UserLocalService _userLocalService;

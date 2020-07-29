@@ -335,25 +335,26 @@ public class AnalyticsReportsDisplayContextTest {
 	}
 
 	private AnalyticsReportsInfoItem<Object> _getAnalyticsReportsItem() {
-		String authorName = StringUtil.randomString();
-		Date publishDate = RandomTestUtil.nextDate();
-		String title = StringUtil.randomString();
-
-		return new AnalyticsReportsInfoItem() {
+		return new AnalyticsReportsInfoItem<Object>() {
 
 			@Override
 			public String getAuthorName(Object model) {
-				return authorName;
+				return StringUtil.randomString();
+			}
+
+			@Override
+			public String getAuthorPortraitURL(Object model, String imagePath) {
+				return RandomTestUtil.randomString();
 			}
 
 			@Override
 			public Date getPublishDate(Object model) {
-				return publishDate;
+				return RandomTestUtil.nextDate();
 			}
 
 			@Override
 			public String getTitle(Object model, Locale locale) {
-				return title;
+				return RandomTestUtil.randomString();
 			}
 
 		};
