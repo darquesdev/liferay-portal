@@ -348,6 +348,11 @@ public class AnalyticsReportsDisplayContextTest {
 			}
 
 			@Override
+			public long getAuthorUserId(Object model) {
+				return RandomTestUtil.randomLong();
+			}
+
+			@Override
 			public Date getPublishDate(Object model) {
 				return RandomTestUtil.nextDate();
 			}

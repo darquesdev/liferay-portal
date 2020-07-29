@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.UserConstants;
+import com.liferay.portal.kernel.model.UserModel;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.Portal;
 
@@ -77,6 +78,17 @@ public class JournalArticleAnalyticsReportsInfoItem
 			}
 		).orElse(
 			StringPool.BLANK
+		);
+	}
+
+	@Override
+	public long getAuthorUserId(JournalArticle journalArticle) {
+		return _getUser(
+			journalArticle
+		).map(
+			UserModel::getUserId
+		).orElse(
+			0L
 		);
 	}
 
