@@ -196,6 +196,10 @@ public class AnalyticsReportsDisplayContext {
 			_analyticsReportsInfoItem.getAuthorName(
 				_analyticsReportsInfoItemObject)
 		).put(
+			"authorPortraitURL",
+			_analyticsReportsInfoItem.getAuthorPortraitURL(
+				_analyticsReportsInfoItemObject, _themeDisplay.getPathImage())
+		).put(
 			"publishDate",
 			() -> _analyticsReportsInfoItem.getPublishDate(
 				_analyticsReportsInfoItemObject)
