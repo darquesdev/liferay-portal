@@ -24,6 +24,8 @@ public interface AnalyticsReportsInfoItem<T> {
 
 	public String getAuthorName(T model);
 
+	public String getAuthorPortraitURL(T model, String imagePath);
+
 	public Date getPublishDate(T model);
 
 	public String getTitle(T model, Locale locale);
