@@ -45,6 +45,17 @@ public class LayoutAnalyticsReportsInfoItem
 	}
 
 	@Override
+	public long getAuthorUserId(Layout layout) {
+		User user = _userLocalService.fetchUser(layout.getUserId());
+
+		if (user != null) {
+			return user.getUserId();
+		}
+
+		return 0;
+	}
+
+	@Override
 	public Date getPublishDate(Layout layout) {
 		return layout.getPublishDate();
 	}

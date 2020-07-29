@@ -19,7 +19,6 @@ import com.liferay.asset.display.page.model.AssetDisplayPageEntry;
 import com.liferay.asset.display.page.service.AssetDisplayPageEntryLocalService;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalService;
-import com.liferay.journal.util.comparator.ArticleVersionComparator;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -29,9 +28,8 @@ import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.Portal;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
-import java.util.stream.Stream;
+import java.util.Optional;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -45,21 +43,23 @@ public class JournalArticleAnalyticsReportsInfoItem
 
 	@Override
 	public String getAuthorName(JournalArticle journalArticle) {
-		List<JournalArticle> journalArticles =
-			_journalArticleLocalService.getArticles(
-				journalArticle.getGroupId(), journalArticle.getArticleId(), 0,
-				1, new ArticleVersionComparator(true));
-
-		Stream<JournalArticle> stream = journalArticles.stream();
-
-		return stream.findFirst(
-		).map(
-			firstJournalArticle -> _userLocalService.fetchUser(
-				firstJournalArticle.getUserId())
+		return _getUser(
+			journalArticle
 		).map(
 			User::getFullName
 		).orElse(
 			StringPool.BLANK
+		);
+	}
+
+	@Override
+	public long getAuthorUserId(JournalArticle journalArticle) {
+		return _getUser(
+			journalArticle
+		).map(
+			User::getUserId
+		).orElse(
+			0L
 		);
 	}
 
@@ -102,6 +102,16 @@ public class JournalArticleAnalyticsReportsInfoItem
 
 			return journalArticle.getDisplayDate();
 		}
+	}
+
+	private Optional<User> _getUser(JournalArticle journalArticle) {
+		return Optional.ofNullable(
+			_journalArticleLocalService.fetchLatestArticle(
+				journalArticle.getResourcePrimKey())
+		).map(
+			latestArticle -> _userLocalService.fetchUser(
+				latestArticle.getUserId())
+		);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
