@@ -91,6 +91,31 @@ public class JournalArticleAnalyticsReportsInfoItemTest {
 	}
 
 	@Test
+	public void testGetAuthorUserId() throws Exception {
+		User user = TestPropsValues.getUser();
+
+		JournalArticle journalArticle = JournalTestUtil.addArticle(
+			user.getUserId(), _group.getGroupId(), 0);
+
+		Assert.assertEquals(
+			user.getUserId(),
+			_analyticsReportsInfoItem.getAuthorUserId(journalArticle));
+	}
+
+	@Test
+	public void testGetAuthorUserIdWithDeletedUser() throws Exception {
+		User user = UserTestUtil.addUser(_group.getGroupId());
+
+		JournalArticle journalArticle = JournalTestUtil.addArticle(
+			user.getUserId(), _group.getGroupId(), 0);
+
+		_userLocalService.deleteUser(user);
+
+		Assert.assertEquals(
+			0L, _analyticsReportsInfoItem.getAuthorUserId(journalArticle));
+	}
+
+	@Test
 	public void testGetPublishDate() throws Exception {
 		JournalArticle journalArticle = JournalTestUtil.addArticle(
 			_group.getGroupId(), RandomTestUtil.randomString(),

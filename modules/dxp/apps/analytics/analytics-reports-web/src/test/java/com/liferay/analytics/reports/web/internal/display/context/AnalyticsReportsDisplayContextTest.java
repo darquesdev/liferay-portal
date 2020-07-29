@@ -19,6 +19,7 @@ import com.liferay.analytics.reports.web.internal.data.provider.AnalyticsReports
 import com.liferay.analytics.reports.web.internal.model.CountrySearchKeywords;
 import com.liferay.analytics.reports.web.internal.model.SearchKeyword;
 import com.liferay.analytics.reports.web.internal.model.TrafficSource;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -26,6 +27,7 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
@@ -80,7 +82,9 @@ public class AnalyticsReportsDisplayContextTest {
 	}
 
 	@Test
-	public void testGetContextWithInvalidAnalyticsConnection() {
+	public void testGetContextWithInvalidAnalyticsConnection()
+		throws Exception {
+
 		LocalDate localDate = LocalDate.now();
 
 		AnalyticsReportsDisplayContext analyticsReportsDisplayContext =
@@ -92,7 +96,8 @@ public class AnalyticsReportsDisplayContextTest {
 					false),
 				_getAnalyticsReportsItem(), null, null, new PortalImpl(),
 				_getRenderResponse(), _getResourceBundle(),
-				_getThemeDisplay(_getLayout()));
+				_getThemeDisplay(_getLayout()),
+				_getUser(RandomTestUtil.randomString()));
 
 		Map<String, Object> data = analyticsReportsDisplayContext.getData();
 
@@ -112,7 +117,67 @@ public class AnalyticsReportsDisplayContextTest {
 	}
 
 	@Test
-	public void testGetPropsWithInvalidAnalyticsConnection() {
+	public void testGetPropsAuthorPortraitURLWithNullUser() throws Exception {
+		AnalyticsReportsDataProvider analyticsReportsDataProvider =
+			_getAnalyticsReportsDataProvider(
+				Collections.emptyList(), RandomTestUtil.randomInt(),
+				RandomTestUtil.randomDouble(), Collections.emptyList(),
+				RandomTestUtil.randomInt(), RandomTestUtil.randomDouble(),
+				true);
+
+		AnalyticsReportsInfoItem<Object> analyticsReportsInfoItem =
+			_getAnalyticsReportsItem();
+
+		AnalyticsReportsDisplayContext analyticsReportsDisplayContext =
+			new AnalyticsReportsDisplayContext(
+				analyticsReportsDataProvider, analyticsReportsInfoItem, null,
+				null, new PortalImpl(), _getRenderResponse(),
+				_getResourceBundle(), _getThemeDisplay(_getLayout()), null);
+
+		Map<String, Object> data = analyticsReportsDisplayContext.getData();
+
+		Map<String, Object> props = (Map<String, Object>)data.get("props");
+
+		Assert.assertEquals(StringPool.BLANK, props.get("authorPortraitURL"));
+	}
+
+	@Test
+	public void testGetPropsAuthorPortraitURLWithUserWithoutPortrait()
+		throws Exception {
+
+		AnalyticsReportsDataProvider analyticsReportsDataProvider =
+			_getAnalyticsReportsDataProvider(
+				Collections.emptyList(), RandomTestUtil.randomInt(),
+				RandomTestUtil.randomDouble(), Collections.emptyList(),
+				RandomTestUtil.randomInt(), RandomTestUtil.randomDouble(),
+				true);
+
+		AnalyticsReportsInfoItem<Object> analyticsReportsInfoItem =
+			_getAnalyticsReportsItem();
+
+		User user = Mockito.mock(User.class);
+
+		Mockito.doReturn(
+			0L
+		).when(
+			user
+		).getPortraitId();
+
+		AnalyticsReportsDisplayContext analyticsReportsDisplayContext =
+			new AnalyticsReportsDisplayContext(
+				analyticsReportsDataProvider, analyticsReportsInfoItem, null,
+				null, new PortalImpl(), _getRenderResponse(),
+				_getResourceBundle(), _getThemeDisplay(_getLayout()), user);
+
+		Map<String, Object> data = analyticsReportsDisplayContext.getData();
+
+		Map<String, Object> props = (Map<String, Object>)data.get("props");
+
+		Assert.assertEquals(StringPool.BLANK, props.get("authorPortraitURL"));
+	}
+
+	@Test
+	public void testGetPropsWithInvalidAnalyticsConnection() throws Exception {
 		long organicTrafficAmount = RandomTestUtil.randomInt();
 		double organicTrafficShare = RandomTestUtil.randomDouble();
 
@@ -129,11 +194,14 @@ public class AnalyticsReportsDisplayContextTest {
 
 		Layout layout = _getLayout();
 
+		String authorPortraitURL = RandomTestUtil.randomString();
+
 		AnalyticsReportsDisplayContext analyticsReportsDisplayContext =
 			new AnalyticsReportsDisplayContext(
 				analyticsReportsDataProvider, analyticsReportsInfoItem, null,
 				null, new PortalImpl(), _getRenderResponse(),
-				_getResourceBundle(), _getThemeDisplay(layout));
+				_getResourceBundle(), _getThemeDisplay(layout),
+				_getUser(authorPortraitURL));
 
 		Map<String, Object> data = analyticsReportsDisplayContext.getData();
 
@@ -142,6 +210,10 @@ public class AnalyticsReportsDisplayContextTest {
 		Assert.assertEquals(
 			analyticsReportsInfoItem.getAuthorName(null),
 			props.get("authorName"));
+		Assert.assertEquals(authorPortraitURL, props.get("authorPortraitURL"));
+		Assert.assertEquals(
+			analyticsReportsInfoItem.getAuthorUserId(null),
+			props.get("authorUserId"));
 		Assert.assertEquals(
 			analyticsReportsInfoItem.getPublishDate(null),
 			props.get("publishDate"));
@@ -173,7 +245,7 @@ public class AnalyticsReportsDisplayContextTest {
 	}
 
 	@Test
-	public void testGetPropsWithValidAnalyticsConnection() {
+	public void testGetPropsWithValidAnalyticsConnection() throws Exception {
 		long organicTrafficAmount = RandomTestUtil.randomInt();
 		double organicTrafficShare = RandomTestUtil.randomDouble();
 
@@ -200,11 +272,14 @@ public class AnalyticsReportsDisplayContextTest {
 
 		Layout layout = _getLayout();
 
+		String authorPortraitURL = RandomTestUtil.randomString();
+
 		AnalyticsReportsDisplayContext analyticsReportsDisplayContext =
 			new AnalyticsReportsDisplayContext(
 				analyticsReportsDataProvider, analyticsReportsInfoItem, null,
 				null, new PortalImpl(), _getRenderResponse(),
-				_getResourceBundle(), _getThemeDisplay(layout));
+				_getResourceBundle(), _getThemeDisplay(layout),
+				_getUser(authorPortraitURL));
 
 		Map<String, Object> data = analyticsReportsDisplayContext.getData();
 
@@ -213,11 +288,13 @@ public class AnalyticsReportsDisplayContextTest {
 		Assert.assertEquals(
 			analyticsReportsInfoItem.getAuthorName(null),
 			props.get("authorName"));
-
+		Assert.assertEquals(authorPortraitURL, props.get("authorPortraitURL"));
+		Assert.assertEquals(
+			analyticsReportsInfoItem.getAuthorUserId(null),
+			props.get("authorUserId"));
 		Assert.assertEquals(
 			analyticsReportsInfoItem.getPublishDate(null),
 			props.get("publishDate"));
-
 		Assert.assertEquals(
 			analyticsReportsInfoItem.getTitle(null, LocaleUtil.US),
 			props.get("title"));
@@ -336,14 +413,20 @@ public class AnalyticsReportsDisplayContextTest {
 
 	private AnalyticsReportsInfoItem<Object> _getAnalyticsReportsItem() {
 		String authorName = StringUtil.randomString();
+		long authorUserId = RandomTestUtil.randomLong();
 		Date publishDate = RandomTestUtil.nextDate();
 		String title = StringUtil.randomString();
 
-		return new AnalyticsReportsInfoItem() {
+		return new AnalyticsReportsInfoItem<Object>() {
 
 			@Override
 			public String getAuthorName(Object model) {
 				return authorName;
+			}
+
+			@Override
+			public long getAuthorUserId(Object model) {
+				return authorUserId;
 			}
 
 			@Override
@@ -421,6 +504,26 @@ public class AnalyticsReportsDisplayContextTest {
 		themeDisplay.setLocale(LocaleUtil.US);
 
 		return themeDisplay;
+	}
+
+	private User _getUser(String authorPortraitURL) throws Exception {
+		User user = Mockito.mock(User.class);
+
+		Mockito.doReturn(
+			1L
+		).when(
+			user
+		).getPortraitId();
+
+		Mockito.doReturn(
+			authorPortraitURL
+		).when(
+			user
+		).getPortraitURL(
+			Mockito.any(ThemeDisplay.class)
+		);
+
+		return user;
 	}
 
 	private static final String _MESSAGE_KEY_HELP_ORGANIC =
