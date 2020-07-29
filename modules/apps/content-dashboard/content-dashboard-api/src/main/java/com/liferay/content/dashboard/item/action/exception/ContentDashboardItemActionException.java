@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.content.dashboard.item.action;
+package com.liferay.content.dashboard.item.action.exception;
 
 import com.liferay.portal.kernel.exception.PortalException;
 

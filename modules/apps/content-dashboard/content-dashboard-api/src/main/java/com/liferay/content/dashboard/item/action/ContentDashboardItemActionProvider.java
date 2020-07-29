@@ -14,6 +14,8 @@
 
 package com.liferay.content.dashboard.item.action;
 
+import com.liferay.content.dashboard.item.action.exception.ContentDashboardItemActionException;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**

@@ -15,7 +15,7 @@
 package com.liferay.analytics.reports.info.action;
 
 import com.liferay.content.dashboard.item.action.ContentDashboardItemAction;
-import com.liferay.content.dashboard.item.action.ContentDashboardItemActionException;
+import com.liferay.content.dashboard.item.action.exception.ContentDashboardItemActionException;
 import com.liferay.portal.kernel.exception.PortalException;
 
 import javax.servlet.http.HttpServletRequest;
