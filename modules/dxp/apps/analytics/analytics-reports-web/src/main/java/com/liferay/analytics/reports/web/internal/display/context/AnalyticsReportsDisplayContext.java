@@ -20,6 +20,7 @@ import com.liferay.analytics.reports.web.internal.data.provider.AnalyticsReports
 import com.liferay.analytics.reports.web.internal.model.TimeRange;
 import com.liferay.analytics.reports.web.internal.model.TimeSpan;
 import com.liferay.analytics.reports.web.internal.model.TrafficSource;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -27,6 +28,7 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Portal;
@@ -42,6 +44,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
@@ -59,7 +62,7 @@ public class AnalyticsReportsDisplayContext {
 		AnalyticsReportsInfoItem<Object> analyticsReportsInfoItem,
 		Object analyticsReportsInfoItemObject, String canonicalURL,
 		Portal portal, RenderResponse renderResponse,
-		ResourceBundle resourceBundle, ThemeDisplay themeDisplay) {
+		ResourceBundle resourceBundle, ThemeDisplay themeDisplay, User user) {
 
 		_analyticsReportsDataProvider = analyticsReportsDataProvider;
 		_analyticsReportsInfoItem = analyticsReportsInfoItem;
@@ -68,8 +71,8 @@ public class AnalyticsReportsDisplayContext {
 		_portal = portal;
 		_renderResponse = renderResponse;
 		_resourceBundle = resourceBundle;
-
 		_themeDisplay = themeDisplay;
+		_user = user;
 
 		_validAnalyticsConnection =
 			_analyticsReportsDataProvider.isValidAnalyticsConnection(
@@ -196,6 +199,30 @@ public class AnalyticsReportsDisplayContext {
 			_analyticsReportsInfoItem.getAuthorName(
 				_analyticsReportsInfoItemObject)
 		).put(
+			"authorPortraitURL",
+			() -> Optional.ofNullable(
+				_user
+			).filter(
+				user -> _user.getPortraitId() > 0
+			).map(
+				user -> {
+					try {
+						return user.getPortraitURL(_themeDisplay);
+					}
+					catch (PortalException portalException) {
+						_log.error(portalException, portalException);
+
+						return StringPool.BLANK;
+					}
+				}
+			).orElse(
+				StringPool.BLANK
+			)
+		).put(
+			"authorUserId",
+			_analyticsReportsInfoItem.getAuthorUserId(
+				_analyticsReportsInfoItemObject)
+		).put(
 			"publishDate",
 			() -> _analyticsReportsInfoItem.getPublishDate(
 				_analyticsReportsInfoItemObject)
@@ -312,6 +339,7 @@ public class AnalyticsReportsDisplayContext {
 	private final RenderResponse _renderResponse;
 	private final ResourceBundle _resourceBundle;
 	private final ThemeDisplay _themeDisplay;
+	private final User _user;
 	private final boolean _validAnalyticsConnection;
 
 }

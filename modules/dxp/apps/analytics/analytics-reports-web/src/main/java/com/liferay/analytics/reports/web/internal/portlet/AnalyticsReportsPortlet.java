@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.Http;
@@ -147,7 +148,10 @@ public class AnalyticsReportsPortlet extends MVCPortlet {
 				canonicalURL, _portal, renderResponse,
 				ResourceBundleUtil.getBundle(
 					"content.Language", themeDisplay.getLocale(), getClass()),
-				themeDisplay));
+				themeDisplay,
+				_userLocalService.fetchUser(
+					analyticsReportsInfoItem.getAuthorUserId(
+						analyticsReportsInfoItemObject))));
 
 		super.doDispatch(renderRequest, renderResponse);
 	}
@@ -202,5 +206,8 @@ public class AnalyticsReportsPortlet extends MVCPortlet {
 
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private UserLocalService _userLocalService;
 
 }
