@@ -24,6 +24,10 @@ public interface AnalyticsReportsInfoItem<T> {
 
 	public String getAuthorName(T model);
 
+	public default long getAuthorUserId(T model) {
+		return 0L;
+	}
+
 	public Date getPublishDate(T model);
 
 	public String getTitle(T model, Locale locale);
