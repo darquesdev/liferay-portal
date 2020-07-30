@@ -9,22 +9,34 @@
  * distribution rights of the Software.
  */
 
+import ClayIcon from '@clayui/icon';
 import ClayLayout from '@clayui/layout';
 import ClaySticker from '@clayui/sticker';
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-function Author({authorName, authorPortraitURL}) {
+function Author({authorName, authorPortraitURL, authorUserId}) {
+	const stickerColor = parseInt(authorUserId, 10) % 10;
+
 	return (
-		<div className="mt-2 text-secondary">
+		<div className="text-secondary">
 			<ClaySticker
-				className="mr-2 sticker-user-icon"
-				inline={true}
+				className={classnames('c-mr-2 sticker-user-icon', {
+					[`user-icon-color-${stickerColor}`]: !authorPortraitURL,
+				})}
+				shape="circle"
 				size="sm"
 			>
-				<div className="sticker-overlay">
-					<img className="sticker-img" src={authorPortraitURL} />
-				</div>
+				{authorPortraitURL ? (
+					<img
+						alt={`${authorName}.`}
+						className="sticker-img"
+						src={authorPortraitURL}
+					/>
+				) : (
+					<ClayIcon symbol="user" />
+				)}
 			</ClaySticker>
 			{Liferay.Util.sub(
 				Liferay.Language.get('authored-by-x'),
@@ -37,6 +49,7 @@ function Author({authorName, authorPortraitURL}) {
 function BasicInformation({
 	authorName,
 	authorPortraitURL,
+	authorUserId,
 	languageTag,
 	publishDate,
 	title,
@@ -64,6 +77,7 @@ function BasicInformation({
 				<Author
 					authorName={authorName}
 					authorPortraitURL={authorPortraitURL}
+					authorUserId={authorUserId}
 				/>
 			</ClayLayout.ContentCol>
 		</ClayLayout.ContentRow>
@@ -73,11 +87,13 @@ function BasicInformation({
 Author.propTypes = {
 	authorName: PropTypes.string.isRequired,
 	authorPortraitURL: PropTypes.string.isRequired,
+	authorUserId: PropTypes.number.isRequired,
 };
 
 BasicInformation.propTypes = {
 	authorName: PropTypes.string.isRequired,
 	authorPortraitURL: PropTypes.string.isRequired,
+	authorUserId: PropTypes.number.isRequired,
 	publishDate: PropTypes.number.isRequired,
 	title: PropTypes.string.isRequired,
 };
