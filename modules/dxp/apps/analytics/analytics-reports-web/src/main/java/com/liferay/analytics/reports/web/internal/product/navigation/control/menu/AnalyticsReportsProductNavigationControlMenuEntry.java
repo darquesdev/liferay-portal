@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.portlet.PortalPreferences;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletURLFactory;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.permission.LayoutPermissionUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
@@ -221,7 +222,17 @@ public class AnalyticsReportsProductNavigationControlMenuEntry
 			return false;
 		}
 
-		if (!_hasAnalyticsReportsInfoItem(httpServletRequest)) {
+		InfoDisplayObjectProvider<?> infoDisplayObjectProvider =
+			(InfoDisplayObjectProvider<?>)httpServletRequest.getAttribute(
+				AssetDisplayPageWebKeys.INFO_DISPLAY_OBJECT_PROVIDER);
+
+		if ((infoDisplayObjectProvider == null) ||
+			(infoDisplayObjectProvider.getDisplayObject() == null)) {
+
+			return false;
+		}
+
+		if (!_hasAnalyticsReportsInfoItem(infoDisplayObjectProvider)) {
 			return false;
 		}
 
@@ -251,7 +262,11 @@ public class AnalyticsReportsProductNavigationControlMenuEntry
 			return false;
 		}
 
-		if (!_hasEditPermission(httpServletRequest, layout)) {
+		if (!_hasEditPermission(
+				infoDisplayObjectProvider.getClassNameId(),
+				infoDisplayObjectProvider.getClassPK(), layout,
+				themeDisplay.getPermissionChecker())) {
+
 			return false;
 		}
 
@@ -265,24 +280,14 @@ public class AnalyticsReportsProductNavigationControlMenuEntry
 	}
 
 	private boolean _hasAnalyticsReportsInfoItem(
-		HttpServletRequest httpServletRequest) {
-
-		InfoDisplayObjectProvider<?> infoDisplayObjectProvider =
-			(InfoDisplayObjectProvider<?>)httpServletRequest.getAttribute(
-				AssetDisplayPageWebKeys.INFO_DISPLAY_OBJECT_PROVIDER);
-
-		if (infoDisplayObjectProvider == null) {
-			return false;
-		}
+		InfoDisplayObjectProvider<?> infoDisplayObjectProvider) {
 
 		AnalyticsReportsInfoItem<?> analyticsReportsInfoItem =
 			_analyticsReportsInfoItemTracker.getAnalyticsReportsInfoItem(
 				_portal.getClassName(
 					infoDisplayObjectProvider.getClassNameId()));
 
-		if ((analyticsReportsInfoItem == null) ||
-			(infoDisplayObjectProvider.getDisplayObject() == null)) {
-
+		if (analyticsReportsInfoItem == null) {
 			return false;
 		}
 
@@ -290,39 +295,24 @@ public class AnalyticsReportsProductNavigationControlMenuEntry
 	}
 
 	private boolean _hasEditPermission(
-			HttpServletRequest httpServletRequest, Layout layout)
+			long classNameId, long classPK, Layout layout,
+			PermissionChecker permissionChecker)
 		throws PortalException {
-
-		InfoDisplayObjectProvider<?> infoDisplayObjectProvider =
-			(InfoDisplayObjectProvider<?>)httpServletRequest.getAttribute(
-				AssetDisplayPageWebKeys.INFO_DISPLAY_OBJECT_PROVIDER);
-
-		if (infoDisplayObjectProvider == null) {
-			return false;
-		}
 
 		AssetRendererFactory<?> assetRendererFactory =
 			AssetRendererFactoryRegistryUtil.
-				getAssetRendererFactoryByClassNameId(
-					infoDisplayObjectProvider.getClassNameId());
+				getAssetRendererFactoryByClassNameId(classNameId);
 
 		AssetRenderer<?> assetRenderer = null;
 
 		if (assetRendererFactory != null) {
-			assetRenderer = assetRendererFactory.getAssetRenderer(
-				infoDisplayObjectProvider.getClassPK());
+			assetRenderer = assetRendererFactory.getAssetRenderer(classPK);
 		}
 
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
 		if (((assetRenderer == null) ||
-			 !assetRenderer.hasEditPermission(
-				 themeDisplay.getPermissionChecker())) &&
+			 !assetRenderer.hasEditPermission(permissionChecker)) &&
 			!LayoutPermissionUtil.contains(
-				themeDisplay.getPermissionChecker(), layout,
-				ActionKeys.UPDATE)) {
+				permissionChecker, layout, ActionKeys.UPDATE)) {
 
 			return false;
 		}
