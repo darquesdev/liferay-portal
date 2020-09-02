@@ -214,9 +214,13 @@ public abstract class BaseSegmentsEntryProvider
 		String className, long classPK, Context context,
 		SegmentsEntry segmentsEntry, long[] segmentsEntryIds) {
 
+		String contextFilterString = getFilterString(
+			segmentsEntry, Criteria.Type.CONTEXT);
+
 		if (segmentsEntryRelLocalService.hasSegmentsEntryRel(
 				segmentsEntry.getSegmentsEntryId(),
-				portal.getClassNameId(className), classPK)) {
+				portal.getClassNameId(className), classPK) &&
+			Validator.isNull(contextFilterString)) {
 
 			return true;
 		}
@@ -228,8 +232,6 @@ public abstract class BaseSegmentsEntryProvider
 		}
 
 		Criteria.Conjunction contextConjunction = getConjunction(
-			segmentsEntry, Criteria.Type.CONTEXT);
-		String contextFilterString = getFilterString(
 			segmentsEntry, Criteria.Type.CONTEXT);
 
 		if ((context != null) && Validator.isNotNull(contextFilterString)) {
