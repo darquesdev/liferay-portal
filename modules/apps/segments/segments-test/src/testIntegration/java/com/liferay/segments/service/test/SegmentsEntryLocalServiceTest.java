@@ -565,6 +565,35 @@ public class SegmentsEntryLocalServiceTest {
 	}
 
 	@Test
+	public void testUpdateSegmentsEntryWithOutdatedReferredSource()
+		throws PortalException {
+
+		Criteria criteria = new Criteria();
+
+		_segmentsEntrySegmentsCriteriaContributor.contribute(
+			criteria,
+			String.format(
+				"(segmentsEntryIds eq '%s')", RandomTestUtil.nextLong()),
+			Criteria.Conjunction.AND);
+
+		SegmentsEntry segmentsEntry = SegmentsTestUtil.addSegmentsEntry(
+			_group.getGroupId(), CriteriaSerializer.serialize(criteria),
+			User.class.getName());
+
+		SegmentsEntry updatedSegmentsEntry =
+			_segmentsEntryLocalService.updateSegmentsEntry(
+				segmentsEntry.getSegmentsEntryId(),
+				segmentsEntry.getSegmentsEntryKey(), segmentsEntry.getNameMap(),
+				segmentsEntry.getDescriptionMap(), false,
+				CriteriaSerializer.serialize(new Criteria()),
+				ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
+
+		Assert.assertEquals(
+			SegmentsEntryConstants.SOURCE_DEFAULT,
+			updatedSegmentsEntry.getSource());
+	}
+
+	@Test
 	public void testUpdateSegmentsEntryWithReferredSource()
 		throws PortalException {
 
