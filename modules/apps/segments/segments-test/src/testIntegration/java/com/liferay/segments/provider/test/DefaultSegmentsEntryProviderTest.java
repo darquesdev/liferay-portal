@@ -21,13 +21,16 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.role.RoleConstants;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.OrganizationTestUtil;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -444,6 +447,37 @@ public class DefaultSegmentsEntryProviderTest {
 				segmentsEntryIds));
 	}
 
+	@Test
+	public void testGetSegmentsEntryIdsWithUserModelCriterionAndUserCreatedAfterSegmentsEntry()
+		throws Exception {
+
+		Criteria criteria = new Criteria();
+
+		String firstName = RandomTestUtil.randomString();
+
+		_userSegmentsCriteriaContributor.contribute(
+			criteria, String.format("(firstName eq '%s')", firstName),
+			Criteria.Conjunction.AND);
+
+		SegmentsEntry segmentsEntry = SegmentsTestUtil.addSegmentsEntry(
+			_group.getGroupId(), CriteriaSerializer.serialize(criteria),
+			User.class.getName());
+
+		_user1 = UserTestUtil.addUser(
+			RandomTestUtil.randomString(), LocaleUtil.US, firstName,
+			RandomTestUtil.randomString(), new long[0]);
+
+		long[] segmentsEntryIds = _segmentsEntryProvider.getSegmentsEntryIds(
+			_group.getGroupId(), User.class.getName(), _user1.getUserId());
+
+		Assert.assertEquals(
+			StringUtil.merge(segmentsEntryIds, StringPool.COMMA), 1,
+			segmentsEntryIds.length);
+
+		Assert.assertArrayEquals(
+			new long[] {segmentsEntry.getSegmentsEntryId()}, segmentsEntryIds);
+	}
+
 	@Inject(
 		filter = "segments.criteria.contributor.key=context",
 		type = SegmentsCriteriaContributor.class
@@ -473,6 +507,9 @@ public class DefaultSegmentsEntryProviderTest {
 
 	@DeleteAfterTestRun
 	private User _user2;
+
+	@Inject
+	private UserLocalService _userLocalService;
 
 	@Inject(
 		filter = "segments.criteria.contributor.key=user-organization",
