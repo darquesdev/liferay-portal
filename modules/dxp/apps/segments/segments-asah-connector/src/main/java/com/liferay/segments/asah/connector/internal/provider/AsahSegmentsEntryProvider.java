@@ -115,13 +115,6 @@ public class AsahSegmentsEntryProvider implements SegmentsEntryProvider {
 					_segmentsEntryRelLocalService.hasSegmentsEntryRel(
 						segmentsEntry.getSegmentsEntryId(),
 						_portal.getClassNameId(className), classPK)
-			).sorted(
-				(segmentsEntry1, segmentsEntry2) -> {
-					Date modifiedDate = segmentsEntry2.getModifiedDate();
-
-					return modifiedDate.compareTo(
-						segmentsEntry1.getModifiedDate());
-				}
 			).mapToLong(
 				SegmentsEntry::getSegmentsEntryId
 			).toArray();
