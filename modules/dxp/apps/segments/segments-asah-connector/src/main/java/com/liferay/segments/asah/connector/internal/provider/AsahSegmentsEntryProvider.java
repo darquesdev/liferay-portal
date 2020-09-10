@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.segments.asah.connector.internal.cache.AsahSegmentsEntryCache;
@@ -102,7 +103,27 @@ public class AsahSegmentsEntryProvider implements SegmentsEntryProvider {
 				_segmentsEntryLocalService.getSegmentsEntries(
 					groupId, true,
 					SegmentsEntryConstants.SOURCE_ASAH_FARO_BACKEND, className,
-					QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+					QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+					new OrderByComparator<SegmentsEntry>() {
+
+						@Override
+						public int compare(
+							SegmentsEntry segmentsEntry1,
+							SegmentsEntry segmentsEntry2) {
+
+							Date modifiedDate =
+								segmentsEntry2.getModifiedDate();
+
+							return modifiedDate.compareTo(
+								segmentsEntry1.getModifiedDate());
+						}
+
+						@Override
+						public String[] getOrderByFields() {
+							return new String[] {"modifiedDate"};
+						}
+
+					});
 
 			if (segmentsEntries.isEmpty()) {
 				return new long[0];
@@ -115,13 +136,6 @@ public class AsahSegmentsEntryProvider implements SegmentsEntryProvider {
 					_segmentsEntryRelLocalService.hasSegmentsEntryRel(
 						segmentsEntry.getSegmentsEntryId(),
 						_portal.getClassNameId(className), classPK)
-			).sorted(
-				(segmentsEntry1, segmentsEntry2) -> {
-					Date modifiedDate = segmentsEntry2.getModifiedDate();
-
-					return modifiedDate.compareTo(
-						segmentsEntry1.getModifiedDate());
-				}
 			).mapToLong(
 				SegmentsEntry::getSegmentsEntryId
 			).toArray();
