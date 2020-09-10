@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.security.permission.contributor.RoleCollection;
 import com.liferay.portal.kernel.security.permission.contributor.RoleContributor;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.segments.constants.SegmentsWebKeys;
 import com.liferay.segments.context.RequestContextMapper;
 import com.liferay.segments.model.SegmentsEntryRole;
 import com.liferay.segments.provider.SegmentsEntryProviderRegistry;
@@ -32,6 +33,7 @@ import com.liferay.segments.simulator.SegmentsEntrySimulator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -85,11 +87,21 @@ public class SegmentsEntryRoleContributor implements RoleContributor {
 		}
 		else {
 			try {
-				segmentsEntryIds =
-					_segmentsEntryProviderRegistry.getSegmentsEntryIds(
-						roleCollection.getGroupId(), User.class.getName(),
-						user.getUserId(),
-						_requestContextMapper.map(httpServletRequest));
+				HttpSession session = httpServletRequest.getSession();
+
+				segmentsEntryIds = (long[])session.getAttribute(
+					SegmentsWebKeys.SEGMENTS_ENTRY_IDS);
+
+				if (segmentsEntryIds == null) {
+					segmentsEntryIds =
+						_segmentsEntryProviderRegistry.getSegmentsEntryIds(
+							roleCollection.getGroupId(), User.class.getName(),
+							user.getUserId(),
+							_requestContextMapper.map(httpServletRequest));
+
+					session.setAttribute(
+						SegmentsWebKeys.SEGMENTS_ENTRY_IDS, segmentsEntryIds);
+				}
 			}
 			catch (PortalException portalException) {
 				if (_log.isWarnEnabled()) {
@@ -98,7 +110,9 @@ public class SegmentsEntryRoleContributor implements RoleContributor {
 			}
 		}
 
-		if ((segmentsEntryIds.length > 0) && _log.isDebugEnabled()) {
+		if ((segmentsEntryIds != null) && (segmentsEntryIds.length > 0) &&
+			_log.isDebugEnabled()) {
+
 			_log.debug(
 				StringBundler.concat(
 					"Found segments ", segmentsEntryIds, " for user ",

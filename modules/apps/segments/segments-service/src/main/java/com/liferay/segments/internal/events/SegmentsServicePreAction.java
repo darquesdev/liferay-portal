@@ -43,6 +43,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -151,16 +152,30 @@ public class SegmentsServicePreAction extends Action {
 		}
 		else {
 			try {
-				segmentsEntryIds =
-					_segmentsEntryProviderRegistry.getSegmentsEntryIds(
-						groupId, User.class.getName(), userId,
-						_requestContextMapper.map(httpServletRequest));
+				HttpSession session = httpServletRequest.getSession();
+
+				segmentsEntryIds = (long[])session.getAttribute(
+					SegmentsWebKeys.SEGMENTS_ENTRY_IDS);
+
+				if (segmentsEntryIds == null) {
+					segmentsEntryIds =
+						_segmentsEntryProviderRegistry.getSegmentsEntryIds(
+							groupId, User.class.getName(), userId,
+							_requestContextMapper.map(httpServletRequest));
+
+					session.setAttribute(
+						SegmentsWebKeys.SEGMENTS_ENTRY_IDS, segmentsEntryIds);
+				}
 			}
 			catch (PortalException portalException) {
 				if (_log.isWarnEnabled()) {
 					_log.warn(portalException.getMessage());
 				}
 			}
+		}
+
+		if (segmentsEntryIds == null) {
+			segmentsEntryIds = new long[0];
 		}
 
 		return ArrayUtil.append(
