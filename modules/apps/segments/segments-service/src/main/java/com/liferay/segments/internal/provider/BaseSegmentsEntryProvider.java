@@ -38,8 +38,10 @@ import com.liferay.segments.provider.SegmentsEntryProvider;
 import com.liferay.segments.service.SegmentsEntryLocalService;
 import com.liferay.segments.service.SegmentsEntryRelLocalService;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Reference;
@@ -198,10 +200,18 @@ public abstract class BaseSegmentsEntryProvider
 	protected String getFilterString(
 		SegmentsEntry segmentsEntry, Criteria.Type type) {
 
+		Map<String, String> filterStrings = getFilterStrings(segmentsEntry);
+
+		return filterStrings.get(type.getValue());
+	}
+
+	protected Map<String, String> getFilterStrings(
+		SegmentsEntry segmentsEntry) {
+
 		Criteria existingCriteria = segmentsEntry.getCriteriaObj();
 
 		if (existingCriteria == null) {
-			return null;
+			return Collections.emptyMap();
 		}
 
 		Criteria criteria = new Criteria();
@@ -225,7 +235,7 @@ public abstract class BaseSegmentsEntryProvider
 				Criteria.Conjunction.parse(criterion.getConjunction()));
 		}
 
-		return criteria.getFilterString(type);
+		return criteria.getFilterStrings();
 	}
 
 	protected abstract String getSource();
@@ -234,8 +244,10 @@ public abstract class BaseSegmentsEntryProvider
 		String className, long classPK, Context context,
 		SegmentsEntry segmentsEntry, long[] segmentsEntryIds) {
 
-		String contextFilterString = getFilterString(
-			segmentsEntry, Criteria.Type.CONTEXT);
+		Map<String, String> filterStrings = getFilterStrings(segmentsEntry);
+
+		String contextFilterString = filterStrings.get(
+			Criteria.Type.CONTEXT.getValue());
 
 		if (segmentsEntryRelLocalService.hasSegmentsEntryRel(
 				segmentsEntry.getSegmentsEntryId(),
@@ -251,9 +263,6 @@ public abstract class BaseSegmentsEntryProvider
 			return false;
 		}
 
-		Criteria.Conjunction contextConjunction = getConjunction(
-			segmentsEntry, Criteria.Type.CONTEXT);
-
 		if ((context != null) && Validator.isNotNull(contextFilterString)) {
 			boolean matchesContext = false;
 
@@ -264,6 +273,9 @@ public abstract class BaseSegmentsEntryProvider
 			catch (PortalException portalException) {
 				_log.error(portalException, portalException);
 			}
+
+			Criteria.Conjunction contextConjunction = getConjunction(
+				segmentsEntry, Criteria.Type.CONTEXT);
 
 			if (matchesContext &&
 				contextConjunction.equals(Criteria.Conjunction.OR)) {
@@ -278,12 +290,11 @@ public abstract class BaseSegmentsEntryProvider
 			}
 		}
 
-		Criteria.Conjunction modelConjunction = getConjunction(
-			segmentsEntry, Criteria.Type.MODEL);
 		ODataRetriever<BaseModel<?>> oDataRetriever =
 			serviceTrackerMap.getService(className);
-		String modelFilterString = getFilterString(
-			segmentsEntry, Criteria.Type.MODEL);
+
+		String modelFilterString = filterStrings.get(
+			Criteria.Type.MODEL.getValue());
 
 		if (Validator.isNotNull(modelFilterString) &&
 			(oDataRetriever != null)) {
@@ -310,6 +321,9 @@ public abstract class BaseSegmentsEntryProvider
 			catch (PortalException portalException) {
 				_log.error(portalException, portalException);
 			}
+
+			Criteria.Conjunction modelConjunction = getConjunction(
+				segmentsEntry, Criteria.Type.MODEL);
 
 			if (matchesModel &&
 				modelConjunction.equals(Criteria.Conjunction.OR)) {
