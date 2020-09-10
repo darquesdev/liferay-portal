@@ -23,7 +23,10 @@ import com.liferay.portal.kernel.security.permission.contributor.RoleCollection;
 import com.liferay.portal.kernel.security.permission.contributor.RoleContributor;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.segments.constants.SegmentsWebKeys;
+import com.liferay.segments.context.Context;
 import com.liferay.segments.context.RequestContextMapper;
+import com.liferay.segments.internal.cache.SegmentsEntrySessionCache;
 import com.liferay.segments.model.SegmentsEntryRole;
 import com.liferay.segments.provider.SegmentsEntryProviderRegistry;
 import com.liferay.segments.service.SegmentsEntryRoleLocalService;
@@ -42,7 +45,7 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 /**
  * @author Drew Brokke
  */
-@Component(immediate = true, service = RoleContributor.class)
+@Component(service = RoleContributor.class)
 public class SegmentsEntryRoleContributor implements RoleContributor {
 
 	@Override
@@ -59,18 +62,23 @@ public class SegmentsEntryRoleContributor implements RoleContributor {
 	}
 
 	private long[] _getSegmentsEntryIds(RoleCollection roleCollection) {
-		long[] segmentsEntryIds = new long[0];
-
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
 
 		if (serviceContext == null) {
-			return segmentsEntryIds;
+			return new long[0];
 		}
 
 		HttpServletRequest httpServletRequest = serviceContext.getRequest();
 
 		if (httpServletRequest == null) {
+			return new long[0];
+		}
+
+		long[] segmentsEntryIds = (long[])httpServletRequest.getAttribute(
+			SegmentsWebKeys.SEGMENTS_ENTRY_IDS);
+
+		if (segmentsEntryIds != null) {
 			return segmentsEntryIds;
 		}
 
@@ -86,10 +94,30 @@ public class SegmentsEntryRoleContributor implements RoleContributor {
 		else {
 			try {
 				segmentsEntryIds =
-					_segmentsEntryProviderRegistry.getSegmentsEntryIds(
-						roleCollection.getGroupId(), User.class.getName(),
-						user.getUserId(),
-						_requestContextMapper.map(httpServletRequest));
+					_segmentsEntrySessionCache.getSegmentsEntryIds();
+
+				Context context = _requestContextMapper.map(httpServletRequest);
+
+				if (segmentsEntryIds == null) {
+					segmentsEntryIds =
+						_segmentsEntryProviderRegistry.getSegmentsEntryIds(
+							roleCollection.getGroupId(), User.class.getName(),
+							user.getUserId(), context);
+
+					_segmentsEntrySessionCache.putSegmentsEntryIds(
+						segmentsEntryIds);
+				}
+				else {
+					context.put("segmentsEntryIds", segmentsEntryIds);
+
+					segmentsEntryIds =
+						_segmentsEntryProviderRegistry.getSegmentsEntryIds(
+							roleCollection.getGroupId(), User.class.getName(),
+							user.getUserId(), context);
+
+					_segmentsEntrySessionCache.putSegmentsEntryIds(
+						segmentsEntryIds);
+				}
 			}
 			catch (PortalException portalException) {
 				if (_log.isWarnEnabled()) {
@@ -98,13 +126,18 @@ public class SegmentsEntryRoleContributor implements RoleContributor {
 			}
 		}
 
-		if ((segmentsEntryIds.length > 0) && _log.isDebugEnabled()) {
+		if ((segmentsEntryIds != null) && (segmentsEntryIds.length > 0) &&
+			_log.isDebugEnabled()) {
+
 			_log.debug(
 				StringBundler.concat(
 					"Found segments ", segmentsEntryIds, " for user ",
 					user.getUserId(), " in group ",
 					roleCollection.getGroupId()));
 		}
+
+		httpServletRequest.setAttribute(
+			SegmentsWebKeys.SEGMENTS_ENTRY_IDS, segmentsEntryIds);
 
 		return segmentsEntryIds;
 	}
@@ -120,6 +153,9 @@ public class SegmentsEntryRoleContributor implements RoleContributor {
 
 	@Reference
 	private SegmentsEntryRoleLocalService _segmentsEntryRoleLocalService;
+
+	@Reference
+	private SegmentsEntrySessionCache _segmentsEntrySessionCache;
 
 	@Reference(
 		cardinality = ReferenceCardinality.OPTIONAL,
