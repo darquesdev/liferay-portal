@@ -122,6 +122,10 @@ public class SegmentsEntryProviderRegistryImpl
 
 		long[] segmentsEntryIds = new long[0];
 
+		if ((context != null) && context.containsKey("segmentsEntryIds")) {
+			segmentsEntryIds = (long[])context.get("segmentsEntryIds");
+		}
+
 		for (SegmentsEntryProvider segmentsEntryProvider :
 				_serviceTrackerList) {
 

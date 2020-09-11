@@ -15,12 +15,12 @@
 package com.liferay.segments.internal.provider;
 
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -290,37 +290,12 @@ public abstract class BaseSegmentsEntryProvider
 			}
 		}
 
-		ODataRetriever<BaseModel<?>> oDataRetriever =
-			serviceTrackerMap.getService(className);
-
 		String modelFilterString = filterStrings.get(
 			Criteria.Type.MODEL.getValue());
 
-		if (Validator.isNotNull(modelFilterString) &&
-			(oDataRetriever != null)) {
-
-			StringBundler sb = new StringBundler(5);
-
-			sb.append("(");
-			sb.append(modelFilterString);
-			sb.append(") and (classPK eq '");
-			sb.append(classPK);
-			sb.append("')");
-
-			boolean matchesModel = false;
-
-			try {
-				int count = oDataRetriever.getResultsCount(
-					segmentsEntry.getCompanyId(), sb.toString(),
-					LocaleUtil.getDefault());
-
-				if (count > 0) {
-					matchesModel = true;
-				}
-			}
-			catch (PortalException portalException) {
-				_log.error(portalException, portalException);
-			}
+		if (Validator.isNotNull(modelFilterString)) {
+			boolean matchesModel = ArrayUtil.contains(
+				segmentsEntryIds, segmentsEntry.getSegmentsEntryId());
 
 			Criteria.Conjunction modelConjunction = getConjunction(
 				segmentsEntry, Criteria.Type.MODEL);
