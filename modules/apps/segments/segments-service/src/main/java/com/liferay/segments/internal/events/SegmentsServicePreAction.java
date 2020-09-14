@@ -119,12 +119,17 @@ public class SegmentsServicePreAction extends Action {
 			return;
 		}
 
-		long[] segmentsEntryIds = _getSegmentsEntryIds(
-			httpServletRequest, themeDisplay.getScopeGroupId(),
-			themeDisplay.getUserId());
+		long[] segmentsEntryIds = (long[])httpServletRequest.getAttribute(
+			SegmentsWebKeys.SEGMENTS_ENTRY_IDS);
 
-		httpServletRequest.setAttribute(
-			SegmentsWebKeys.SEGMENTS_ENTRY_IDS, segmentsEntryIds);
+		if (segmentsEntryIds == null) {
+			segmentsEntryIds = _getSegmentsEntryIds(
+				httpServletRequest, themeDisplay.getScopeGroupId(),
+				themeDisplay.getUserId());
+
+			httpServletRequest.setAttribute(
+				SegmentsWebKeys.SEGMENTS_ENTRY_IDS, segmentsEntryIds);
+		}
 
 		if (!layout.isTypeContent()) {
 			return;
@@ -134,7 +139,8 @@ public class SegmentsServicePreAction extends Action {
 			SegmentsWebKeys.SEGMENTS_EXPERIENCE_IDS,
 			_getSegmentsExperienceIds(
 				httpServletRequest, httpServletResponse, layout.getGroupId(),
-				segmentsEntryIds,
+				ArrayUtil.append(
+					segmentsEntryIds, SegmentsEntryConstants.ID_DEFAULT),
 				_portal.getClassNameId(Layout.class.getName()),
 				layout.getPlid()));
 	}
@@ -176,8 +182,7 @@ public class SegmentsServicePreAction extends Action {
 			segmentsEntryIds = new long[0];
 		}
 
-		return ArrayUtil.append(
-			segmentsEntryIds, SegmentsEntryConstants.ID_DEFAULT);
+		return segmentsEntryIds;
 	}
 
 	private long[] _getSegmentsExperienceIds(
