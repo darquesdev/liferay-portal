@@ -24,6 +24,7 @@ import com.liferay.portal.kernel.security.permission.contributor.RoleContributor
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.segments.constants.SegmentsWebKeys;
+import com.liferay.segments.context.Context;
 import com.liferay.segments.context.RequestContextMapper;
 import com.liferay.segments.internal.cache.SegmentsEntrySessionCache;
 import com.liferay.segments.model.SegmentsEntryRole;
@@ -95,12 +96,24 @@ public class SegmentsEntryRoleContributor implements RoleContributor {
 				segmentsEntryIds =
 					_segmentsEntrySessionCache.getSegmentsEntryIds();
 
+				Context context = _requestContextMapper.map(httpServletRequest);
+
 				if (segmentsEntryIds == null) {
 					segmentsEntryIds =
 						_segmentsEntryProviderRegistry.getSegmentsEntryIds(
 							roleCollection.getGroupId(), User.class.getName(),
-							user.getUserId(),
-							_requestContextMapper.map(httpServletRequest));
+							user.getUserId(), context);
+
+					_segmentsEntrySessionCache.putSegmentsEntryIds(
+						segmentsEntryIds);
+				}
+				else {
+					context.put("segmentsEntryIds", segmentsEntryIds);
+
+					segmentsEntryIds =
+						_segmentsEntryProviderRegistry.getSegmentsEntryIds(
+							roleCollection.getGroupId(), User.class.getName(),
+							user.getUserId(), context);
 
 					_segmentsEntrySessionCache.putSegmentsEntryIds(
 						segmentsEntryIds);

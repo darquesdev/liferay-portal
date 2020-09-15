@@ -54,6 +54,23 @@ public class SegmentsEntrySessionCache {
 		_sessions.clear();
 	}
 
+	public void clear(HttpSession httpSession) {
+		if (_sessions.get(httpSession.getId()) == null) {
+			return;
+		}
+
+		try {
+			httpSession.removeAttribute(SegmentsWebKeys.SEGMENTS_ENTRY_IDS);
+		}
+		catch (IllegalStateException illegalStateException) {
+			if (_log.isInfoEnabled()) {
+				_log.info("Error cleaning the cache " + illegalStateException);
+			}
+		}
+
+		_sessions.remove(httpSession.getId());
+	}
+
 	public long[] getSegmentsEntryIds() {
 		HttpSession httpSession = PortalSessionThreadLocal.getHttpSession();
 
