@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.segments.constants.SegmentsWebKeys;
 import com.liferay.segments.context.RequestContextMapper;
+import com.liferay.segments.internal.cache.SegmentsEntrySessionCache;
 import com.liferay.segments.model.SegmentsEntryRole;
 import com.liferay.segments.provider.SegmentsEntryProviderRegistry;
 import com.liferay.segments.service.SegmentsEntryRoleLocalService;
@@ -33,7 +34,6 @@ import com.liferay.segments.simulator.SegmentsEntrySimulator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -44,7 +44,7 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 /**
  * @author Drew Brokke
  */
-@Component(immediate = true, service = RoleContributor.class)
+@Component(service = RoleContributor.class)
 public class SegmentsEntryRoleContributor implements RoleContributor {
 
 	@Override
@@ -92,10 +92,8 @@ public class SegmentsEntryRoleContributor implements RoleContributor {
 		}
 		else {
 			try {
-				HttpSession session = httpServletRequest.getSession();
-
-				segmentsEntryIds = (long[])session.getAttribute(
-					SegmentsWebKeys.SEGMENTS_ENTRY_IDS);
+				segmentsEntryIds =
+					_segmentsEntrySessionCache.getSegmentsEntryIds();
 
 				if (segmentsEntryIds == null) {
 					segmentsEntryIds =
@@ -104,8 +102,8 @@ public class SegmentsEntryRoleContributor implements RoleContributor {
 							user.getUserId(),
 							_requestContextMapper.map(httpServletRequest));
 
-					session.setAttribute(
-						SegmentsWebKeys.SEGMENTS_ENTRY_IDS, segmentsEntryIds);
+					_segmentsEntrySessionCache.putSegmentsEntryIds(
+						segmentsEntryIds);
 				}
 			}
 			catch (PortalException portalException) {
@@ -142,6 +140,9 @@ public class SegmentsEntryRoleContributor implements RoleContributor {
 
 	@Reference
 	private SegmentsEntryRoleLocalService _segmentsEntryRoleLocalService;
+
+	@Reference
+	private SegmentsEntrySessionCache _segmentsEntrySessionCache;
 
 	@Reference(
 		cardinality = ReferenceCardinality.OPTIONAL,

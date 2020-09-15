@@ -33,6 +33,7 @@ import com.liferay.segments.constants.SegmentsEntryConstants;
 import com.liferay.segments.constants.SegmentsExperienceConstants;
 import com.liferay.segments.constants.SegmentsWebKeys;
 import com.liferay.segments.context.RequestContextMapper;
+import com.liferay.segments.internal.cache.SegmentsEntrySessionCache;
 import com.liferay.segments.internal.configuration.SegmentsServiceConfiguration;
 import com.liferay.segments.processor.SegmentsExperienceRequestProcessorRegistry;
 import com.liferay.segments.provider.SegmentsEntryProviderRegistry;
@@ -43,7 +44,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -157,10 +157,8 @@ public class SegmentsServicePreAction extends Action {
 		}
 		else {
 			try {
-				HttpSession session = httpServletRequest.getSession();
-
-				segmentsEntryIds = (long[])session.getAttribute(
-					SegmentsWebKeys.SEGMENTS_ENTRY_IDS);
+				segmentsEntryIds =
+					_segmentsEntrySessionCache.getSegmentsEntryIds();
 
 				if (segmentsEntryIds == null) {
 					segmentsEntryIds =
@@ -168,8 +166,8 @@ public class SegmentsServicePreAction extends Action {
 							groupId, User.class.getName(), userId,
 							_requestContextMapper.map(httpServletRequest));
 
-					session.setAttribute(
-						SegmentsWebKeys.SEGMENTS_ENTRY_IDS, segmentsEntryIds);
+					_segmentsEntrySessionCache.putSegmentsEntryIds(
+						segmentsEntryIds);
 				}
 			}
 			catch (PortalException portalException) {
@@ -225,6 +223,9 @@ public class SegmentsServicePreAction extends Action {
 
 	@Reference
 	private SegmentsEntryProviderRegistry _segmentsEntryProviderRegistry;
+
+	@Reference
+	private SegmentsEntrySessionCache _segmentsEntrySessionCache;
 
 	@Reference(
 		cardinality = ReferenceCardinality.OPTIONAL,
