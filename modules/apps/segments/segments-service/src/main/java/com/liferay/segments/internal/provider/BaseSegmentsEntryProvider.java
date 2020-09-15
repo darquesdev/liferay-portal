@@ -31,6 +31,7 @@ import com.liferay.segments.context.Context;
 import com.liferay.segments.criteria.Criteria;
 import com.liferay.segments.criteria.contributor.SegmentsCriteriaContributor;
 import com.liferay.segments.criteria.contributor.SegmentsCriteriaContributorRegistry;
+import com.liferay.segments.internal.cache.SegmentsEntrySessionCache;
 import com.liferay.segments.model.SegmentsEntry;
 import com.liferay.segments.model.SegmentsEntryRel;
 import com.liferay.segments.odata.matcher.ODataMatcher;
@@ -301,13 +302,12 @@ public abstract class BaseSegmentsEntryProvider
 
 			boolean matchesModel = false;
 
-			if ((context != null) && context.containsKey("segmentsEntryIds")) {
-				long[] matchedSegmentsEntryIds = (long[])context.get(
-					"segmentsEntryIds");
+			long[] cachedSegmentsEntryIds =
+				segmentsEntrySessionCache.getSegmentsEntryIds();
 
+			if (cachedSegmentsEntryIds != null) {
 				matchesModel = ArrayUtil.contains(
-					matchedSegmentsEntryIds,
-					segmentsEntry.getSegmentsEntryId());
+					cachedSegmentsEntryIds, segmentsEntry.getSegmentsEntryId());
 			}
 			else {
 				StringBundler sb = new StringBundler(5);
@@ -368,6 +368,9 @@ public abstract class BaseSegmentsEntryProvider
 
 	@Reference
 	protected SegmentsEntryRelLocalService segmentsEntryRelLocalService;
+
+	@Reference
+	protected SegmentsEntrySessionCache segmentsEntrySessionCache;
 
 	protected ServiceTrackerMap<String, ODataRetriever<BaseModel<?>>>
 		serviceTrackerMap;

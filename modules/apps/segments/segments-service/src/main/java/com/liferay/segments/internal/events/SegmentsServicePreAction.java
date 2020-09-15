@@ -32,7 +32,6 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.segments.constants.SegmentsEntryConstants;
 import com.liferay.segments.constants.SegmentsExperienceConstants;
 import com.liferay.segments.constants.SegmentsWebKeys;
-import com.liferay.segments.context.Context;
 import com.liferay.segments.context.RequestContextMapper;
 import com.liferay.segments.internal.cache.SegmentsEntrySessionCache;
 import com.liferay.segments.internal.configuration.SegmentsServiceConfiguration;
@@ -159,28 +158,12 @@ public class SegmentsServicePreAction extends Action {
 		else {
 			try {
 				segmentsEntryIds =
-					_segmentsEntrySessionCache.getSegmentsEntryIds();
+					_segmentsEntryProviderRegistry.getSegmentsEntryIds(
+						groupId, User.class.getName(), userId,
+						_requestContextMapper.map(httpServletRequest));
 
-				Context context = _requestContextMapper.map(httpServletRequest);
-
-				if (segmentsEntryIds == null) {
-					segmentsEntryIds =
-						_segmentsEntryProviderRegistry.getSegmentsEntryIds(
-							groupId, User.class.getName(), userId, context);
-
-					_segmentsEntrySessionCache.putSegmentsEntryIds(
-						segmentsEntryIds);
-				}
-				else {
-					context.put("segmentsEntryIds", segmentsEntryIds);
-
-					segmentsEntryIds =
-						_segmentsEntryProviderRegistry.getSegmentsEntryIds(
-							groupId, User.class.getName(), userId, context);
-
-					_segmentsEntrySessionCache.putSegmentsEntryIds(
-						segmentsEntryIds);
-				}
+				_segmentsEntrySessionCache.putSegmentsEntryIds(
+					segmentsEntryIds);
 			}
 			catch (PortalException portalException) {
 				if (_log.isWarnEnabled()) {
