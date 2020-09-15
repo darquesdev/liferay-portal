@@ -39,6 +39,7 @@ import com.liferay.segments.service.SegmentsEntryRelLocalService;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Reference;
@@ -278,17 +279,12 @@ public abstract class BaseSegmentsEntryProvider
 
 			boolean matchesModel = false;
 
-			try {
-				int count = oDataRetriever.getResultsCount(
-					segmentsEntry.getCompanyId(), sb.toString(),
-					LocaleUtil.getDefault());
+			ThreadLocalRandom threadLocalRandom = ThreadLocalRandom.current();
 
-				if (count > 0) {
-					matchesModel = true;
-				}
-			}
-			catch (PortalException portalException) {
-				_log.error(portalException, portalException);
+			int count = threadLocalRandom.nextInt(0, 1);
+
+			if (count > 0) {
+				matchesModel = true;
 			}
 
 			if (matchesModel &&
