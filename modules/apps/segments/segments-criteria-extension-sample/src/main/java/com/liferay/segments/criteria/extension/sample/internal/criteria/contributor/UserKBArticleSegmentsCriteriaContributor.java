@@ -14,6 +14,7 @@
 
 package com.liferay.segments.criteria.extension.sample.internal.criteria.contributor;
 
+import com.liferay.item.selector.ItemSelector;
 import com.liferay.knowledge.base.model.KBArticle;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -21,21 +22,27 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.segments.criteria.Criteria;
 import com.liferay.segments.criteria.contributor.SegmentsCriteriaContributor;
+import com.liferay.segments.criteria.extension.sample.internal.item.selector.KBArticleItemSelectorCriterion;
 import com.liferay.segments.criteria.extension.sample.internal.odata.entity.KBArticleEntityModel;
 import com.liferay.segments.field.Field;
 import com.liferay.segments.odata.retriever.ODataRetriever;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import javax.portlet.PortletRequest;
+import javax.portlet.PortletURL;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -119,7 +126,8 @@ public class UserKBArticleSegmentsCriteriaContributor
 			new Field(
 				"title",
 				LanguageUtil.get(_portal.getLocale(portletRequest), "title"),
-				"string"));
+				"id", Collections.emptyList(),
+				getSelectEntity(portletRequest)));
 	}
 
 	@Override
@@ -127,15 +135,45 @@ public class UserKBArticleSegmentsCriteriaContributor
 		return KEY;
 	}
 
+	public Field.SelectEntity getSelectEntity(PortletRequest portletRequest) {
+		try {
+			PortletURL portletURL = _itemSelector.getItemSelectorURL(
+				RequestBackedPortletURLFactoryUtil.create(portletRequest),
+				"selectEntity", new KBArticleItemSelectorCriterion());
+
+			return new Field.SelectEntity(
+				"selectEntity",
+				getSelectEntityTitle(
+					_portal.getLocale(portletRequest), User.class.getName()),
+				portletURL.toString(), false);
+		}
+		catch (Exception exception) {
+			if (_log.isWarnEnabled()) {
+				_log.warn("Unable to get select entity", exception);
+			}
+
+			return null;
+		}
+	}
+
 	@Override
 	public Criteria.Type getType() {
 		return Criteria.Type.MODEL;
+	}
+
+	protected String getSelectEntityTitle(Locale locale, String className) {
+		String title = ResourceActionsUtil.getModelResource(locale, className);
+
+		return LanguageUtil.format(locale, "select-x", title);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		UserKBArticleSegmentsCriteriaContributor.class);
 
 	private static final EntityModel _entityModel = new KBArticleEntityModel();
+
+	@Reference
+	private ItemSelector _itemSelector;
 
 	@Reference(
 		target = "(model.class.name=com.liferay.knowledge.base.model.KBArticle)"
