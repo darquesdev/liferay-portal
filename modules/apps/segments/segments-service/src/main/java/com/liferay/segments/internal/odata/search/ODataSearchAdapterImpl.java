@@ -15,6 +15,7 @@
 package com.liferay.segments.internal.odata.search;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.search.BooleanClause;
 import com.liferay.portal.kernel.search.BooleanClauseFactoryUtil;
@@ -32,6 +33,8 @@ import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.search.generic.MatchAllQuery;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
+import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.odata.filter.ExpressionConvert;
 import com.liferay.portal.odata.filter.Filter;
@@ -110,6 +113,12 @@ public class ODataSearchAdapterImpl implements ODataSearchAdapter {
 		SearchContext searchContext = new SearchContext();
 
 		searchContext.setCompanyId(companyId);
+
+		searchContext.setGroupIds(
+			ListUtil.toLongArray(
+				_groupLocalService.getActiveGroups(companyId, true),
+				Group::getGroupId));
+
 		searchContext.setEnd(end);
 		searchContext.setStart(start);
 
@@ -187,6 +196,9 @@ public class ODataSearchAdapterImpl implements ODataSearchAdapter {
 	)
 	private ExpressionConvert<com.liferay.portal.kernel.search.filter.Filter>
 		_expressionConvert;
+
+	@Reference
+	private GroupLocalService _groupLocalService;
 
 	@Reference
 	private IndexerRegistry _indexerRegistry;
