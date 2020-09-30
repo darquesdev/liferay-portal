@@ -14,8 +14,10 @@
 
 package com.liferay.segments.criteria.extension.sample.internal.odata.entity;
 
+import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.odata.entity.EntityField;
 import com.liferay.portal.odata.entity.EntityModel;
+import com.liferay.portal.odata.entity.IdEntityField;
 import com.liferay.portal.odata.entity.StringEntityField;
 
 import java.util.Map;
@@ -31,7 +33,10 @@ public class KBArticleEntityModel implements EntityModel {
 
 	public KBArticleEntityModel() {
 		_entityFieldsMap = EntityModel.toEntityFieldsMap(
-			new StringEntityField("title", locale -> "titleKeyword"));
+			new StringEntityField("title", locale -> "titleKeyword"),
+			new IdEntityField(
+				"kbArticleId", locale -> Field.ENTRY_CLASS_PK,
+				String::valueOf));
 	}
 
 	@Override

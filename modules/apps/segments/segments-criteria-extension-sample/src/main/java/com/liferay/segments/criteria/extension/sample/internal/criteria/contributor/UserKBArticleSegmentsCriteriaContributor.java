@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
@@ -30,10 +31,13 @@ import com.liferay.segments.criteria.Criteria;
 import com.liferay.segments.criteria.contributor.SegmentsCriteriaContributor;
 import com.liferay.segments.criteria.extension.sample.internal.odata.entity.KBArticleEntityModel;
 import com.liferay.segments.field.Field;
+import com.liferay.segments.field.customizer.SegmentsFieldCustomizer;
 import com.liferay.segments.odata.retriever.ODataRetriever;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import javax.portlet.PortletRequest;
 
@@ -115,11 +119,16 @@ public class UserKBArticleSegmentsCriteriaContributor
 
 	@Override
 	public List<Field> getFields(PortletRequest portletRequest) {
-		return Collections.singletonList(
+		Locale locale = _portal.getLocale(portletRequest);
+
+		return Arrays.asList(
+			new Field("title", LanguageUtil.get(locale, "title"), "string"),
 			new Field(
-				"title",
-				LanguageUtil.get(_portal.getLocale(portletRequest), "title"),
-				"string"));
+				"kbArticleId",
+				ResourceActionsUtil.getModelResource(
+					locale, KBArticle.class.getName()),
+				"id", Collections.emptyList(),
+				_segmentsFieldCustomizer.getSelectEntity(portletRequest)));
 	}
 
 	@Override
@@ -144,5 +153,8 @@ public class UserKBArticleSegmentsCriteriaContributor
 
 	@Reference
 	private Portal _portal;
+
+	@Reference(target = "(segments.field.customizer.entity.name=KBArticle)")
+	private SegmentsFieldCustomizer _segmentsFieldCustomizer;
 
 }
