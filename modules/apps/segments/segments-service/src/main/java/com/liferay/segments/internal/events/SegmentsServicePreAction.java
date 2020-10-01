@@ -160,7 +160,7 @@ public class SegmentsServicePreAction extends Action {
 		else {
 			try {
 				segmentsEntryIds =
-					_segmentsEntrySessionCache.getSegmentsEntryIds();
+					_segmentsEntrySessionCache.getSegmentsEntryIds(groupId);
 
 				Context context = _requestContextMapper.map(httpServletRequest);
 
@@ -170,7 +170,7 @@ public class SegmentsServicePreAction extends Action {
 							groupId, User.class.getName(), userId, context);
 
 					_segmentsEntrySessionCache.putSegmentsEntryIds(
-						segmentsEntryIds);
+						groupId, segmentsEntryIds);
 				}
 				else {
 					context.put("segmentsEntryIds", segmentsEntryIds);
@@ -180,7 +180,7 @@ public class SegmentsServicePreAction extends Action {
 							groupId, User.class.getName(), userId, context);
 
 					_segmentsEntrySessionCache.putSegmentsEntryIds(
-						segmentsEntryIds);
+						groupId, segmentsEntryIds);
 				}
 			}
 			catch (PortalException portalException) {

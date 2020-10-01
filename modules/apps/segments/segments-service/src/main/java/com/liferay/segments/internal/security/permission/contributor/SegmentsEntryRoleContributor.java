@@ -128,7 +128,8 @@ public class SegmentsEntryRoleContributor implements RoleContributor {
 		else {
 			try {
 				segmentsEntryIds =
-					_segmentsEntrySessionCache.getSegmentsEntryIds();
+					_segmentsEntrySessionCache.getSegmentsEntryIds(
+						roleCollection.getGroupId());
 
 				Context context = _requestContextMapper.map(httpServletRequest);
 
@@ -139,7 +140,7 @@ public class SegmentsEntryRoleContributor implements RoleContributor {
 							user.getUserId(), context);
 
 					_segmentsEntrySessionCache.putSegmentsEntryIds(
-						segmentsEntryIds);
+						roleCollection.getGroupId(), segmentsEntryIds);
 				}
 				else {
 					context.put("segmentsEntryIds", segmentsEntryIds);
@@ -150,7 +151,7 @@ public class SegmentsEntryRoleContributor implements RoleContributor {
 							user.getUserId(), context);
 
 					_segmentsEntrySessionCache.putSegmentsEntryIds(
-						segmentsEntryIds);
+						roleCollection.getGroupId(), segmentsEntryIds);
 				}
 			}
 			catch (PortalException portalException) {

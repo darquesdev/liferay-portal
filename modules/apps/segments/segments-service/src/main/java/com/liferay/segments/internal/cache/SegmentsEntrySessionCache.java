@@ -19,8 +19,10 @@ import com.liferay.petra.memory.FinalizeManager;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.servlet.PortalSessionThreadLocal;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.segments.constants.SegmentsWebKeys;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -71,18 +73,25 @@ public class SegmentsEntrySessionCache {
 		_sessions.remove(httpSession.getId());
 	}
 
-	public long[] getSegmentsEntryIds() {
+	public long[] getSegmentsEntryIds(long groupId) {
 		HttpSession httpSession = PortalSessionThreadLocal.getHttpSession();
 
 		if (httpSession == null) {
 			return null;
 		}
 
-		return (long[])httpSession.getAttribute(
-			SegmentsWebKeys.SEGMENTS_ENTRY_IDS);
+		Map<Long, long[]> segmentsEntryIds =
+			(Map<Long, long[]>)httpSession.getAttribute(
+				SegmentsWebKeys.SEGMENTS_ENTRY_IDS);
+
+		if (segmentsEntryIds == null) {
+			return null;
+		}
+
+		return segmentsEntryIds.get(groupId);
 	}
 
-	public void putSegmentsEntryIds(long[] segmentsEntryIds) {
+	public void putSegmentsEntryIds(long groupId, long[] segmentsEntryIds) {
 		HttpSession httpSession = PortalSessionThreadLocal.getHttpSession();
 
 		if (httpSession == null) {
@@ -93,8 +102,15 @@ public class SegmentsEntrySessionCache {
 			return;
 		}
 
+		Map<Long, long[]> cachedSegmentsEntryIds =
+			(Map<Long, long[]>)GetterUtil.getObject(
+				httpSession.getAttribute(SegmentsWebKeys.SEGMENTS_ENTRY_IDS),
+				new HashMap<>());
+
+		cachedSegmentsEntryIds.put(groupId, segmentsEntryIds);
+
 		httpSession.setAttribute(
-			SegmentsWebKeys.SEGMENTS_ENTRY_IDS, segmentsEntryIds);
+			SegmentsWebKeys.SEGMENTS_ENTRY_IDS, cachedSegmentsEntryIds);
 
 		_sessions.putIfAbsent(httpSession.getId(), httpSession);
 	}
