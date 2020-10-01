@@ -160,7 +160,7 @@ public class RequestContextMapperImpl implements RequestContextMapper {
 					_portal.getScopeGroupId(httpServletRequest))
 			).ifPresent(
 				segmentsEntryIds -> context.put(
-					"segmentsEntryIds", segmentsEntryIds)
+					Context.SEGMENTS_ENTRY_IDS, segmentsEntryIds)
 			);
 		}
 		catch (PortalException portalException) {

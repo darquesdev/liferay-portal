@@ -281,9 +281,11 @@ public abstract class BaseSegmentsEntryProvider
 
 			boolean matchesModel = false;
 
-			if ((context != null) && context.containsKey("segmentsEntryIds")) {
+			if ((context != null) &&
+				context.containsKey(Context.SEGMENTS_ENTRY_IDS)) {
+
 				long[] matchedSegmentsEntryIds = (long[])context.get(
-					"segmentsEntryIds");
+					Context.SEGMENTS_ENTRY_IDS);
 
 				matchesModel = ArrayUtil.contains(
 					matchedSegmentsEntryIds,
