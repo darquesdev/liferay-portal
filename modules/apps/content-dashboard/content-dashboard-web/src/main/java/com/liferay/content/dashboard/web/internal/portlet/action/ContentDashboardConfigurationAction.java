@@ -15,21 +15,21 @@
 package com.liferay.content.dashboard.web.internal.portlet.action;
 
 import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
-import com.liferay.content.dashboard.web.internal.configuration.ContentDashboardAdminConfiguration;
 import com.liferay.content.dashboard.web.internal.constants.ContentDashboardPortletKeys;
 import com.liferay.content.dashboard.web.internal.constants.ContentDashboardWebKeys;
 import com.liferay.content.dashboard.web.internal.display.context.ContentDashboardAdminConfigurationDisplayContext;
-import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
-import com.liferay.portal.kernel.portlet.BaseJSPSettingsConfigurationAction;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
+import com.liferay.portal.kernel.portlet.DefaultConfigurationAction;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletConfig;
+import javax.portlet.PortletPreferences;
+import javax.portlet.RenderRequest;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +40,7 @@ import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Eudaldo Alonso
+ * @author David Arques
  */
 @Component(
 	immediate = true,
@@ -47,7 +48,7 @@ import org.osgi.service.component.annotations.Reference;
 	service = ConfigurationAction.class
 )
 public class ContentDashboardConfigurationAction
-	extends BaseJSPSettingsConfigurationAction {
+	extends DefaultConfigurationAction {
 
 	@Override
 	public void include(
@@ -55,17 +56,20 @@ public class ContentDashboardConfigurationAction
 			HttpServletResponse httpServletResponse)
 		throws Exception {
 
-		ContentDashboardAdminConfiguration contentDashboardAdminConfiguration =
-			_configurationProvider.getCompanyConfiguration(
-				ContentDashboardAdminConfiguration.class,
-				_portal.getCompanyId(httpServletRequest));
+		RenderRequest renderRequest =
+			(RenderRequest)httpServletRequest.getAttribute(
+				JavaConstants.JAVAX_PORTLET_REQUEST);
+
+		PortletPreferences portletPreferences = renderRequest.getPreferences();
 
 		httpServletRequest.setAttribute(
 			ContentDashboardWebKeys.
 				CONTENT_DASHBOARD_ADMIN_CONFIGURATION_DISPLAY_CONTEXT,
 			new ContentDashboardAdminConfigurationDisplayContext(
 				_assetVocabularyLocalService,
-				contentDashboardAdminConfiguration, httpServletRequest));
+				portletPreferences.getValues(
+					"assetVocabularyNames", new String[0]),
+				httpServletRequest));
 
 		super.include(portletConfig, httpServletRequest, httpServletResponse);
 	}
@@ -110,11 +114,5 @@ public class ContentDashboardConfigurationAction
 
 	@Reference
 	private AssetVocabularyLocalService _assetVocabularyLocalService;
-
-	@Reference
-	private ConfigurationProvider _configurationProvider;
-
-	@Reference
-	private Portal _portal;
 
 }

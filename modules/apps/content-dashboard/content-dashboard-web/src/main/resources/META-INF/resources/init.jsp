@@ -27,7 +27,6 @@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.asset.kernel.model.AssetVocabulary" %><%@
-page import="com.liferay.content.dashboard.web.internal.configuration.ContentDashboardAdminConfiguration" %><%@
 page import="com.liferay.content.dashboard.web.internal.constants.ContentDashboardWebKeys" %><%@
 page import="com.liferay.content.dashboard.web.internal.display.context.ContentDashboardAdminConfigurationDisplayContext" %><%@
 page import="com.liferay.content.dashboard.web.internal.display.context.ContentDashboardAdminDisplayContext" %><%@
