@@ -16,7 +16,6 @@ package com.liferay.content.dashboard.web.internal.display.context;
 
 import com.liferay.asset.kernel.model.AssetVocabulary;
 import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
-import com.liferay.content.dashboard.web.internal.configuration.ContentDashboardAdminConfiguration;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
@@ -41,20 +40,17 @@ public class ContentDashboardAdminConfigurationDisplayContext {
 
 	public ContentDashboardAdminConfigurationDisplayContext(
 		AssetVocabularyLocalService assetVocabularyLocalService,
-		ContentDashboardAdminConfiguration contentDashboardAdminConfiguration,
-		HttpServletRequest httpServletRequest) {
+		String[] assetVocabularyNames, HttpServletRequest httpServletRequest) {
 
 		_assetVocabularyLocalService = assetVocabularyLocalService;
-		_contentDashboardAdminConfiguration =
-			contentDashboardAdminConfiguration;
+		_assetVocabularyNames = assetVocabularyNames;
 
 		_themeDisplay = (ThemeDisplay)httpServletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 	}
 
 	public List<KeyValuePair> getAvailableVocabularyNames() {
-		String[] assetVocabularyNames = ArrayUtil.clone(
-			_getAssetVocabularyNames());
+		String[] assetVocabularyNames = ArrayUtil.clone(_assetVocabularyNames);
 
 		Arrays.sort(assetVocabularyNames);
 
@@ -84,7 +80,7 @@ public class ContentDashboardAdminConfigurationDisplayContext {
 
 	public List<KeyValuePair> getCurrentVocabularyNames() {
 		return Stream.of(
-			_getAssetVocabularyNames()
+			_assetVocabularyNames
 		).map(
 			assetVocabularyName ->
 				_assetVocabularyLocalService.fetchGroupVocabulary(
@@ -107,17 +103,6 @@ public class ContentDashboardAdminConfigurationDisplayContext {
 			new long[] {_themeDisplay.getCompanyGroupId()});
 
 		return _assetVocabularies;
-	}
-
-	private String[] _getAssetVocabularyNames() {
-		if (_assetVocabularyNames != null) {
-			return _assetVocabularyNames;
-		}
-
-		_assetVocabularyNames =
-			_contentDashboardAdminConfiguration.assetVocabularyNames();
-
-		return _assetVocabularyNames;
 	}
 
 	private String[] _getAvailableAssetVocabularyNames() {
@@ -147,10 +132,8 @@ public class ContentDashboardAdminConfigurationDisplayContext {
 
 	private List<AssetVocabulary> _assetVocabularies;
 	private final AssetVocabularyLocalService _assetVocabularyLocalService;
-	private String[] _assetVocabularyNames;
+	private final String[] _assetVocabularyNames;
 	private String[] _availableAssetVocabularyNames;
-	private final ContentDashboardAdminConfiguration
-		_contentDashboardAdminConfiguration;
 	private final ThemeDisplay _themeDisplay;
 
 }
