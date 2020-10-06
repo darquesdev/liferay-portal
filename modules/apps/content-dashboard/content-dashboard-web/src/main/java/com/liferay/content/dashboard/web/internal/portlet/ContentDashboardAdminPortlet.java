@@ -51,6 +51,7 @@ import java.util.List;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
+import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
@@ -68,7 +69,7 @@ import org.osgi.service.component.annotations.Reference;
 		"com.liferay.portlet.css-class-wrapper=portlet-content-dashboard-admin",
 		"com.liferay.portlet.display-category=category.hidden",
 		"com.liferay.portlet.header-portlet-css=/css/main.css",
-		"com.liferay.portlet.preferences-company-wide=true",
+		"com.liferay.portlet.preferences-company-wide=false",
 		"com.liferay.portlet.preferences-owned-by-group=false",
 		"com.liferay.portlet.preferences-unique-per-layout=false",
 		"com.liferay.portlet.private-request-attributes=false",
@@ -82,6 +83,7 @@ import org.osgi.service.component.annotations.Reference;
 		"javax.portlet.init-param.view-template=/view.jsp",
 		"javax.portlet.name=" + ContentDashboardPortletKeys.CONTENT_DASHBOARD_ADMIN,
 		"javax.portlet.portlet-mode=text/html;config",
+		"javax.portlet.preferences=classpath:/META-INF/portlet-preferences/default-portlet-preferences.xml",
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=power-user,user"
 	},
@@ -116,9 +118,13 @@ public class ContentDashboardAdminPortlet extends MVCPortlet {
 		SearchContainer<ContentDashboardItem<?>> searchContainer =
 			contentDashboardItemSearchContainerFactory.create();
 
+		PortletPreferences portletPreferences = renderRequest.getPreferences();
+
 		List<AssetVocabulary> assetVocabularies =
 			_assetVocabulariesProvider.getAssetVocabularies(
-				_portal.getCompanyId(liferayPortletRequest));
+				_portal.getCompanyId(liferayPortletRequest),
+				portletPreferences.getValues(
+					"assetVocabularyNames", new String[0]));
 
 		ContentDashboardAdminDisplayContext
 			contentDashboardAdminDisplayContext =
