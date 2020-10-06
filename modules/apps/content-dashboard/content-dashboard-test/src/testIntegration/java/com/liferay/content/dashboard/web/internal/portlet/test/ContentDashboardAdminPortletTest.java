@@ -81,7 +81,9 @@ import java.util.stream.Stream;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletContext;
+import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequestDispatcher;
+import javax.portlet.ReadOnlyException;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -1322,7 +1324,24 @@ public class ContentDashboardAdminPortletTest {
 		throws Exception {
 
 		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
-			new MockLiferayPortletRenderRequest();
+			new MockLiferayPortletRenderRequest() {
+
+				@Override
+				public PortletPreferences getPreferences() {
+					PortletPreferences portletPreferences =
+						super.getPreferences();
+
+					try {
+						portletPreferences.setValues(
+							"assetVocabularyNames", "audience", "stage");
+					}
+					catch (ReadOnlyException readOnlyException) {
+					}
+
+					return portletPreferences;
+				}
+
+			};
 
 		mockLiferayPortletRenderRequest.setAttribute(
 			WebKeys.COMPANY_ID, _company.getCompanyId());
