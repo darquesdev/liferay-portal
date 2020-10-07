@@ -16,9 +16,14 @@ package com.liferay.content.dashboard.web.internal.display.context;
 
 import com.liferay.asset.kernel.model.AssetVocabulary;
 import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.portlet.LiferayWindowState;
+import com.liferay.portal.kernel.security.auth.AuthTokenUtil;
+import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
+import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.KeyValuePair;
 import com.liferay.portal.kernel.util.KeyValuePairComparator;
 import com.liferay.portal.kernel.util.SetUtil;
@@ -30,6 +35,14 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionURL;
+import javax.portlet.PortletMode;
+import javax.portlet.PortletURL;
+import javax.portlet.RenderResponse;
+import javax.portlet.RenderURL;
+import javax.portlet.WindowStateException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -44,9 +57,12 @@ public class ContentDashboardAdminConfigurationDisplayContext {
 
 		_assetVocabularyLocalService = assetVocabularyLocalService;
 		_assetVocabularyNames = assetVocabularyNames;
+		_httpServletRequest = httpServletRequest;
 
 		_themeDisplay = (ThemeDisplay)httpServletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
+		_renderResponse = (RenderResponse)httpServletRequest.getAttribute(
+			JavaConstants.JAVAX_PORTLET_RESPONSE);
 	}
 
 	public List<KeyValuePair> getAvailableVocabularyNames() {
@@ -76,6 +92,16 @@ public class ContentDashboardAdminConfigurationDisplayContext {
 		).collect(
 			Collectors.toList()
 		);
+	}
+
+	public ActionURL getConfigurationActionURL() throws WindowStateException {
+		return (ActionURL)_getConfigurationPortletURL(
+			_renderResponse.createActionURL());
+	}
+
+	public RenderURL getConfigurationRenderURL() throws WindowStateException {
+		return (RenderURL)_getConfigurationPortletURL(
+			_renderResponse.createRenderURL());
 	}
 
 	public List<KeyValuePair> getCurrentVocabularyNames() {
@@ -123,6 +149,30 @@ public class ContentDashboardAdminConfigurationDisplayContext {
 		return _availableAssetVocabularyNames;
 	}
 
+	private PortletURL _getConfigurationPortletURL(PortletURL portletURL)
+		throws WindowStateException {
+
+		portletURL.setParameter(ActionRequest.ACTION_NAME, "editConfiguration");
+		portletURL.setParameter("mvcPath", "/edit_configuration.jsp");
+		portletURL.setParameter(
+			"p_auth", AuthTokenUtil.getToken(_httpServletRequest));
+		portletURL.setParameter("p_p_mode", PortletMode.VIEW.toString());
+		portletURL.setParameter(
+			"portletConfiguration", Boolean.TRUE.toString());
+
+		PortletDisplay portletDisplay = _themeDisplay.getPortletDisplay();
+
+		portletURL.setParameter(
+			"portletResource", portletDisplay.getPortletResource());
+
+		portletURL.setParameter("previewWidth", StringPool.BLANK);
+		portletURL.setParameter("returnToFullPageURL", "/");
+		portletURL.setParameter("settingsScope", "portletInstance");
+		portletURL.setWindowState(LiferayWindowState.POP_UP);
+
+		return portletURL;
+	}
+
 	private KeyValuePair _toKeyValuePair(AssetVocabulary assetVocabulary) {
 		return new KeyValuePair(
 			assetVocabulary.getName(),
@@ -134,6 +184,8 @@ public class ContentDashboardAdminConfigurationDisplayContext {
 	private final AssetVocabularyLocalService _assetVocabularyLocalService;
 	private final String[] _assetVocabularyNames;
 	private String[] _availableAssetVocabularyNames;
+	private final HttpServletRequest _httpServletRequest;
+	private final RenderResponse _renderResponse;
 	private final ThemeDisplay _themeDisplay;
 
 }

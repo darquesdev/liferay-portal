@@ -20,18 +20,14 @@
 ContentDashboardAdminConfigurationDisplayContext contentDashboardAdminConfigurationDisplayContext = (ContentDashboardAdminConfigurationDisplayContext)request.getAttribute(ContentDashboardWebKeys.CONTENT_DASHBOARD_ADMIN_CONFIGURATION_DISPLAY_CONTEXT);
 %>
 
-<liferay-portlet:actionURL portletConfiguration="<%= true %>" var="configurationActionURL" />
-
-<liferay-portlet:renderURL portletConfiguration="<%= true %>" var="configurationRenderURL" />
-
 <liferay-frontend:edit-form
-	action="<%= configurationActionURL %>"
+	action="<%= contentDashboardAdminConfigurationDisplayContext.getConfigurationActionURL() %>"
 	method="post"
 	name="fm"
 	onSubmit='<%= "event.preventDefault(); " + liferayPortletResponse.getNamespace() + "saveConfiguration();" %>'
 >
 	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
-	<aui:input name="redirect" type="hidden" value="<%= configurationRenderURL %>" />
+	<aui:input name="redirect" type="hidden" value="<%= contentDashboardAdminConfigurationDisplayContext.getConfigurationRenderURL() %>" />
 	<aui:input name="preferences--assetVocabularyNames--" type="hidden" />
 
 	<liferay-frontend:edit-form-body>
