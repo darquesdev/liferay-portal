@@ -57,7 +57,14 @@ public class ContentDashboardAdminConfigurationDisplayContext {
 	}
 
 	public ActionURL getActionURL() {
-		return null;
+		ActionURL actionURL = _renderResponse.createActionURL();
+
+		actionURL.setParameter(
+			ActionRequest.ACTION_NAME,
+			"/update_content_dashboard_configuration");
+		actionURL.setParameter("redirect", String.valueOf(getRedirect()));
+
+		return actionURL;
 	}
 
 	public List<KeyValuePair> getAvailableVocabularyNames() {
