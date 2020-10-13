@@ -31,6 +31,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionURL;
+import javax.portlet.PortletURL;
+import javax.portlet.RenderResponse;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -40,13 +45,19 @@ public class ContentDashboardAdminConfigurationDisplayContext {
 
 	public ContentDashboardAdminConfigurationDisplayContext(
 		AssetVocabularyLocalService assetVocabularyLocalService,
-		String[] assetVocabularyNames, HttpServletRequest httpServletRequest) {
+		String[] assetVocabularyNames, HttpServletRequest httpServletRequest,
+		RenderResponse renderResponse) {
 
 		_assetVocabularyLocalService = assetVocabularyLocalService;
 		_assetVocabularyNames = assetVocabularyNames;
+		_renderResponse = renderResponse;
 
 		_themeDisplay = (ThemeDisplay)httpServletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
+	}
+
+	public ActionURL getActionURL() {
+		return null;
 	}
 
 	public List<KeyValuePair> getAvailableVocabularyNames() {
@@ -94,6 +105,15 @@ public class ContentDashboardAdminConfigurationDisplayContext {
 		);
 	}
 
+	public PortletURL getRedirect() {
+		PortletURL portletURL = _renderResponse.createRenderURL();
+
+		portletURL.setParameter(
+			"mvcRenderCommandName", "/edit_content_dashboard_configuration");
+
+		return portletURL;
+	}
+
 	private List<AssetVocabulary> _getAssetVocabularies() {
 		if (_assetVocabularies != null) {
 			return _assetVocabularies;
@@ -134,6 +154,7 @@ public class ContentDashboardAdminConfigurationDisplayContext {
 	private final AssetVocabularyLocalService _assetVocabularyLocalService;
 	private final String[] _assetVocabularyNames;
 	private String[] _availableAssetVocabularyNames;
+	private final RenderResponse _renderResponse;
 	private final ThemeDisplay _themeDisplay;
 
 }

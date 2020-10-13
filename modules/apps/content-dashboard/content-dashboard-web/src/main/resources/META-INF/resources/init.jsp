@@ -27,6 +27,7 @@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.asset.kernel.model.AssetVocabulary" %><%@
 page import="com.liferay.content.dashboard.web.internal.constants.ContentDashboardWebKeys" %><%@
+page import="com.liferay.content.dashboard.web.internal.display.context.ContentDashboardAdminConfigurationDisplayContext" %><%@
 page import="com.liferay.content.dashboard.web.internal.display.context.ContentDashboardAdminDisplayContext" %><%@
 page import="com.liferay.content.dashboard.web.internal.display.context.ContentDashboardAdminManagementToolbarDisplayContext" %><%@
 page import="com.liferay.content.dashboard.web.internal.display.context.ContentDashboardItemTypeItemSelectorViewDisplayContext" %><%@
@@ -36,6 +37,8 @@ page import="com.liferay.content.dashboard.web.internal.item.type.ContentDashboa
 page import="com.liferay.info.item.InfoItemReference" %><%@
 page import="com.liferay.petra.string.StringPool" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
+page import="com.liferay.portal.kernel.servlet.SessionMessages" %><%@
+page import="com.liferay.portal.kernel.util.GetterUtil" %><%@
 page import="com.liferay.portal.kernel.util.HashMapBuilder" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.StringUtil" %>
@@ -47,5 +50,7 @@ page import="java.util.Map" %>
 <liferay-frontend:defineObjects />
 
 <liferay-theme:defineObjects />
+
+<portlet:defineObjects />
 
 <%@ include file="/init-ext.jsp" %>
