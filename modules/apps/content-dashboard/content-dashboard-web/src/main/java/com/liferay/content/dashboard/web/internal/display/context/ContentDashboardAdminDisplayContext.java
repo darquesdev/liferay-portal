@@ -393,6 +393,14 @@ public class ContentDashboardAdminDisplayContext {
 		return _userId;
 	}
 
+	public boolean isSwapConfigurationEnabled() {
+		if (_assetVocabularies.size() == 2) {
+			return true;
+		}
+
+		return false;
+	}
+
 	private Map<String, Object> _getContext() {
 		return Collections.singletonMap(
 			"languageDirection", _languageDirection);

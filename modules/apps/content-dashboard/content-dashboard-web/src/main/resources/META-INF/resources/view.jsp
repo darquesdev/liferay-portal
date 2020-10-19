@@ -46,6 +46,7 @@ ContentDashboardAdminManagementToolbarDisplayContext contentDashboardAdminManage
 									<clay:button
 										borderless="<%= true %>"
 										cssClass="component-action"
+										disabled="<%= !contentDashboardAdminDisplayContext.isSwapConfigurationEnabled() %>"
 										displayType="secondary"
 										icon="change"
 										small="<%= true %>"
