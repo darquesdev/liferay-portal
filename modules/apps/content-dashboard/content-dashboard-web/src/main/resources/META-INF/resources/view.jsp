@@ -42,14 +42,16 @@ ContentDashboardAdminManagementToolbarDisplayContext contentDashboardAdminManage
 							cssClass="c-mr-4"
 						>
 							<span class="lfr-portal-tooltip" title="<%= LanguageUtil.get(request, "flip-axes") %>">
-								<clay:button
-									borderless="<%= true %>"
-									cssClass="component-action"
-									displayType="secondary"
-									icon="change"
-									onClick=""
-									small="<%= true %>"
-								/>
+								<form action="<%= contentDashboardAdminDisplayContext.getSwapConfigurationURL() %>" method="post">
+									<clay:button
+										borderless="<%= true %>"
+										cssClass="component-action"
+										displayType="secondary"
+										icon="change"
+										small="<%= true %>"
+										type="submit"
+									/>
+								</form>
 							</span>
 						</clay:content-col>
 

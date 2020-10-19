@@ -63,6 +63,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionURL;
 import javax.portlet.PortletURL;
 import javax.portlet.WindowStateException;
 
@@ -370,6 +372,15 @@ public class ContentDashboardAdminDisplayContext {
 			_liferayPortletRequest, "status", WorkflowConstants.STATUS_ANY);
 
 		return _status;
+	}
+
+	public ActionURL getSwapConfigurationURL() {
+		ActionURL actionURL = _liferayPortletResponse.createActionURL();
+
+		actionURL.setParameter(
+			ActionRequest.ACTION_NAME, "/swap_content_dashboard_configuration");
+
+		return actionURL;
 	}
 
 	public long getUserId() {
