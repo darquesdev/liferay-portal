@@ -1331,6 +1331,17 @@ public class ContentDashboardAdminPortletTest {
 				childAssetVocabulary.getVocabularyId(), serviceContext);
 
 		try {
+			JournalArticle journalArticle = JournalTestUtil.addArticle(
+				_user.getUserId(), _group.getGroupId(), 0);
+
+			_journalArticleLocalService.updateAsset(
+				_user.getUserId(), journalArticle,
+				new long[] {
+					assetCategory.getCategoryId(),
+					childAssetCategory.getCategoryId()
+				},
+				new String[0], new long[0], null);
+
 			Assert.assertTrue(_isSwapConfigurationEnabled("audience", "stage"));
 		}
 		finally {
@@ -1358,6 +1369,14 @@ public class ContentDashboardAdminPortletTest {
 			serviceContext);
 
 		try {
+			JournalArticle journalArticle = JournalTestUtil.addArticle(
+				_user.getUserId(), _group.getGroupId(), 0);
+
+			_journalArticleLocalService.updateAsset(
+				_user.getUserId(), journalArticle,
+				new long[] {assetCategory.getCategoryId()}, new String[0],
+				new long[0], null);
+
 			Assert.assertFalse(
 				_isSwapConfigurationEnabled("audience", "stage"));
 		}
@@ -1395,6 +1414,17 @@ public class ContentDashboardAdminPortletTest {
 				childAssetVocabulary.getVocabularyId(), serviceContext);
 
 		try {
+			JournalArticle journalArticle = JournalTestUtil.addArticle(
+				_user.getUserId(), _group.getGroupId(), 0);
+
+			_journalArticleLocalService.updateAsset(
+				_user.getUserId(), journalArticle,
+				new long[] {
+					assetCategory.getCategoryId(),
+					childAssetCategory.getCategoryId()
+				},
+				new String[0], new long[0], null);
+
 			Assert.assertFalse(_isSwapConfigurationEnabled("audience"));
 		}
 		finally {
