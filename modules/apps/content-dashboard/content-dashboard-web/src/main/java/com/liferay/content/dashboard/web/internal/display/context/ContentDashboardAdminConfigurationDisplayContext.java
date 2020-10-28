@@ -33,7 +33,6 @@ import java.util.stream.Stream;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionURL;
-import javax.portlet.PortletURL;
 import javax.portlet.RenderResponse;
 
 import javax.servlet.http.HttpServletRequest;
@@ -112,13 +111,8 @@ public class ContentDashboardAdminConfigurationDisplayContext {
 		);
 	}
 
-	public PortletURL getRedirect() {
-		PortletURL portletURL = _renderResponse.createRenderURL();
-
-		portletURL.setParameter(
-			"mvcRenderCommandName", "/edit_content_dashboard_configuration");
-
-		return portletURL;
+	public String getRedirect() {
+		return _themeDisplay.getURLCurrent();
 	}
 
 	private List<AssetVocabulary> _getAssetVocabularies() {
