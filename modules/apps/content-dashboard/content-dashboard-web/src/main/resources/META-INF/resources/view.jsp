@@ -43,6 +43,8 @@ ContentDashboardAdminManagementToolbarDisplayContext contentDashboardAdminManage
 						>
 							<span class="lfr-portal-tooltip" title="<%= LanguageUtil.get(request, "flip-axes") %>">
 								<form action="<%= contentDashboardAdminDisplayContext.getSwapConfigurationURL() %>" method="post">
+									<aui:input name="redirect" type="hidden" value="<%= currentURL %>" />
+
 									<clay:button
 										borderless="<%= true %>"
 										cssClass="component-action"
