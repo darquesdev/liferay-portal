@@ -485,7 +485,19 @@ public class ContentDashboardAdminPortletTest {
 				"vocabularies");
 
 			Assert.assertEquals(
-				String.valueOf(JSONFactoryUtil.createJSONArray()),
+				JSONUtil.put(
+					JSONUtil.put(
+						"key",
+						String.valueOf(childAssetCategory.getCategoryId())
+					).put(
+						"name", childAssetCategory.getTitle(LocaleUtil.US)
+					).put(
+						"value", 1L
+					).put(
+						"vocabularyName",
+						childAssetVocabulary.getTitle(LocaleUtil.US)
+					)
+				).toString(),
 				vocabulariesJSONArray.toString());
 		}
 		finally {
