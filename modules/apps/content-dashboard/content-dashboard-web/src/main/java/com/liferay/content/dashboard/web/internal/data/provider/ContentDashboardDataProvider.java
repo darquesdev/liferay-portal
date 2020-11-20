@@ -100,7 +100,9 @@ public class ContentDashboardDataProvider {
 			assetCategoryTitlesMap, assetVocabulary,
 			_getBuckets(
 				_getTermsAggregation(
-					assetVocabulary, assetCategoryTitlesMap.keySet())));
+					assetVocabulary, assetCategoryTitlesMap.keySet(),
+					"categories"),
+				"categories"));
 	}
 
 	private AssetVocabularyMetric _getAssetVocabularyMetric(
@@ -113,23 +115,18 @@ public class ContentDashboardDataProvider {
 			_getAssetCategoryTitlesMap(childAssetVocabulary, _locale);
 
 		TermsAggregation termsAggregation = _getTermsAggregation(
-			assetVocabulary, assetCategoryTitlesMap.keySet());
+			assetVocabulary, assetCategoryTitlesMap.keySet(), "categories");
 
-		termsAggregation.addChildAggregation(
-			_getTermsAggregation(
-				childAssetVocabulary, childAssetCategoryTitlesMap.keySet()));
+		TermsAggregation childTermsAggregation = _getTermsAggregation(
+			childAssetVocabulary, childAssetCategoryTitlesMap.keySet(),
+			"childCategories");
 
-		return new AssetVocabularyMetric(
-			String.valueOf(assetVocabulary.getVocabularyId()),
-			assetVocabulary.getTitle(_locale),
-			_toAssetCategoryMetrics(
-				assetCategoryTitlesMap, _getBuckets(termsAggregation),
-				childAssetCategoryTitlesMap, childAssetVocabulary));
-	}
+		termsAggregation.addChildAggregation(childTermsAggregation);
 
-	private Collection<Bucket> _getBuckets(TermsAggregation termsAggregation) {
 		SearchResponse searchResponse = _searcher.search(
 			_searchRequestBuilder.addAggregation(
+				childTermsAggregation
+			).addAggregation(
 				termsAggregation
 			).size(
 				0
@@ -139,11 +136,46 @@ public class ContentDashboardDataProvider {
 			(TermsAggregationResult)searchResponse.getAggregationResult(
 				"categories");
 
+		Collection<Bucket> buckets = termsAggregationResult.getBuckets();
+
+		if (buckets.isEmpty()) {
+			termsAggregationResult =
+				(TermsAggregationResult)searchResponse.getAggregationResult(
+					"childCategories");
+
+			return _toAssetVocabularyMetric(
+				childAssetCategoryTitlesMap, childAssetVocabulary,
+				termsAggregationResult.getBuckets());
+		}
+
+		return new AssetVocabularyMetric(
+			String.valueOf(assetVocabulary.getVocabularyId()),
+			assetVocabulary.getTitle(_locale),
+			_toAssetCategoryMetrics(
+				assetCategoryTitlesMap, buckets, childAssetCategoryTitlesMap,
+				childAssetVocabulary, "childCategories"));
+	}
+
+	private Collection<Bucket> _getBuckets(
+		TermsAggregation termsAggregation, String termsAggregationName) {
+
+		SearchResponse searchResponse = _searcher.search(
+			_searchRequestBuilder.addAggregation(
+				termsAggregation
+			).size(
+				0
+			).build());
+
+		TermsAggregationResult termsAggregationResult =
+			(TermsAggregationResult)searchResponse.getAggregationResult(
+				termsAggregationName);
+
 		return termsAggregationResult.getBuckets();
 	}
 
 	private TermsAggregation _getTermsAggregation(
-		AssetVocabulary assetVocabulary, Set<String> assetCategoryIds) {
+		AssetVocabulary assetVocabulary, Set<String> assetCategoryIds,
+		String termsAggregationName) {
 
 		TermsAggregation termsAggregation = null;
 
@@ -152,11 +184,11 @@ public class ContentDashboardDataProvider {
 				AssetVocabularyConstants.VISIBILITY_TYPE_INTERNAL)) {
 
 			termsAggregation = _aggregations.terms(
-				"categories", Field.ASSET_INTERNAL_CATEGORY_IDS);
+				termsAggregationName, Field.ASSET_INTERNAL_CATEGORY_IDS);
 		}
 		else {
 			termsAggregation = _aggregations.terms(
-				"categories", Field.ASSET_CATEGORY_IDS);
+				termsAggregationName, Field.ASSET_CATEGORY_IDS);
 		}
 
 		termsAggregation.setIncludeExcludeClause(
@@ -169,7 +201,7 @@ public class ContentDashboardDataProvider {
 	private List<AssetCategoryMetric> _toAssetCategoryMetrics(
 		Map<String, String> assetCategoryTitlesMap, Collection<Bucket> buckets,
 		Map<String, String> childAssetCategoryTitlesMap,
-		AssetVocabulary childAssetVocabulary) {
+		AssetVocabulary childAssetVocabulary, String termsAggregationName) {
 
 		Stream<Bucket> stream = buckets.stream();
 
@@ -177,7 +209,7 @@ public class ContentDashboardDataProvider {
 			bucket -> {
 				TermsAggregationResult termsAggregationResult =
 					(TermsAggregationResult)bucket.getChildAggregationResult(
-						"categories");
+						termsAggregationName);
 
 				return new AssetCategoryMetric(
 					_toAssetVocabularyMetric(
