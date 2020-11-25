@@ -15,6 +15,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import KeywordsDetail from './detail/KeywordsDetail';
+import ReferralDetail from './detail/ReferralDetail';
 
 const TRAFFIC_CHANNELS = {
 	DIRECT: 'direct',
@@ -60,6 +61,10 @@ export default function Detail({
 						trafficShareDataProvider={trafficShareDataProvider}
 						trafficVolumeDataProvider={trafficVolumeDataProvider}
 					/>
+				)}
+
+				{currentPage.view === TRAFFIC_CHANNELS.REFERRAL && (
+					<ReferralDetail />
 				)}
 		</>
 	);
