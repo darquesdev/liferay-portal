@@ -18,6 +18,8 @@ import com.liferay.analytics.reports.web.internal.constants.AnalyticsReportsPort
 import com.liferay.analytics.reports.web.internal.data.provider.AnalyticsReportsDataProvider;
 import com.liferay.analytics.reports.web.internal.info.display.contributor.util.LayoutDisplayPageProviderUtil;
 import com.liferay.analytics.reports.web.internal.layout.seo.CanonicalURLProvider;
+import com.liferay.analytics.reports.web.internal.model.ReferralTrafficDetails;
+import com.liferay.analytics.reports.web.internal.model.ReferringURL;
 import com.liferay.analytics.reports.web.internal.model.TrafficSource;
 import com.liferay.layout.display.page.LayoutDisplayPageObjectProvider;
 import com.liferay.layout.display.page.LayoutDisplayPageProviderTracker;
@@ -43,9 +45,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
@@ -133,6 +137,57 @@ public class GetTrafficSourcesMVCResourceCommand
 					ResourceBundleUtil.getString(
 						resourceBundle, "an-unexpected-error-occurred")));
 		}
+	}
+
+	private ReferralTrafficDetails _getReferralTrafficDetails() {
+		return new ReferralTrafficDetails(
+			Arrays.asList(
+				new ReferringURL(17985230, "http://youtube.com/"),
+				new ReferringURL(12218030, "http://www.google.com/"),
+				new ReferringURL(9062949, "http://microsoft.com/"),
+				new ReferringURL(4601453, "http://linkedin.com/"),
+				new ReferringURL(253399, "https://www.liferay.com")),
+			Arrays.asList(
+				new ReferringURL(
+					125461,
+					"https://www.liferay.com/resources/ebooks/Becoming+a+" +
+						"Digital+Business-4+Common+Enterprise+Challenges+" +
+							"Conquered"),
+				new ReferringURL(
+					85485,
+					"https://www.liferay.com/resources/whitepapers/B2B+E-" +
+						"Commerce+RFP+Kit"),
+				new ReferringURL(
+					84564,
+					"https://www.liferay.com/resources/whitepapers/6+Tactics+" +
+						"to+Modernize+Your+Intranet"),
+				new ReferringURL(
+					5846,
+					"https://www.liferay.com/resources/case-studies/materion-" +
+						"case-study"),
+				new ReferringURL(
+					3521,
+					"https://www.liferay.com/web/l/a1-hrvatska-case-study"),
+				new ReferringURL(
+					2513,
+					"https://www.liferay.com/resources/case-studies/excellus-" +
+						"case-study"),
+				new ReferringURL(
+					2200,
+					"https://www.liferay.com/resources/case-studies/terres-" +
+						"inovia-case-study"),
+				new ReferringURL(
+					1230,
+					"https://www.liferay.com/resources/case-studies/vodafone-" +
+						"business"),
+				new ReferringURL(
+					1100,
+					"https://www.liferay.com/web/guest/resources/case-" +
+						"studies/agia"),
+				new ReferringURL(
+					100,
+					"https://www.liferay.com/resources/case-studies/vitality-" +
+						"case-study")));
 	}
 
 	private List<TrafficSource> _getTrafficSources(
@@ -227,7 +282,7 @@ public class GetTrafficSourcesMVCResourceCommand
 		Comparator<TrafficSource> comparator = Comparator.comparing(
 			TrafficSource::getTrafficShare);
 
-		return JSONUtil.putAll(
+		JSONArray trafficSourcesJSONArray = JSONUtil.putAll(
 			stream.sorted(
 				comparator.reversed()
 			).map(
@@ -236,6 +291,29 @@ public class GetTrafficSourcesMVCResourceCommand
 					ResourceBundleUtil.getString(
 						resourceBundle, trafficSource.getName()))
 			).toArray());
+
+		return _mockReferralTraffic(trafficSourcesJSONArray);
+	}
+
+	private JSONArray _mockReferralTraffic(JSONArray trafficSourcesJSONArray) {
+		Iterator<JSONObject> iterator = trafficSourcesJSONArray.iterator();
+
+		iterator.forEachRemaining(
+			jsonObject -> {
+				if (Objects.equals("referral", jsonObject.get("name"))) {
+					ReferralTrafficDetails referralTrafficDetails =
+						_getReferralTrafficDetails();
+
+					jsonObject.put(
+						"details", referralTrafficDetails.toJSONObject());
+
+					jsonObject.put("share", String.format("%.1f", 64.5D));
+
+					jsonObject.put("value", 24225897);
+				}
+			});
+
+		return trafficSourcesJSONArray;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
