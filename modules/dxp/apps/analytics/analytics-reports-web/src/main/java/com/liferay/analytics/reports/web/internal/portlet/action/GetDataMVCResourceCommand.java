@@ -16,6 +16,7 @@ package com.liferay.analytics.reports.web.internal.portlet.action;
 
 import com.liferay.analytics.reports.info.item.AnalyticsReportsInfoItem;
 import com.liferay.analytics.reports.info.item.AnalyticsReportsInfoItemTracker;
+import com.liferay.analytics.reports.web.internal.configuration.FFAnalyticsReportsDetailsConfiguration;
 import com.liferay.analytics.reports.web.internal.constants.AnalyticsReportsPortletKeys;
 import com.liferay.analytics.reports.web.internal.data.provider.AnalyticsReportsDataProvider;
 import com.liferay.analytics.reports.web.internal.info.display.contributor.util.LayoutDisplayPageProviderUtil;
@@ -30,6 +31,7 @@ import com.liferay.info.type.WebImage;
 import com.liferay.layout.display.page.LayoutDisplayPageObjectProvider;
 import com.liferay.layout.display.page.LayoutDisplayPageProviderTracker;
 import com.liferay.layout.seo.kernel.LayoutSEOLinkManager;
+import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
@@ -62,6 +64,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
@@ -72,14 +75,17 @@ import javax.portlet.ResourceURL;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Cristina González
  */
 @Component(
-	immediate = true,
+	configurationPid = "com.liferay.analytics.reports.web.internal.configuration.FFAnalyticsReportsDetailsConfiguration",
+	configurationPolicy = ConfigurationPolicy.OPTIONAL, immediate = true,
 	property = {
 		"javax.portlet.name=" + AnalyticsReportsPortletKeys.ANALYTICS_REPORTS,
 		"mvc.command.name=/analytics_reports/get_data"
@@ -87,6 +93,13 @@ import org.osgi.service.component.annotations.Reference;
 	service = MVCResourceCommand.class
 )
 public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
+
+	@Activate
+	protected void activate(Map<String, Object> properties) {
+		_ffAnalyticsReportsDetailsConfiguration =
+			ConfigurableUtil.createConfigurable(
+				FFAnalyticsReportsDetailsConfiguration.class, properties);
+	}
 
 	@Override
 	protected void doServeResource(
@@ -216,6 +229,9 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 				object)
 		).put(
 			"canonicalURL", canonicalURL
+		).put(
+			"detailsReferralEnabled",
+			_ffAnalyticsReportsDetailsConfiguration.referralEnabled()
 		).put(
 			"endpoints",
 			JSONUtil.put(
@@ -402,6 +418,9 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 
 	@Reference
 	private AnalyticsReportsInfoItemTracker _analyticsReportsInfoItemTracker;
+
+	private volatile FFAnalyticsReportsDetailsConfiguration
+		_ffAnalyticsReportsDetailsConfiguration;
 
 	@Reference
 	private Http _http;
