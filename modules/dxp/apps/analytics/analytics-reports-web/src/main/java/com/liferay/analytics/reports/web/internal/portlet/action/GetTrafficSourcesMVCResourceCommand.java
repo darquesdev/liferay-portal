@@ -18,6 +18,8 @@ import com.liferay.analytics.reports.web.internal.constants.AnalyticsReportsPort
 import com.liferay.analytics.reports.web.internal.data.provider.AnalyticsReportsDataProvider;
 import com.liferay.analytics.reports.web.internal.info.display.contributor.util.LayoutDisplayPageProviderUtil;
 import com.liferay.analytics.reports.web.internal.layout.seo.CanonicalURLProvider;
+import com.liferay.analytics.reports.web.internal.model.ReferringSocialMedia;
+import com.liferay.analytics.reports.web.internal.model.SocialMediaTrafficDetails;
 import com.liferay.analytics.reports.web.internal.model.TrafficSource;
 import com.liferay.layout.display.page.LayoutDisplayPageObjectProvider;
 import com.liferay.layout.display.page.LayoutDisplayPageProviderTracker;
@@ -43,9 +45,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
@@ -133,6 +137,16 @@ public class GetTrafficSourcesMVCResourceCommand
 					ResourceBundleUtil.getString(
 						resourceBundle, "an-unexpected-error-occurred")));
 		}
+	}
+
+	private SocialMediaTrafficDetails _getSocialMediaTrafficDetails() {
+		return new SocialMediaTrafficDetails(
+			Arrays.asList(
+				new ReferringSocialMedia("linkedin", "LinkedIn", 1256),
+				new ReferringSocialMedia("twitter", "Twitter", 1165),
+				new ReferringSocialMedia("facebook", "Facebook", 229),
+				new ReferringSocialMedia("youtube", "YouTube", 150),
+				new ReferringSocialMedia("other", "Other", 30)));
 	}
 
 	private List<TrafficSource> _getTrafficSources(
@@ -227,7 +241,7 @@ public class GetTrafficSourcesMVCResourceCommand
 		Comparator<TrafficSource> comparator = Comparator.comparing(
 			TrafficSource::getTrafficShare);
 
-		return JSONUtil.putAll(
+		JSONArray trafficSourcesJSONArray = JSONUtil.putAll(
 			stream.sorted(
 				comparator.reversed()
 			).map(
@@ -236,6 +250,30 @@ public class GetTrafficSourcesMVCResourceCommand
 					ResourceBundleUtil.getString(
 						resourceBundle, trafficSource.getName()))
 			).toArray());
+
+		return _mockSocialMediaTraffic(trafficSourcesJSONArray);
+	}
+
+	private JSONArray _mockSocialMediaTraffic(
+		JSONArray trafficSourcesJSONArray) {
+
+		Iterator<JSONObject> iterator = trafficSourcesJSONArray.iterator();
+
+		iterator.forEachRemaining(
+			jsonObject -> {
+				if (Objects.equals("social", jsonObject.get("name"))) {
+					SocialMediaTrafficDetails socialMediaTrafficDetails =
+						_getSocialMediaTrafficDetails();
+
+					socialMediaTrafficDetails.putJSONObject(jsonObject);
+
+					jsonObject.put("share", String.format("%.1f", 90.0D));
+
+					jsonObject.put("value", 5532);
+				}
+			});
+
+		return trafficSourcesJSONArray;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
