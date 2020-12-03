@@ -15,12 +15,19 @@
 package com.liferay.analytics.reports.web.internal.model;
 
 import com.liferay.analytics.reports.web.internal.model.util.TrafficChannelUtil;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.stream.Stream;
 
 /**
  * @author David Arques
@@ -29,12 +36,17 @@ public class SocialTrafficChannelImpl implements TrafficChannel {
 
 	public SocialTrafficChannelImpl(boolean error) {
 		_error = error;
+		_referringSocialMedia = Collections.emptyList();
 		_trafficAmount = 0;
 		_trafficShare = 0;
 	}
 
-	public SocialTrafficChannelImpl(long trafficAmount, double trafficShare) {
+	public SocialTrafficChannelImpl(
+		List<ReferringSocialMedia> referringSocialMedia, long trafficAmount,
+		double trafficShare) {
+
 		_error = false;
+		_referringSocialMedia = referringSocialMedia;
 		_trafficAmount = trafficAmount;
 		_trafficShare = trafficShare;
 	}
@@ -52,10 +64,14 @@ public class SocialTrafficChannelImpl implements TrafficChannel {
 		SocialTrafficChannelImpl socialTrafficChannelImpl =
 			(SocialTrafficChannelImpl)object;
 
-		if (Objects.equals(
+		if (Objects.equals(_error, socialTrafficChannelImpl._error) &&
+			Objects.equals(
 				getHelpMessageKey(),
 				socialTrafficChannelImpl.getHelpMessageKey()) &&
 			Objects.equals(getName(), socialTrafficChannelImpl.getName()) &&
+			Objects.equals(
+				_referringSocialMedia,
+				socialTrafficChannelImpl._referringSocialMedia) &&
 			Objects.equals(
 				_trafficAmount, socialTrafficChannelImpl._trafficAmount) &&
 			Objects.equals(
@@ -78,6 +94,10 @@ public class SocialTrafficChannelImpl implements TrafficChannel {
 		return "social";
 	}
 
+	public List<ReferringSocialMedia> getReferringSocialMedia() {
+		return _referringSocialMedia;
+	}
+
 	@Override
 	public long getTrafficAmount() {
 		return _trafficAmount;
@@ -91,18 +111,27 @@ public class SocialTrafficChannelImpl implements TrafficChannel {
 	@Override
 	public int hashCode() {
 		return Objects.hash(
-			getHelpMessageKey(), getName(), _trafficAmount, _trafficShare);
+			_error, getHelpMessageKey(), getName(), _trafficAmount,
+			_trafficShare);
 	}
 
 	@Override
 	public JSONObject toJSONObject(
 		Locale locale, ResourceBundle resourceBundle) {
 
-		return TrafficChannelUtil.toJSONObject(
+		JSONObject jsonObject = TrafficChannelUtil.toJSONObject(
 			_error,
 			ResourceBundleUtil.getString(resourceBundle, getHelpMessageKey()),
 			getName(), ResourceBundleUtil.getString(resourceBundle, getName()),
 			_trafficAmount, _trafficShare);
+
+		if (ListUtil.isNotEmpty(_referringSocialMedia)) {
+			jsonObject.put(
+				"referringSocialMedia",
+				_getReferringSocialMediaJSONArray(resourceBundle));
+		}
+
+		return jsonObject;
 	}
 
 	@Override
@@ -113,7 +142,24 @@ public class SocialTrafficChannelImpl implements TrafficChannel {
 				_trafficAmount, _trafficShare));
 	}
 
+	private JSONArray _getReferringSocialMediaJSONArray(
+		ResourceBundle resourceBundle) {
+
+		if (ListUtil.isEmpty(_referringSocialMedia)) {
+			return JSONFactoryUtil.createJSONArray();
+		}
+
+		Stream<ReferringSocialMedia> stream = _referringSocialMedia.stream();
+
+		return JSONUtil.putAll(
+			stream.map(
+				referringSocialMedia -> referringSocialMedia.toJSONObject(
+					resourceBundle)
+			).toArray());
+	}
+
 	private final boolean _error;
+	private final List<ReferringSocialMedia> _referringSocialMedia;
 	private final long _trafficAmount;
 	private final double _trafficShare;
 
