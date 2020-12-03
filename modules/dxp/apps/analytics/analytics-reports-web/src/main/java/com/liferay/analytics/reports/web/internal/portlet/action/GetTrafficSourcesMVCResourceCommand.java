@@ -46,7 +46,6 @@ import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -145,19 +144,15 @@ public class GetTrafficSourcesMVCResourceCommand
 		String canonicalURL, long companyId) {
 
 		Map<String, TrafficChannel> emptyMap = HashMapBuilder.put(
-			"direct", (TrafficChannel)new DirectTrafficChannelImpl(0, 0)
+			"direct", (TrafficChannel)new DirectTrafficChannelImpl(false)
 		).put(
-			"organic",
-			new OrganicTrafficChannelImpl(Collections.emptyList(), 0, 0)
+			"organic", new OrganicTrafficChannelImpl(false)
 		).put(
-			"paid", new PaidTrafficChannelImpl(Collections.emptyList(), 0, 0)
+			"paid", new PaidTrafficChannelImpl(false)
 		).put(
-			"referral",
-			new ReferralTrafficChannelImpl(
-				Collections.emptyList(), Collections.emptyList(), 0, 0)
+			"referral", new ReferralTrafficChannelImpl(false)
 		).put(
-			"social",
-			new SocialTrafficChannelImpl(Collections.emptyList(), 0, 0)
+			"social", new SocialTrafficChannelImpl(false)
 		).build();
 
 		if (!analyticsReportsDataProvider.isValidAnalyticsConnection(
