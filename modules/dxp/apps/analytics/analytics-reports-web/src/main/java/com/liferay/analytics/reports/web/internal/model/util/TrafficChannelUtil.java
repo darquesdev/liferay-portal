@@ -96,7 +96,7 @@ public final class TrafficChannelUtil {
 		}
 		else if (Objects.equals("social", acquisitionChannel.getName())) {
 			return new SocialTrafficChannelImpl(
-				acquisitionChannel.getTrafficAmount(),
+				Collections.emptyList(), acquisitionChannel.getTrafficAmount(),
 				acquisitionChannel.getTrafficShare());
 		}
 

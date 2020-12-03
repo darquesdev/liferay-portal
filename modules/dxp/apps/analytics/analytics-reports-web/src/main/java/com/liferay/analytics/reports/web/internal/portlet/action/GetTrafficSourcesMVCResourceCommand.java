@@ -156,7 +156,8 @@ public class GetTrafficSourcesMVCResourceCommand
 			new ReferralTrafficChannelImpl(
 				Collections.emptyList(), Collections.emptyList(), 0, 0)
 		).put(
-			"social", new SocialTrafficChannelImpl(0, 0)
+			"social",
+			new SocialTrafficChannelImpl(Collections.emptyList(), 0, 0)
 		).build();
 
 		if (!analyticsReportsDataProvider.isValidAnalyticsConnection(
