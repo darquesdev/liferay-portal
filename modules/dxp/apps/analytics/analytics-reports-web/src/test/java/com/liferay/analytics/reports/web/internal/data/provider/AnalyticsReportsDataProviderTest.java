@@ -24,6 +24,7 @@ import com.liferay.analytics.reports.web.internal.model.SearchKeyword;
 import com.liferay.analytics.reports.web.internal.model.TimeRange;
 import com.liferay.analytics.reports.web.internal.model.TimeSpan;
 import com.liferay.analytics.reports.web.internal.model.TrafficChannel;
+import com.liferay.analytics.reports.web.internal.model.TrafficSource;
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -420,6 +421,168 @@ public class AnalyticsReportsDataProviderTest {
 									"dxp enterprises", 1, 4400, 206L)))),
 					206L, 6.06D)),
 			String.valueOf(trafficChannels.get("paid")));
+	}
+
+	@Test
+	public void testGetTrafficSources() throws Exception {
+		AnalyticsReportsDataProvider analyticsReportsDataProvider =
+			new AnalyticsReportsDataProvider(
+				_getHttp(
+					Collections.singletonMap(
+						"/traffic-sources",
+						JSONUtil.putAll(
+							JSONUtil.put(
+								"name", "organic"
+							).put(
+								"trafficAmount", 1192L
+							).put(
+								"trafficShare", 83.9D
+							),
+							JSONUtil.put(
+								"name", "paid"
+							).put(
+								"trafficAmount", 2010L
+							).put(
+								"trafficShare", 44.1D
+							)
+						).toString())));
+
+		Map<String, TrafficSource> trafficSources =
+			analyticsReportsDataProvider.getTrafficSources(
+				RandomTestUtil.randomLong(), RandomTestUtil.randomString());
+
+		Assert.assertEquals(
+			trafficSources.toString(), 2, trafficSources.size());
+		Assert.assertEquals(
+			String.valueOf(
+				new TrafficSource(
+					Collections.emptyList(), "organic", 1192L, 83.9D)),
+			String.valueOf(trafficSources.get("organic")));
+		Assert.assertEquals(
+			String.valueOf(
+				new TrafficSource(
+					Collections.emptyList(), "paid", 2010L, 44.1D)),
+			String.valueOf(trafficSources.get("paid")));
+	}
+
+	@Test
+	public void testGetTrafficSourcesWithAsahFaroBackendError()
+		throws Exception {
+
+		AnalyticsReportsDataProvider analyticsReportsDataProvider =
+			new AnalyticsReportsDataProvider(_getHttp(new IOException()));
+
+		Map<String, TrafficSource> trafficSources =
+			analyticsReportsDataProvider.getTrafficSources(
+				RandomTestUtil.randomLong(), RandomTestUtil.randomString());
+
+		Assert.assertTrue(trafficSources.isEmpty());
+	}
+
+	@Test
+	public void testGetTrafficSourcesWithCountrySearchKeywords()
+		throws Exception {
+
+		AnalyticsReportsDataProvider analyticsReportsDataProvider =
+			new AnalyticsReportsDataProvider(
+				_getHttp(
+					Collections.singletonMap(
+						"/traffic-sources",
+						JSONUtil.putAll(
+							JSONUtil.put(
+								"countryKeywords",
+								JSONUtil.putAll(
+									JSONUtil.put(
+										"countryCode", "us"
+									).put(
+										"countryName", "United States"
+									).put(
+										"keywords",
+										JSONUtil.putAll(
+											JSONUtil.put(
+												"keyword", "liferay"
+											).put(
+												"position", 1
+											).put(
+												"searchVolume", 3600
+											).put(
+												"traffic", 2880L
+											),
+											JSONUtil.put(
+												"keyword", "liferay portal"
+											).put(
+												"position", 1
+											).put(
+												"searchVolume", 390
+											).put(
+												"traffic", 312L
+											))
+									))
+							).put(
+								"name", "organic"
+							).put(
+								"trafficAmount", 1192L
+							).put(
+								"trafficShare", 83.9D
+							),
+							JSONUtil.put(
+								"countryKeywords",
+								JSONUtil.putAll(
+									JSONUtil.put(
+										"countryCode", "us"
+									).put(
+										"countryName", "United States"
+									).put(
+										"keywords",
+										JSONUtil.putAll(
+											JSONUtil.put(
+												"keyword", "dxp enterprises"
+											).put(
+												"position", 1
+											).put(
+												"searchVolume", 4400
+											).put(
+												"traffic", 206L
+											))
+									))
+							).put(
+								"name", "paid"
+							).put(
+								"trafficAmount", 2010L
+							).put(
+								"trafficShare", 44.1D
+							)
+						).toString())));
+
+		Map<String, TrafficSource> trafficSources =
+			analyticsReportsDataProvider.getTrafficSources(
+				RandomTestUtil.randomLong(), RandomTestUtil.randomString());
+
+		Assert.assertEquals(
+			trafficSources.toString(), 2, trafficSources.size());
+		Assert.assertEquals(
+			String.valueOf(
+				new TrafficSource(
+					Collections.singletonList(
+						new CountrySearchKeywords(
+							"us",
+							Arrays.asList(
+								new SearchKeyword("liferay", 1, 3600, 2880L),
+								new SearchKeyword(
+									"liferay portal", 1, 390, 312L)))),
+					"organic", 1192L, 83.9D)),
+			String.valueOf(trafficSources.get("organic")));
+		Assert.assertEquals(
+			String.valueOf(
+				new TrafficSource(
+					Collections.singletonList(
+						new CountrySearchKeywords(
+							"us",
+							Collections.singletonList(
+								new SearchKeyword(
+									"dxp enterprises", 1, 4400, 206L)))),
+					"paid", 2010L, 44.1D)),
+			String.valueOf(trafficSources.get("paid")));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
