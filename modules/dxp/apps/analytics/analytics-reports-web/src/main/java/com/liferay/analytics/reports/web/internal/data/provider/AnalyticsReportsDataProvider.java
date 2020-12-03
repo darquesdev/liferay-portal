@@ -191,7 +191,7 @@ public class AnalyticsReportsDataProvider {
 		throws PortalException {
 
 		try {
-			Map<String, TrafficSource> trafficSourceMap = _getTrafficSources(
+			Map<String, TrafficSource> trafficSourceMap = getTrafficSources(
 				companyId, url);
 
 			Map<String, AcquisitionChannel> acquisitionChannels =
@@ -219,33 +219,7 @@ public class AnalyticsReportsDataProvider {
 		}
 	}
 
-	public boolean isValidAnalyticsConnection(long companyId) {
-		return _asahFaroBackendClient.isValidConnection(companyId);
-	}
-
-	private long _getTodayReads(long companyId, String url)
-		throws PortalException {
-
-		HistoricalMetric historicalMetric = getHistoricalReadsHistoricalMetric(
-			companyId, TimeRange.of(TimeSpan.TODAY, 0), url);
-
-		Double value = historicalMetric.getValue();
-
-		return value.longValue();
-	}
-
-	private long _getTodayViews(long companyId, String url)
-		throws PortalException {
-
-		HistoricalMetric historicalMetric = getHistoricalViewsHistoricalMetric(
-			companyId, TimeRange.of(TimeSpan.TODAY, 0), url);
-
-		Double value = historicalMetric.getValue();
-
-		return value.longValue();
-	}
-
-	private Map<String, TrafficSource> _getTrafficSources(
+	public Map<String, TrafficSource> getTrafficSources(
 		long companyId, String url) {
 
 		try {
@@ -274,6 +248,32 @@ public class AnalyticsReportsDataProvider {
 
 			return Collections.emptyMap();
 		}
+	}
+
+	public boolean isValidAnalyticsConnection(long companyId) {
+		return _asahFaroBackendClient.isValidConnection(companyId);
+	}
+
+	private long _getTodayReads(long companyId, String url)
+		throws PortalException {
+
+		HistoricalMetric historicalMetric = getHistoricalReadsHistoricalMetric(
+			companyId, TimeRange.of(TimeSpan.TODAY, 0), url);
+
+		Double value = historicalMetric.getValue();
+
+		return value.longValue();
+	}
+
+	private long _getTodayViews(long companyId, String url)
+		throws PortalException {
+
+		HistoricalMetric historicalMetric = getHistoricalViewsHistoricalMetric(
+			companyId, TimeRange.of(TimeSpan.TODAY, 0), url);
+
+		Double value = historicalMetric.getValue();
+
+		return value.longValue();
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
