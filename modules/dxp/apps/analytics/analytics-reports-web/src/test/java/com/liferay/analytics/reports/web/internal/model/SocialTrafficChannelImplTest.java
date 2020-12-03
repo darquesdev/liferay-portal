@@ -16,6 +16,7 @@ package com.liferay.analytics.reports.web.internal.model;
 
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -23,6 +24,7 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 import org.junit.Assert;
@@ -45,7 +47,59 @@ public class SocialTrafficChannelImplTest {
 	public void testToJSONObject() {
 		SocialTrafficChannelImpl socialTrafficChannelImpl =
 			new SocialTrafficChannelImpl(
+				Arrays.asList(
+					new ReferringSocialMedia("twitter", 98),
+					new ReferringSocialMedia("other", 76)),
 				RandomTestUtil.randomInt(), RandomTestUtil.randomDouble());
+
+		JSONObject jsonObject = socialTrafficChannelImpl.toJSONObject(
+			LocaleUtil.US, _getResourceBundle(socialTrafficChannelImpl));
+
+		Assert.assertEquals(
+			JSONUtil.putAll(
+				JSONUtil.put(
+					"name", "twitter"
+				).put(
+					"title", "Twitter"
+				).put(
+					"trafficAmount", 98
+				),
+				JSONUtil.put(
+					"name", "other"
+				).put(
+					"title", "Other"
+				).put(
+					"trafficAmount", 76
+				)
+			).toString(),
+			String.valueOf(jsonObject.get("referringSocialMedia")));
+	}
+
+	@Test
+	public void testToJSONObjectWithError() {
+		SocialTrafficChannelImpl socialTrafficChannelImpl =
+			new SocialTrafficChannelImpl(true);
+
+		Assert.assertEquals(
+			JSONUtil.put(
+				"helpMessage", socialTrafficChannelImpl.getHelpMessageKey()
+			).put(
+				"name", socialTrafficChannelImpl.getName()
+			).put(
+				"title", socialTrafficChannelImpl.getName()
+			).toString(),
+			String.valueOf(
+				socialTrafficChannelImpl.toJSONObject(
+					LocaleUtil.US,
+					_getResourceBundle(socialTrafficChannelImpl))));
+	}
+
+	@Test
+	public void testToJSONObjectWithoutReferringSocialMedia() {
+		SocialTrafficChannelImpl socialTrafficChannelImpl =
+			new SocialTrafficChannelImpl(
+				Collections.emptyList(), RandomTestUtil.randomInt(),
+				RandomTestUtil.randomDouble());
 
 		Assert.assertEquals(
 			JSONUtil.put(
@@ -68,25 +122,6 @@ public class SocialTrafficChannelImplTest {
 					_getResourceBundle(socialTrafficChannelImpl))));
 	}
 
-	@Test
-	public void testToJSONObjectWithError() {
-		SocialTrafficChannelImpl socialTrafficChannelImpl =
-			new SocialTrafficChannelImpl(true);
-
-		Assert.assertEquals(
-			JSONUtil.put(
-				"helpMessage", socialTrafficChannelImpl.getHelpMessageKey()
-			).put(
-				"name", socialTrafficChannelImpl.getName()
-			).put(
-				"title", socialTrafficChannelImpl.getName()
-			).toString(),
-			String.valueOf(
-				socialTrafficChannelImpl.toJSONObject(
-					LocaleUtil.US,
-					_getResourceBundle(socialTrafficChannelImpl))));
-	}
-
 	private ResourceBundle _getResourceBundle(TrafficChannel trafficChannel) {
 		return new ResourceBundle() {
 
@@ -95,11 +130,15 @@ public class SocialTrafficChannelImplTest {
 				return Collections.enumeration(
 					Arrays.asList(
 						trafficChannel.getName(),
-						trafficChannel.getHelpMessageKey()));
+						trafficChannel.getHelpMessageKey(), "other"));
 			}
 
 			@Override
 			protected Object handleGetObject(String key) {
+				if (Objects.equals("other", key)) {
+					return "Other";
+				}
+
 				return key;
 			}
 
