@@ -76,6 +76,39 @@ public class SocialTrafficChannelImplTest {
 	}
 
 	@Test
+	public void testToJSONObjectWithEmptyTrafficAmountReferringSocialMedia() {
+		SocialTrafficChannelImpl socialTrafficChannelImpl =
+			new SocialTrafficChannelImpl(
+				Arrays.asList(
+					new ReferringSocialMedia("twitter", 98),
+					new ReferringSocialMedia("other", 76),
+					new ReferringSocialMedia(RandomTestUtil.randomString(), 0)),
+				RandomTestUtil.randomInt(), RandomTestUtil.randomDouble());
+
+		JSONObject jsonObject = socialTrafficChannelImpl.toJSONObject(
+			LocaleUtil.US, _getResourceBundle(socialTrafficChannelImpl));
+
+		Assert.assertEquals(
+			JSONUtil.putAll(
+				JSONUtil.put(
+					"name", "twitter"
+				).put(
+					"title", "Twitter"
+				).put(
+					"trafficAmount", 98
+				),
+				JSONUtil.put(
+					"name", "other"
+				).put(
+					"title", "Other"
+				).put(
+					"trafficAmount", 76
+				)
+			).toString(),
+			String.valueOf(jsonObject.get("referringSocialMedia")));
+	}
+
+	@Test
 	public void testToJSONObjectWithError() {
 		SocialTrafficChannelImpl socialTrafficChannelImpl =
 			new SocialTrafficChannelImpl(true);
@@ -120,6 +153,38 @@ public class SocialTrafficChannelImplTest {
 				socialTrafficChannelImpl.toJSONObject(
 					LocaleUtil.US,
 					_getResourceBundle(socialTrafficChannelImpl))));
+	}
+
+	@Test
+	public void testToJSONObjectWithUnsortedReferringSocialMedia() {
+		SocialTrafficChannelImpl socialTrafficChannelImpl =
+			new SocialTrafficChannelImpl(
+				Arrays.asList(
+					new ReferringSocialMedia("other", 76),
+					new ReferringSocialMedia("twitter", 98)),
+				RandomTestUtil.randomInt(), RandomTestUtil.randomDouble());
+
+		JSONObject jsonObject = socialTrafficChannelImpl.toJSONObject(
+			LocaleUtil.US, _getResourceBundle(socialTrafficChannelImpl));
+
+		Assert.assertEquals(
+			JSONUtil.putAll(
+				JSONUtil.put(
+					"name", "twitter"
+				).put(
+					"title", "Twitter"
+				).put(
+					"trafficAmount", 98
+				),
+				JSONUtil.put(
+					"name", "other"
+				).put(
+					"title", "Other"
+				).put(
+					"trafficAmount", 76
+				)
+			).toString(),
+			String.valueOf(jsonObject.get("referringSocialMedia")));
 	}
 
 	private ResourceBundle _getResourceBundle(TrafficChannel trafficChannel) {
