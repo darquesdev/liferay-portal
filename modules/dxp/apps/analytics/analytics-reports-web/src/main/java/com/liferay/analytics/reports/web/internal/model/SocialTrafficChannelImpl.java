@@ -26,7 +26,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -46,7 +48,17 @@ public class SocialTrafficChannelImpl implements TrafficChannel {
 		List<ReferringSocialMedia> referringSocialMediaList, long trafficAmount,
 		double trafficShare) {
 
-		_referringSocialMediaList = referringSocialMediaList;
+		_referringSocialMediaList = Optional.ofNullable(
+			referringSocialMediaList
+		).orElse(
+			Collections.emptyList()
+		).stream(
+		).filter(
+			referringSocialMedia -> referringSocialMedia.getTrafficAmount() > 0
+		).collect(
+			Collectors.toList()
+		);
+
 		_trafficAmount = trafficAmount;
 		_trafficShare = trafficShare;
 
