@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -166,8 +167,13 @@ public class SocialTrafficChannelImpl implements TrafficChannel {
 		Stream<ReferringSocialMedia> stream =
 			_referringSocialMediaList.stream();
 
+		Comparator<ReferringSocialMedia> comparator = Comparator.comparingInt(
+			ReferringSocialMedia::getTrafficAmount);
+
 		return JSONUtil.putAll(
-			stream.map(
+			stream.sorted(
+				comparator.reversed()
+			).map(
 				referringSocialMedia -> referringSocialMedia.toJSONObject(
 					resourceBundle)
 			).toArray());
