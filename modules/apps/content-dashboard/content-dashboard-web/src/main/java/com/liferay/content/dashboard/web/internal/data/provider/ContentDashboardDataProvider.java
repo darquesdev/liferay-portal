@@ -22,12 +22,18 @@ import com.liferay.content.dashboard.web.internal.model.AssetVocabularyMetric;
 import com.liferay.content.dashboard.web.internal.search.request.ContentDashboardSearchContextBuilder;
 import com.liferay.content.dashboard.web.internal.searcher.ContentDashboardSearchRequestBuilderFactory;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.search.aggregation.Aggregations;
 import com.liferay.portal.search.aggregation.bucket.Bucket;
+import com.liferay.portal.search.aggregation.bucket.FilterAggregation;
+import com.liferay.portal.search.aggregation.bucket.FilterAggregationResult;
 import com.liferay.portal.search.aggregation.bucket.IncludeExcludeClause;
 import com.liferay.portal.search.aggregation.bucket.TermsAggregation;
 import com.liferay.portal.search.aggregation.bucket.TermsAggregationResult;
+import com.liferay.portal.search.query.BooleanQuery;
+import com.liferay.portal.search.query.Queries;
+import com.liferay.portal.search.query.TermsQuery;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.searcher.SearchResponse;
 import com.liferay.portal.search.searcher.Searcher;
@@ -51,10 +57,11 @@ public class ContentDashboardDataProvider {
 			contentDashboardSearchContextBuilder,
 		ContentDashboardSearchRequestBuilderFactory
 			contentDashboardSearchRequestBuilderFactory,
-		Locale locale, Searcher searcher) {
+		Locale locale, Queries queries, Searcher searcher) {
 
 		_aggregations = aggregations;
 		_locale = locale;
+		_queries = queries;
 		_searcher = searcher;
 
 		_searchRequestBuilder =
@@ -90,6 +97,17 @@ public class ContentDashboardDataProvider {
 				entry -> entry.getTitle(locale)));
 	}
 
+	private String _getAssetVocabularyField(AssetVocabulary assetVocabulary) {
+		if ((assetVocabulary != null) &&
+			(assetVocabulary.getVisibilityType() ==
+				AssetVocabularyConstants.VISIBILITY_TYPE_INTERNAL)) {
+
+			return Field.ASSET_INTERNAL_CATEGORY_IDS;
+		}
+
+		return Field.ASSET_CATEGORY_IDS;
+	}
+
 	private AssetVocabularyMetric _getAssetVocabularyMetric(
 		AssetVocabulary assetVocabulary) {
 
@@ -114,18 +132,30 @@ public class ContentDashboardDataProvider {
 		Map<String, String> childAssetCategoryTitlesMap =
 			_getAssetCategoryTitlesMap(childAssetVocabulary, _locale);
 
-		TermsAggregation termsAggregation = _getTermsAggregation(
-			assetVocabulary, assetCategoryTitlesMap.keySet(), "categories");
-
 		TermsAggregation childTermsAggregation = _getTermsAggregation(
 			childAssetVocabulary, childAssetCategoryTitlesMap.keySet(),
 			"childCategories");
+
+		FilterAggregation filterAggregation = _aggregations.filter(
+			"noneCategory",
+			_getNoneCategoryFilterBooleanQuery(
+				assetCategoryTitlesMap.keySet(),
+				_getAssetVocabularyField(assetVocabulary),
+				childAssetCategoryTitlesMap.keySet(),
+				_getAssetVocabularyField(childAssetVocabulary)));
+
+		filterAggregation.addChildAggregation(childTermsAggregation);
+
+		TermsAggregation termsAggregation = _getTermsAggregation(
+			assetVocabulary, assetCategoryTitlesMap.keySet(), "categories");
 
 		termsAggregation.addChildAggregation(childTermsAggregation);
 
 		SearchResponse searchResponse = _searcher.search(
 			_searchRequestBuilder.addAggregation(
 				childTermsAggregation
+			).addAggregation(
+				filterAggregation
 			).addAggregation(
 				termsAggregation
 			).size(
@@ -148,12 +178,31 @@ public class ContentDashboardDataProvider {
 				termsAggregationResult.getBuckets());
 		}
 
-		return new AssetVocabularyMetric(
-			String.valueOf(assetVocabulary.getVocabularyId()),
-			assetVocabulary.getTitle(_locale),
+		List<AssetCategoryMetric> assetCategoryMetrics =
 			_toAssetCategoryMetrics(
 				assetCategoryTitlesMap, buckets, childAssetCategoryTitlesMap,
-				childAssetVocabulary, "childCategories"));
+				childAssetVocabulary, "childCategories");
+
+		FilterAggregationResult filterAggregationResult =
+			(FilterAggregationResult)searchResponse.getAggregationResult(
+				"noneCategory");
+
+		TermsAggregationResult childCategoriesFilterAggregationResult =
+			(TermsAggregationResult)
+				filterAggregationResult.getChildAggregationResult(
+					"childCategories");
+
+		AssetCategoryMetric noneAssetCategoryMetric = new AssetCategoryMetric(
+			_toAssetVocabularyMetric(
+				childAssetCategoryTitlesMap, childAssetVocabulary,
+				childCategoriesFilterAggregationResult.getBuckets()),
+			"none", "None", filterAggregationResult.getDocCount());
+
+		assetCategoryMetrics.add(noneAssetCategoryMetric);
+
+		return new AssetVocabularyMetric(
+			String.valueOf(assetVocabulary.getVocabularyId()),
+			assetVocabulary.getTitle(_locale), assetCategoryMetrics);
 	}
 
 	private Collection<Bucket> _getBuckets(
@@ -171,6 +220,33 @@ public class ContentDashboardDataProvider {
 				termsAggregationName);
 
 		return termsAggregationResult.getBuckets();
+	}
+
+	private BooleanQuery _getNoneCategoryFilterBooleanQuery(
+		Set<String> assetCategoryIds, String assetVocabularyField,
+		Set<String> childAssetCategoryIds, String childAssetVocabularyField) {
+
+		BooleanQuery booleanQuery = _queries.booleanQuery();
+
+		TermsQuery shouldTermsQuery = _queries.terms(childAssetVocabularyField);
+
+		shouldTermsQuery.addValues(
+			(Object[])ArrayUtil.toStringArray(childAssetCategoryIds));
+
+		booleanQuery.addShouldQueryClauses(shouldTermsQuery);
+
+		TermsQuery mustNotTermsQuery = _queries.terms(assetVocabularyField);
+
+		booleanQuery.addMustNotQueryClauses(mustNotTermsQuery);
+
+		mustNotTermsQuery.addValues(
+			(Object[])ArrayUtil.toStringArray(assetCategoryIds));
+
+		booleanQuery.addMustNotQueryClauses(mustNotTermsQuery);
+
+		booleanQuery.setMinimumShouldMatch(1);
+
+		return booleanQuery;
 	}
 
 	private TermsAggregation _getTermsAggregation(
@@ -245,6 +321,7 @@ public class ContentDashboardDataProvider {
 
 	private final Aggregations _aggregations;
 	private final Locale _locale;
+	private final Queries _queries;
 	private final Searcher _searcher;
 	private final SearchRequestBuilder _searchRequestBuilder;
 

@@ -43,6 +43,7 @@ import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.search.aggregation.Aggregations;
+import com.liferay.portal.search.query.Queries;
 import com.liferay.portal.search.searcher.Searcher;
 
 import java.io.IOException;
@@ -99,7 +100,7 @@ public class ContentDashboardAdminPortlet extends MVCPortlet {
 				new ContentDashboardSearchContextBuilder(
 					_portal.getHttpServletRequest(renderRequest)),
 				_contentDashboardSearchRequestBuilderFactory,
-				_portal.getLocale(renderRequest), _searcher);
+				_portal.getLocale(renderRequest), _queries, _searcher);
 		LiferayPortletRequest liferayPortletRequest =
 			_portal.getLiferayPortletRequest(renderRequest);
 		LiferayPortletResponse liferayPortletResponse =
@@ -200,6 +201,9 @@ public class ContentDashboardAdminPortlet extends MVCPortlet {
 
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private Queries _queries;
 
 	@Reference
 	private Searcher _searcher;
