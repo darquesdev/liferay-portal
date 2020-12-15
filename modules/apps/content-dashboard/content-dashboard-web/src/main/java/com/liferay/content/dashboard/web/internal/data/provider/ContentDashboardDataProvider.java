@@ -38,6 +38,7 @@ import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.searcher.SearchResponse;
 import com.liferay.portal.search.searcher.Searcher;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -187,18 +188,12 @@ public class ContentDashboardDataProvider {
 			(FilterAggregationResult)searchResponse.getAggregationResult(
 				"noneCategory");
 
-		TermsAggregationResult childCategoriesFilterAggregationResult =
-			(TermsAggregationResult)
-				filterAggregationResult.getChildAggregationResult(
-					"childCategories");
-
-		AssetCategoryMetric noneAssetCategoryMetric = new AssetCategoryMetric(
-			_toAssetVocabularyMetric(
-				childAssetCategoryTitlesMap, childAssetVocabulary,
-				childCategoriesFilterAggregationResult.getBuckets()),
-			"none", "None", filterAggregationResult.getDocCount());
-
-		assetCategoryMetrics.add(noneAssetCategoryMetric);
+		if (filterAggregationResult.getDocCount() > 0) {
+			assetCategoryMetrics.add(
+				_getNoneAssetCategoryMetric(
+					childAssetVocabulary, childAssetCategoryTitlesMap,
+					filterAggregationResult));
+		}
 
 		return new AssetVocabularyMetric(
 			String.valueOf(assetVocabulary.getVocabularyId()),
@@ -220,6 +215,23 @@ public class ContentDashboardDataProvider {
 				termsAggregationName);
 
 		return termsAggregationResult.getBuckets();
+	}
+
+	private AssetCategoryMetric _getNoneAssetCategoryMetric(
+		AssetVocabulary childAssetVocabulary,
+		Map<String, String> childAssetCategoryTitlesMap,
+		FilterAggregationResult filterAggregationResult) {
+
+		TermsAggregationResult termsAggregationResult =
+			(TermsAggregationResult)
+				filterAggregationResult.getChildAggregationResult(
+					"childCategories");
+
+		return new AssetCategoryMetric(
+			_toAssetVocabularyMetric(
+				childAssetCategoryTitlesMap, childAssetVocabulary,
+				termsAggregationResult.getBuckets()),
+			"none", "None", filterAggregationResult.getDocCount());
 	}
 
 	private BooleanQuery _getNoneCategoryFilterBooleanQuery(
@@ -289,7 +301,8 @@ public class ContentDashboardDataProvider {
 
 				return new AssetCategoryMetric(
 					_toAssetVocabularyMetric(
-						childAssetCategoryTitlesMap, childAssetVocabulary,
+						bucket.getDocCount(), childAssetCategoryTitlesMap,
+						childAssetVocabulary,
 						termsAggregationResult.getBuckets()),
 					bucket.getKey(),
 					assetCategoryTitlesMap.get(bucket.getKey()),
@@ -298,6 +311,36 @@ public class ContentDashboardDataProvider {
 		).collect(
 			Collectors.toList()
 		);
+	}
+
+	private AssetVocabularyMetric _toAssetVocabularyMetric(
+		long assetCategoriesCount, Map<String, String> assetCategoryTitlesMap,
+		AssetVocabulary assetVocabulary, Collection<Bucket> buckets) {
+
+		List<AssetCategoryMetric> assetCategoryMetrics = new ArrayList<>();
+
+		long currentAssetCategoriesCount = 0;
+
+		for (Bucket bucket : buckets) {
+			currentAssetCategoriesCount =
+				currentAssetCategoriesCount + bucket.getDocCount();
+			assetCategoryMetrics.add(
+				new AssetCategoryMetric(
+					bucket.getKey(),
+					assetCategoryTitlesMap.get(bucket.getKey()),
+					bucket.getDocCount()));
+		}
+
+		if (assetCategoriesCount > currentAssetCategoriesCount) {
+			assetCategoryMetrics.add(
+				new AssetCategoryMetric(
+					"none", "None",
+					assetCategoriesCount - currentAssetCategoriesCount));
+		}
+
+		return new AssetVocabularyMetric(
+			String.valueOf(assetVocabulary.getVocabularyId()),
+			assetVocabulary.getTitle(_locale), assetCategoryMetrics);
 	}
 
 	private AssetVocabularyMetric _toAssetVocabularyMetric(
