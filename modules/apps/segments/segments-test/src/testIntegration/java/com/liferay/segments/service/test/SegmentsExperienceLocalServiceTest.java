@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
@@ -30,6 +31,7 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.segments.constants.SegmentsExperimentConstants;
@@ -261,6 +263,89 @@ public class SegmentsExperienceLocalServiceTest {
 				segmentsExperience5.getSegmentsExperienceId());
 
 		Assert.assertEquals(3, segmentsExperience5.getPriority());
+	}
+
+	@Test
+	public void testDuplicateSegmentsExperience() throws Exception {
+		SegmentsEntry segmentsEntry = SegmentsTestUtil.addSegmentsEntry(
+			_group.getGroupId());
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+
+		SegmentsExperience segmentsExperience =
+			_segmentsExperienceLocalService.addSegmentsExperience(
+				segmentsEntry.getSegmentsEntryId(), _classNameId, _classPK,
+				Collections.singletonMap(LocaleUtil.US, "Experience"), 1, true,
+				serviceContext);
+
+		SegmentsExperience duplicatedSegmentsExperience =
+			_segmentsExperienceLocalService.duplicateSegmentsExperience(
+				LocaleUtil.US, segmentsExperience.getSegmentsExperienceId(),
+				serviceContext);
+
+		Assert.assertEquals(
+			segmentsExperience.getSegmentsEntryId(),
+			duplicatedSegmentsExperience.getSegmentsEntryId());
+		Assert.assertEquals(
+			segmentsExperience.getClassNameId(),
+			duplicatedSegmentsExperience.getClassNameId());
+		Assert.assertEquals(
+			segmentsExperience.getClassPK(),
+			duplicatedSegmentsExperience.getClassPK());
+		Assert.assertEquals(
+			Collections.singletonMap(LocaleUtil.US, "Experience (Copy)"),
+			duplicatedSegmentsExperience.getNameMap());
+		Assert.assertEquals(1, duplicatedSegmentsExperience.getPriority());
+		Assert.assertEquals(
+			segmentsExperience.isActive(),
+			duplicatedSegmentsExperience.isActive());
+
+		segmentsExperience =
+			_segmentsExperienceLocalService.getSegmentsExperience(
+				segmentsExperience.getSegmentsExperienceId());
+
+		Assert.assertEquals(2, segmentsExperience.getPriority());
+	}
+
+	@Test
+	public void testDuplicateSegmentsExperienceWithMidrangePriority()
+		throws Exception {
+
+		SegmentsExperience segmentsExperience1 =
+			SegmentsTestUtil.addSegmentsExperience(
+				_group.getGroupId(), _classNameId, _classPK);
+		SegmentsExperience segmentsExperience2 =
+			SegmentsTestUtil.addSegmentsExperience(
+				_group.getGroupId(), _classNameId, _classPK);
+		SegmentsExperience segmentsExperience3 =
+			SegmentsTestUtil.addSegmentsExperience(
+				_group.getGroupId(), _classNameId, _classPK);
+
+		SegmentsExperience duplicatedSegmentsExperience =
+			_segmentsExperienceLocalService.duplicateSegmentsExperience(
+				LocaleUtil.US, segmentsExperience2.getSegmentsExperienceId(),
+				ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
+
+		Assert.assertEquals(1, duplicatedSegmentsExperience.getPriority());
+
+		segmentsExperience1 =
+			_segmentsExperienceLocalService.getSegmentsExperience(
+				segmentsExperience1.getSegmentsExperienceId());
+
+		Assert.assertEquals(0, segmentsExperience1.getPriority());
+
+		segmentsExperience2 =
+			_segmentsExperienceLocalService.getSegmentsExperience(
+				segmentsExperience2.getSegmentsExperienceId());
+
+		Assert.assertEquals(2, segmentsExperience2.getPriority());
+
+		segmentsExperience3 =
+			_segmentsExperienceLocalService.getSegmentsExperience(
+				segmentsExperience3.getSegmentsExperienceId());
+
+		Assert.assertEquals(3, segmentsExperience3.getPriority());
 	}
 
 	@Test

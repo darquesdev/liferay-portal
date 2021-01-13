@@ -39,6 +39,7 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -203,6 +204,75 @@ public class SegmentsExperienceServiceTest {
 
 			_segmentsExperienceService.deleteSegmentsExperience(
 				segmentsExperience.getSegmentsExperienceId());
+		}
+	}
+
+	@Test(expected = PrincipalException.MustHavePermission.class)
+	public void testDuplicateSegmentsExperienceWithoutUpdatePermission()
+		throws Exception {
+
+		SegmentsExperience segmentsExperience =
+			SegmentsTestUtil.addSegmentsExperience(
+				_classNameId, _classPK,
+				ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
+
+		try (ContextUserReplace contextUserReplace = new ContextUserReplace(
+				_user, PermissionCheckerFactoryUtil.create(_user))) {
+
+			_segmentsExperienceService.duplicateSegmentsExperience(
+				LocaleUtil.US, segmentsExperience.getSegmentsExperienceId(),
+				ServiceContextTestUtil.getServiceContext(
+					_group.getGroupId(), _user.getUserId()));
+		}
+	}
+
+	@Test
+	public void testDuplicateSegmentsExperienceWithoutUpdatePermissionAndWithUpdateLayoutPermission()
+		throws Exception {
+
+		SegmentsExperience segmentsExperience =
+			SegmentsTestUtil.addSegmentsExperience(
+				_classNameId, _classPK,
+				ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
+
+		ResourcePermissionLocalServiceUtil.setResourcePermissions(
+			_group.getCompanyId(), Layout.class.getName(),
+			ResourceConstants.SCOPE_INDIVIDUAL,
+			String.valueOf(segmentsExperience.getClassPK()), _role.getRoleId(),
+			new String[] {ActionKeys.UPDATE});
+
+		try (ContextUserReplace contextUserReplace = new ContextUserReplace(
+				_user, PermissionCheckerFactoryUtil.create(_user))) {
+
+			_segmentsExperienceService.duplicateSegmentsExperience(
+				LocaleUtil.US, segmentsExperience.getSegmentsExperienceId(),
+				ServiceContextTestUtil.getServiceContext(
+					_group.getGroupId(), _user.getUserId()));
+		}
+	}
+
+	@Test
+	public void testDuplicateSegmentsExperienceWithUpdatePermission()
+		throws Exception {
+
+		SegmentsExperience segmentsExperience =
+			SegmentsTestUtil.addSegmentsExperience(
+				_classNameId, _classPK,
+				ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
+
+		ResourcePermissionLocalServiceUtil.addResourcePermission(
+			_group.getCompanyId(),
+			"com.liferay.segments.model.SegmentsExperience",
+			ResourceConstants.SCOPE_GROUP, String.valueOf(_group.getGroupId()),
+			_role.getRoleId(), ActionKeys.UPDATE);
+
+		try (ContextUserReplace contextUserReplace = new ContextUserReplace(
+				_user, PermissionCheckerFactoryUtil.create(_user))) {
+
+			_segmentsExperienceService.duplicateSegmentsExperience(
+				LocaleUtil.US, segmentsExperience.getSegmentsExperienceId(),
+				ServiceContextTestUtil.getServiceContext(
+					_group.getGroupId(), _user.getUserId()));
 		}
 	}
 
