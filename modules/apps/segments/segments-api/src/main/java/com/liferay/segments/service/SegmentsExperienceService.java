@@ -67,6 +67,11 @@ public interface SegmentsExperienceService extends BaseService {
 			long segmentsExperienceId)
 		throws PortalException;
 
+	public SegmentsExperience duplicateSegmentsExperience(
+			Locale locale, long segmentsExperienceId,
+			ServiceContext serviceContext)
+		throws PortalException;
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public SegmentsExperience fetchSegmentsExperience(
 			long groupId, String segmentsExperienceKey)

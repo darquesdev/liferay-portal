@@ -166,6 +166,11 @@ public interface SegmentsExperienceLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public <T> T dslQuery(DSLQuery dslQuery);
 
+	public SegmentsExperience duplicateSegmentsExperience(
+			Locale locale, long segmentsExperienceId,
+			ServiceContext serviceContext)
+		throws PortalException;
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public DynamicQuery dynamicQuery();
 

@@ -16,6 +16,7 @@ package com.liferay.segments.service.http;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.segments.service.SegmentsExperienceServiceUtil;
 
@@ -102,6 +103,28 @@ public class SegmentsExperienceServiceSoap {
 			com.liferay.segments.model.SegmentsExperience returnValue =
 				SegmentsExperienceServiceUtil.deleteSegmentsExperience(
 					segmentsExperienceId);
+
+			return com.liferay.segments.model.SegmentsExperienceSoap.
+				toSoapModel(returnValue);
+		}
+		catch (Exception exception) {
+			_log.error(exception, exception);
+
+			throw new RemoteException(exception.getMessage());
+		}
+	}
+
+	public static com.liferay.segments.model.SegmentsExperienceSoap
+			duplicateSegmentsExperience(
+				String locale, long segmentsExperienceId,
+				com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+
+		try {
+			com.liferay.segments.model.SegmentsExperience returnValue =
+				SegmentsExperienceServiceUtil.duplicateSegmentsExperience(
+					LocaleUtil.fromLanguageId(locale), segmentsExperienceId,
+					serviceContext);
 
 			return com.liferay.segments.model.SegmentsExperienceSoap.
 				toSoapModel(returnValue);
