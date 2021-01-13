@@ -14,8 +14,11 @@
 
 package com.liferay.segments.service.impl;
 
+import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.SystemEventConstants;
@@ -24,6 +27,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
 import com.liferay.portal.kernel.util.GroupThreadLocal;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Validator;
@@ -234,6 +238,50 @@ public class SegmentsExperienceLocalServiceImpl
 
 			_deleteSegmentsExperiment(segmentsExperiment);
 		}
+	}
+
+	@Override
+	public SegmentsExperience duplicateSegmentsExperience(
+			Locale locale, long segmentsExperienceId,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		SegmentsExperience segmentsExperience =
+			segmentsExperiencePersistence.findByPrimaryKey(
+				segmentsExperienceId);
+
+		List<SegmentsExperience> segmentsExperiences = new ArrayList<>(
+			segmentsExperiencePersistence.findByG_C_C_GEP(
+				segmentsExperience.getGroupId(),
+				segmentsExperience.getClassNameId(),
+				segmentsExperience.getClassPK(),
+				segmentsExperience.getPriority()));
+
+		for (SegmentsExperience curSegmentsExperience : segmentsExperiences) {
+			curSegmentsExperience.setPriority(
+				curSegmentsExperience.getPriority() + 1);
+
+			segmentsExperienceLocalService.updateSegmentsExperience(
+				curSegmentsExperience);
+		}
+
+		StringBundler sb = new StringBundler(5);
+
+		sb.append(segmentsExperience.getName(LocaleUtil.getSiteDefault()));
+		sb.append(StringPool.SPACE);
+		sb.append(StringPool.OPEN_PARENTHESIS);
+		sb.append(LanguageUtil.get(locale, "copy"));
+		sb.append(StringPool.CLOSE_PARENTHESIS);
+
+		return addSegmentsExperience(
+			segmentsExperience.getSegmentsEntryId(),
+			segmentsExperience.getClassNameId(),
+			segmentsExperience.getClassPK(),
+			HashMapBuilder.put(
+				LocaleUtil.getSiteDefault(), sb.toString()
+			).build(),
+			segmentsExperience.getPriority(), segmentsExperience.isActive(),
+			serviceContext);
 	}
 
 	@Override
