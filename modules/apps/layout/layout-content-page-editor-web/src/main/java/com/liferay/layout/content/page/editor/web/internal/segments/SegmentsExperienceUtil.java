@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.model.PortletPreferences;
 import com.liferay.portal.kernel.portlet.PortletIdCodec;
@@ -40,6 +41,7 @@ import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
+import com.liferay.segments.model.SegmentsExperience;
 
 import java.util.Date;
 import java.util.List;
@@ -67,6 +69,22 @@ public class SegmentsExperienceUtil {
 			plid, commentManager, groupId, portletRegistry,
 			sourceSegmentsExperienceId, targetSegmentsExperienceId,
 			serviceContextFunction, userId);
+	}
+
+	public static JSONObject getSegmentsExperienceJSONObject(
+		SegmentsExperience segmentsExperience) {
+
+		return JSONUtil.put(
+			"active", segmentsExperience.isActive()
+		).put(
+			"name", segmentsExperience.getNameCurrentValue()
+		).put(
+			"priority", segmentsExperience.getPriority()
+		).put(
+			"segmentsEntryId", segmentsExperience.getSegmentsEntryId()
+		).put(
+			"segmentsExperienceId", segmentsExperience.getSegmentsExperienceId()
+		);
 	}
 
 	private static void _copyLayoutData(
@@ -284,6 +302,9 @@ public class SegmentsExperienceUtil {
 		}
 
 		return layoutStructure.toJSONObject();
+	}
+
+	private SegmentsExperienceUtil() {
 	}
 
 }
