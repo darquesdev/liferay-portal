@@ -100,6 +100,23 @@ public class SegmentsExperienceServiceImpl
 	}
 
 	@Override
+	public SegmentsExperience duplicateSegmentsExperience(
+			Map<Locale, String> nameMap, long segmentsExperienceId,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		SegmentsExperience segmentsExperience =
+			segmentsExperiencePersistence.findByPrimaryKey(
+				segmentsExperienceId);
+
+		_segmentsExperienceResourcePermission.check(
+			getPermissionChecker(), segmentsExperience, ActionKeys.UPDATE);
+
+		return segmentsExperienceLocalService.duplicateSegmentsExperience(
+			nameMap, segmentsExperienceId, serviceContext);
+	}
+
+	@Override
 	public SegmentsExperience fetchSegmentsExperience(
 			long groupId, String segmentsExperienceKey)
 		throws PortalException {
