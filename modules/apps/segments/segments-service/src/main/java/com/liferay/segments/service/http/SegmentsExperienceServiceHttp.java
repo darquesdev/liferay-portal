@@ -183,6 +183,51 @@ public class SegmentsExperienceServiceHttp {
 	}
 
 	public static com.liferay.segments.model.SegmentsExperience
+			duplicateSegmentsExperience(
+				HttpPrincipal httpPrincipal,
+				java.util.Map<java.util.Locale, String> nameMap,
+				long segmentsExperienceId,
+				com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		try {
+			MethodKey methodKey = new MethodKey(
+				SegmentsExperienceServiceUtil.class,
+				"duplicateSegmentsExperience",
+				_duplicateSegmentsExperienceParameterTypes3);
+
+			MethodHandler methodHandler = new MethodHandler(
+				methodKey, nameMap, segmentsExperienceId, serviceContext);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception exception) {
+				if (exception instanceof
+						com.liferay.portal.kernel.exception.PortalException) {
+
+					throw (com.liferay.portal.kernel.exception.PortalException)
+						exception;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(
+					exception);
+			}
+
+			return (com.liferay.segments.model.SegmentsExperience)returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException
+					systemException) {
+
+			_log.error(systemException, systemException);
+
+			throw systemException;
+		}
+	}
+
+	public static com.liferay.segments.model.SegmentsExperience
 			fetchSegmentsExperience(
 				HttpPrincipal httpPrincipal, long groupId,
 				String segmentsExperienceKey)
@@ -191,7 +236,7 @@ public class SegmentsExperienceServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				SegmentsExperienceServiceUtil.class, "fetchSegmentsExperience",
-				_fetchSegmentsExperienceParameterTypes3);
+				_fetchSegmentsExperienceParameterTypes4);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, groupId, segmentsExperienceKey);
@@ -232,7 +277,7 @@ public class SegmentsExperienceServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				SegmentsExperienceServiceUtil.class, "getSegmentsExperience",
-				_getSegmentsExperienceParameterTypes4);
+				_getSegmentsExperienceParameterTypes5);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, segmentsExperienceId);
@@ -274,7 +319,7 @@ public class SegmentsExperienceServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				SegmentsExperienceServiceUtil.class, "getSegmentsExperiences",
-				_getSegmentsExperiencesParameterTypes5);
+				_getSegmentsExperiencesParameterTypes6);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, groupId, classNameId, classPK, active);
@@ -320,7 +365,7 @@ public class SegmentsExperienceServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				SegmentsExperienceServiceUtil.class, "getSegmentsExperiences",
-				_getSegmentsExperiencesParameterTypes6);
+				_getSegmentsExperiencesParameterTypes7);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, groupId, classNameId, classPK, active, start, end,
@@ -364,7 +409,7 @@ public class SegmentsExperienceServiceHttp {
 			MethodKey methodKey = new MethodKey(
 				SegmentsExperienceServiceUtil.class,
 				"getSegmentsExperiencesCount",
-				_getSegmentsExperiencesCountParameterTypes7);
+				_getSegmentsExperiencesCountParameterTypes8);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, groupId, classNameId, classPK, active);
@@ -407,7 +452,7 @@ public class SegmentsExperienceServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				SegmentsExperienceServiceUtil.class, "updateSegmentsExperience",
-				_updateSegmentsExperienceParameterTypes8);
+				_updateSegmentsExperienceParameterTypes9);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, segmentsExperienceId, segmentsEntryId, nameMap,
@@ -450,7 +495,7 @@ public class SegmentsExperienceServiceHttp {
 			MethodKey methodKey = new MethodKey(
 				SegmentsExperienceServiceUtil.class,
 				"updateSegmentsExperiencePriority",
-				_updateSegmentsExperiencePriorityParameterTypes9);
+				_updateSegmentsExperiencePriorityParameterTypes10);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, segmentsExperienceId, newPriority);
@@ -496,27 +541,32 @@ public class SegmentsExperienceServiceHttp {
 		};
 	private static final Class<?>[] _deleteSegmentsExperienceParameterTypes2 =
 		new Class[] {long.class};
-	private static final Class<?>[] _fetchSegmentsExperienceParameterTypes3 =
+	private static final Class<?>[]
+		_duplicateSegmentsExperienceParameterTypes3 = new Class[] {
+			java.util.Map.class, long.class,
+			com.liferay.portal.kernel.service.ServiceContext.class
+		};
+	private static final Class<?>[] _fetchSegmentsExperienceParameterTypes4 =
 		new Class[] {long.class, String.class};
-	private static final Class<?>[] _getSegmentsExperienceParameterTypes4 =
+	private static final Class<?>[] _getSegmentsExperienceParameterTypes5 =
 		new Class[] {long.class};
-	private static final Class<?>[] _getSegmentsExperiencesParameterTypes5 =
-		new Class[] {long.class, long.class, long.class, boolean.class};
 	private static final Class<?>[] _getSegmentsExperiencesParameterTypes6 =
+		new Class[] {long.class, long.class, long.class, boolean.class};
+	private static final Class<?>[] _getSegmentsExperiencesParameterTypes7 =
 		new Class[] {
 			long.class, long.class, long.class, boolean.class, int.class,
 			int.class, com.liferay.portal.kernel.util.OrderByComparator.class
 		};
 	private static final Class<?>[]
-		_getSegmentsExperiencesCountParameterTypes7 = new Class[] {
+		_getSegmentsExperiencesCountParameterTypes8 = new Class[] {
 			long.class, long.class, long.class, boolean.class
 		};
-	private static final Class<?>[] _updateSegmentsExperienceParameterTypes8 =
+	private static final Class<?>[] _updateSegmentsExperienceParameterTypes9 =
 		new Class[] {
 			long.class, long.class, java.util.Map.class, boolean.class
 		};
 	private static final Class<?>[]
-		_updateSegmentsExperiencePriorityParameterTypes9 = new Class[] {
+		_updateSegmentsExperiencePriorityParameterTypes10 = new Class[] {
 			long.class, int.class
 		};
 

@@ -141,6 +141,31 @@ public class SegmentsExperienceServiceSoap {
 	}
 
 	public static com.liferay.segments.model.SegmentsExperienceSoap
+			duplicateSegmentsExperience(
+				String[] nameMapLanguageIds, String[] nameMapValues,
+				long segmentsExperienceId,
+				com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+
+		try {
+			Map<Locale, String> nameMap = LocalizationUtil.getLocalizationMap(
+				nameMapLanguageIds, nameMapValues);
+
+			com.liferay.segments.model.SegmentsExperience returnValue =
+				SegmentsExperienceServiceUtil.duplicateSegmentsExperience(
+					nameMap, segmentsExperienceId, serviceContext);
+
+			return com.liferay.segments.model.SegmentsExperienceSoap.
+				toSoapModel(returnValue);
+		}
+		catch (Exception exception) {
+			_log.error(exception, exception);
+
+			throw new RemoteException(exception.getMessage());
+		}
+	}
+
+	public static com.liferay.segments.model.SegmentsExperienceSoap
 			fetchSegmentsExperience(long groupId, String segmentsExperienceKey)
 		throws RemoteException {
 

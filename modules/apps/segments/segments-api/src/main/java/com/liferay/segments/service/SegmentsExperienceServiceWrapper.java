@@ -68,6 +68,17 @@ public class SegmentsExperienceServiceWrapper
 	}
 
 	@Override
+	public SegmentsExperience duplicateSegmentsExperience(
+			java.util.Map<java.util.Locale, String> nameMap,
+			long segmentsExperienceId,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _segmentsExperienceService.duplicateSegmentsExperience(
+			nameMap, segmentsExperienceId, serviceContext);
+	}
+
+	@Override
 	public SegmentsExperience fetchSegmentsExperience(
 			long groupId, String segmentsExperienceKey)
 		throws com.liferay.portal.kernel.exception.PortalException {

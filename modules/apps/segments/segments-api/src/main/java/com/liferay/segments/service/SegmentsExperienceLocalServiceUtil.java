@@ -182,6 +182,17 @@ public class SegmentsExperienceLocalServiceUtil {
 		return getService().dslQuery(dslQuery);
 	}
 
+	public static com.liferay.segments.model.SegmentsExperience
+			duplicateSegmentsExperience(
+				java.util.Map<java.util.Locale, String> nameMap,
+				long segmentsExperienceId,
+				com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().duplicateSegmentsExperience(
+			nameMap, segmentsExperienceId, serviceContext);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.DynamicQuery
 		dynamicQuery() {
 
