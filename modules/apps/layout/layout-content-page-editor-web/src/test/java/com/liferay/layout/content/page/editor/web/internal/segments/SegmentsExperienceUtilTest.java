@@ -1,0 +1,94 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+package com.liferay.layout.content.page.editor.web.internal.segments;
+
+import com.liferay.portal.json.JSONFactoryImpl;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.segments.model.SegmentsExperience;
+
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import org.mockito.Mockito;
+
+/**
+ * @author David Arques
+ */
+public class SegmentsExperienceUtilTest {
+
+	@BeforeClass
+	public static void setUpClass() {
+		JSONFactoryUtil jsonFactoryUtil = new JSONFactoryUtil();
+
+		jsonFactoryUtil.setJSONFactory(new JSONFactoryImpl());
+	}
+
+	@Test
+	public void testGetSegmentsExperienceJSONObject() {
+		SegmentsExperience segmentsExperience = Mockito.mock(
+			SegmentsExperience.class);
+
+		Mockito.when(
+			segmentsExperience.isActive()
+		).thenReturn(
+			RandomTestUtil.randomBoolean()
+		);
+
+		Mockito.when(
+			segmentsExperience.getNameCurrentValue()
+		).thenReturn(
+			RandomTestUtil.randomString()
+		);
+
+		Mockito.when(
+			segmentsExperience.getPriority()
+		).thenReturn(
+			RandomTestUtil.randomInt()
+		);
+
+		Mockito.when(
+			segmentsExperience.getSegmentsEntryId()
+		).thenReturn(
+			RandomTestUtil.randomLong()
+		);
+
+		Mockito.when(
+			segmentsExperience.getSegmentsExperienceId()
+		).thenReturn(
+			RandomTestUtil.randomLong()
+		);
+
+		Assert.assertEquals(
+			JSONUtil.put(
+				"active", segmentsExperience.isActive()
+			).put(
+				"name", segmentsExperience.getNameCurrentValue()
+			).put(
+				"priority", segmentsExperience.getPriority()
+			).put(
+				"segmentsEntryId", segmentsExperience.getSegmentsEntryId()
+			).put(
+				"segmentsExperienceId",
+				segmentsExperience.getSegmentsExperienceId()
+			).toString(),
+			String.valueOf(
+				SegmentsExperienceUtil.getSegmentsExperienceJSONObject(
+					segmentsExperience)));
+	}
+
+}
