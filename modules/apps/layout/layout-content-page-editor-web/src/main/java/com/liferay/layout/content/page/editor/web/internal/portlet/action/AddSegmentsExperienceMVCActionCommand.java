@@ -117,7 +117,8 @@ public class AddSegmentsExperienceMVCActionCommand
 				segmentsExperience.getSegmentsExperienceId())
 		).put(
 			"segmentsExperience",
-			_getSegmentsExperienceJSONObject(segmentsExperience)
+			SegmentsExperienceUtil.getSegmentsExperienceJSONObject(
+				segmentsExperience)
 		);
 
 		if (segmentsExperiment == null) {
@@ -242,22 +243,6 @@ public class AddSegmentsExperienceMVCActionCommand
 
 		return JSONFactoryUtil.createJSONObject(
 			layoutPageTemplateStructure.getData(segmentsExperienceId));
-	}
-
-	private JSONObject _getSegmentsExperienceJSONObject(
-		SegmentsExperience segmentsExperience) {
-
-		return JSONUtil.put(
-			"active", segmentsExperience.isActive()
-		).put(
-			"name", segmentsExperience.getNameCurrentValue()
-		).put(
-			"priority", segmentsExperience.getPriority()
-		).put(
-			"segmentsEntryId", segmentsExperience.getSegmentsEntryId()
-		).put(
-			"segmentsExperienceId", segmentsExperience.getSegmentsExperienceId()
-		);
 	}
 
 	private SegmentsExperiment _getSegmentsExperiment(

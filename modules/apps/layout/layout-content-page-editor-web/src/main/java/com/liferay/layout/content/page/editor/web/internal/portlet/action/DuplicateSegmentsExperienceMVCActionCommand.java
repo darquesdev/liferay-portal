@@ -122,7 +122,8 @@ public class DuplicateSegmentsExperienceMVCActionCommand
 				duplicatedSegmentsExperience.getSegmentsExperienceId())
 		).put(
 			"segmentsExperience",
-			_getSegmentsExperienceJSONObject(duplicatedSegmentsExperience)
+			SegmentsExperienceUtil.getSegmentsExperienceJSONObject(
+				duplicatedSegmentsExperience)
 		);
 	}
 
@@ -163,22 +164,6 @@ public class DuplicateSegmentsExperienceMVCActionCommand
 
 		return JSONFactoryUtil.createJSONObject(
 			layoutPageTemplateStructure.getData(segmentsExperienceId));
-	}
-
-	private JSONObject _getSegmentsExperienceJSONObject(
-		SegmentsExperience segmentsExperience) {
-
-		return JSONUtil.put(
-			"active", segmentsExperience.isActive()
-		).put(
-			"name", segmentsExperience.getNameCurrentValue()
-		).put(
-			"priority", segmentsExperience.getPriority()
-		).put(
-			"segmentsEntryId", segmentsExperience.getSegmentsEntryId()
-		).put(
-			"segmentsExperienceId", segmentsExperience.getSegmentsExperienceId()
-		);
 	}
 
 	@Reference
