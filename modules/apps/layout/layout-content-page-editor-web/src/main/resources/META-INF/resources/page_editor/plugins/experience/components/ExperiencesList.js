@@ -27,6 +27,7 @@ const ExperiencesList = ({
 	defaultExperienceId,
 	experiences,
 	onDeleteExperience,
+	onDuplicateExperience,
 	onEditExperience,
 	onPriorityDecrease,
 	onPriorityIncrease,
@@ -57,6 +58,7 @@ const ExperiencesList = ({
 						lockedDecreasePriority={lockedDecreasePriority}
 						lockedIncreasePriority={lockedIncreasePriority}
 						onDeleteExperience={onDeleteExperience}
+						onDuplicateExperience={onDuplicateExperience}
 						onEditExperience={onEditExperience}
 						onPriorityDecrease={onPriorityDecrease}
 						onPriorityIncrease={onPriorityIncrease}
@@ -74,6 +76,7 @@ ExperiencesList.propTypes = {
 	defaultExperienceId: PropTypes.string.isRequired,
 	experiences: PropTypes.arrayOf(PropTypes.shape(ExperienceType)).isRequired,
 	onDeleteExperience: PropTypes.func.isRequired,
+	onDuplicateExperience: PropTypes.func.isRequired,
 	onEditExperience: PropTypes.func.isRequired,
 	onPriorityDecrease: PropTypes.func.isRequired,
 	onPriorityIncrease: PropTypes.func.isRequired,
