@@ -226,6 +226,20 @@ const ExperienceActions = ({
 					/>
 
 					<ClayButtonWithIcon
+						aria-label={Liferay.Language.get(
+							'duplicate-experience'
+						)}
+						borderless
+						className="component-action mx-1"
+						displayType="unstyled"
+						monospaced
+						outline
+						symbol="copy"
+						title={Liferay.Language.get('duplicate-experience')}
+						type="button"
+					/>
+
+					<ClayButtonWithIcon
 						aria-label={Liferay.Language.get('delete-experience')}
 						borderless
 						className="component-action mx-1"
