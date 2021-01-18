@@ -97,6 +97,7 @@ export interface Config {
 	discardDraftURL: string;
 	draft: boolean;
 	duplicateItemURL: string;
+	duplicateSegmentsExperienceURL: string;
 	editFragmentEntryLinkCommentURL: string;
 	editFragmentEntryLinkURL: string;
 	editSegmentsEntryURL: string;

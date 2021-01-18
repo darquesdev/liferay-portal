@@ -56,6 +56,27 @@ export default {
 	},
 
 	/**
+	 * Asks backend to duplicate an experience
+	 * @param {object} options
+	 * @param {object} options.body
+	 * @param {string} options.body.segmentsExperienceId Id of the experience to be duplicated
+	 * @param {function} options.dispatch
+	 */
+	duplicateExperience({body, dispatch}) {
+		const {segmentsExperienceId} = body;
+
+		const payload = {
+			segmentsExperienceId,
+		};
+
+		return serviceFetch(
+			config.duplicateSegmentsExperienceURL,
+			{body: payload},
+			dispatch
+		);
+	},
+
+	/**
 	 * Asks backend to remove an experience
 	 * @param {object} options
 	 * @param {object} options.body
