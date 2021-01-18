@@ -27,6 +27,7 @@ import selectCanUpdateExperiences from '../../../app/selectors/selectCanUpdateEx
 import selectCanUpdateSegments from '../../../app/selectors/selectCanUpdateSegments';
 import {useDispatch, useSelector} from '../../../app/store/index';
 import createExperience from '../thunks/createExperience';
+import duplicateExperience from '../thunks/duplicateExperience';
 import removeExperience from '../thunks/removeExperience';
 import updateExperience from '../thunks/updateExperience';
 import updateExperiencePriority from '../thunks/updateExperiencePriority';
@@ -253,6 +254,30 @@ const ExperienceSelector = ({
 			});
 	};
 
+	const handleExperienceDuplication = (id) => {
+		dispatch(
+			duplicateExperience({
+				segmentsExperienceId: id,
+			})
+		)
+			.then(() => {
+				openToast({
+					message: Liferay.Language.get(
+						'the-experience-was-duplicated-successfully'
+					),
+					type: 'success',
+				});
+			})
+			.catch(() => {
+				openToast({
+					message: Liferay.Language.get(
+						'an-unexpected-error-occurred'
+					),
+					type: 'danger',
+				});
+			});
+	};
+
 	const decreasePriority = (id) => {
 		const target = getUpdateExperiencePriorityTargets(
 			experiences,
@@ -327,6 +352,9 @@ const ExperienceSelector = ({
 								}
 								experiences={experiences}
 								onDeleteExperience={deleteExperience}
+								onDuplicateExperience={
+									handleExperienceDuplication
+								}
 								onEditExperience={handleEditExperienceClick}
 								onPriorityDecrease={decreasePriority}
 								onPriorityIncrease={increasePriority}
