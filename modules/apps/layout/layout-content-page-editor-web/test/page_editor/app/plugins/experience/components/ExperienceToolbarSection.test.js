@@ -28,6 +28,7 @@ import {StoreAPIContextProvider} from '../../../../../../src/main/resources/META
 import {
 	CREATE_SEGMENTS_EXPERIENCE,
 	DELETE_SEGMENTS_EXPERIENCE,
+	DUPLICATE_SEGMENTS_EXPERIENCE,
 	UPDATE_SEGMENTS_EXPERIENCE,
 	UPDATE_SEGMENTS_EXPERIENCES_LIST,
 } from '../../../../../../src/main/resources/META-INF/resources/page_editor/plugins/experience/actions';
@@ -36,6 +37,7 @@ import ExperienceToolbarSection from '../../../../../../src/main/resources/META-
 import '@testing-library/jest-dom/extend-expect';
 
 const MOCK_DELETE_URL = 'delete-experience-test-url';
+const MOCK_DUPLICATE_URL = 'duplicate-experience-test-url';
 const MOCK_CREATE_URL = 'create-experience-test-url';
 const MOCK_UPDATE_PRIORITY_URL = 'update-experience-priority-test-url';
 const MOCK_UPDATE_URL = 'update-experience-test-url';
@@ -128,6 +130,7 @@ const mockConfig = {
 	classPK: 'test-classPK',
 	defaultSegmentsExperienceId: '0',
 	deleteSegmentsExperienceURL: MOCK_DELETE_URL,
+	duplicateSegmentsExperienceURL: MOCK_DUPLICATE_URL,
 	updateSegmentsExperiencePriorityURL: MOCK_UPDATE_PRIORITY_URL,
 	updateSegmentsExperienceURL: MOCK_UPDATE_URL,
 };
@@ -694,6 +697,74 @@ describe('ExperienceToolbarSection', () => {
 		expect(mockDispatch).toHaveBeenCalledWith(
 			expect.objectContaining({
 				type: DELETE_SEGMENTS_EXPERIENCE,
+			})
+		);
+	});
+
+	it('calls the backend to duplicate an experience', async () => {
+		serviceFetch
+			.mockImplementationOnce((url, {body}) =>
+				Promise.resolve({
+					segmentsExperience: {
+						active: true,
+						name: body.name,
+						priority: '1000',
+						segmentsEntryId: body.segmentsEntryId,
+						segmentsExperienceId: 'a-new-test-experience-id',
+					},
+				})
+			)
+			.mockImplementationOnce(() => {
+				return Promise.resolve([]);
+			});
+
+		const mockDispatch = jest.fn((a) => {
+			if (typeof a === 'function') {
+				return a(mockDispatch);
+			}
+		});
+
+		const {
+			getAllByRole,
+			getByLabelText,
+			getByRole,
+		} = renderExperienceToolbarSection(mockState, mockConfig, mockDispatch);
+
+		const dropDownButton = getByLabelText('experience');
+
+		userEvent.click(dropDownButton);
+
+		await waitForElement(() => getByRole('list'));
+
+		const experienceItems = getAllByRole('listitem');
+
+		expect(experienceItems.length).toBe(3);
+
+		expect(
+			within(experienceItems[0]).getByText('Experience #1')
+		).toBeInTheDocument();
+
+		const duplicateExperienceButton = within(experienceItems[0]).getByTitle(
+			'duplicate-experience'
+		);
+
+		userEvent.click(duplicateExperienceButton);
+
+		await wait(() => expect(serviceFetch).toHaveBeenCalledTimes(2));
+
+		expect(serviceFetch).toHaveBeenCalledWith(
+			expect.stringContaining(MOCK_DUPLICATE_URL),
+			expect.objectContaining({
+				body: expect.objectContaining({
+					segmentsExperienceId: 'test-experience-id-01',
+				}),
+			}),
+			expect.any(Function)
+		);
+
+		expect(mockDispatch).toHaveBeenCalledWith(
+			expect.objectContaining({
+				type: DUPLICATE_SEGMENTS_EXPERIENCE,
 			})
 		);
 	});
