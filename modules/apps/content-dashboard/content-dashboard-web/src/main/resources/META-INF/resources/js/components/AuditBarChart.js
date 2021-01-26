@@ -29,7 +29,7 @@ import {
 	YAxis,
 } from 'recharts';
 
-import {BAR_CHART, COLORS} from '../utils/constants';
+import {BAR_CHART, COLORS, DEFAULT_COLOR} from '../utils/constants';
 import {shortenNumber} from '../utils/shortenNumber';
 
 export default function AuditBarChart({rtl, vocabularies}) {
@@ -86,7 +86,10 @@ export default function AuditBarChart({rtl, vocabularies}) {
 			(acc, {dataKey}, index) => ({
 				colors: {
 					...acc.colors,
-					[dataKey]: COLORS[index % COLORS.length],
+					[dataKey]:
+						dataKey === 'none'
+							? DEFAULT_COLOR
+							: COLORS[index % COLORS.length],
 				},
 				legendCheckboxes: {
 					...acc.legendCheckboxes,
