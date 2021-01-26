@@ -177,6 +177,47 @@ const mockTwoVocabulariesWithCategoriesInTheFirstVocabulary = [
 	},
 ];
 
+const mockTwoVocabulariesWithNoneCategory = [
+	{
+		categories: [
+			{
+				key: 'education',
+				name: 'Education',
+				value: 478,
+				vocabularyName: 'Stage',
+			},
+			{
+				key: 'selection',
+				name: 'Selection',
+				value: 1055,
+				vocabularyName: 'Stage',
+			},
+			{
+				key: 'none',
+				name: 'No Stage Specified',
+				value: 822,
+				vocabularyName: 'Stage',
+			},
+		],
+		key: 'business-decision-maker',
+		name: 'Business Decision Maker',
+		vocabularyName: 'Audience',
+	},
+	{
+		categories: [
+			{
+				key: 'education',
+				name: 'Education',
+				value: 125,
+				vocabularyName: 'Stage',
+			},
+		],
+		key: 'business-end-user',
+		name: 'Business End User',
+		vocabularyName: 'Audience',
+	},
+];
+
 describe('AuditBarChart', () => {
 	afterEach(() => {
 		jest.clearAllMocks();
@@ -245,6 +286,29 @@ describe('AuditBarChart', () => {
 			'recharts-layer recharts-bar-rectangle'
 		);
 		expect(bars.length).toBe(4);
+	});
+
+	it('renders audit bar chart from two vocabularies with none category', () => {
+		const {container, getByText} = render(
+			<AuditBarChart
+				rtl={false}
+				vocabularies={mockTwoVocabulariesWithNoneCategory}
+			/>
+		);
+
+		expect(getByText('Stage:')).toBeInTheDocument();
+		expect(getByText('Education')).toBeInTheDocument();
+		expect(getByText('Selection')).toBeInTheDocument();
+		expect(getByText('No Stage Specified')).toBeInTheDocument();
+
+		expect(getByText('Audience')).toBeInTheDocument();
+		expect(getByText('Business Decision Maker')).toBeInTheDocument();
+		expect(getByText('Business End User')).toBeInTheDocument();
+
+		const bars = container.getElementsByClassName(
+			'recharts-layer recharts-bar-rectangle'
+		);
+		expect(bars.length).toBe(6);
 	});
 
 	it('renders audit bar chart only from checked categories from legend', () => {
