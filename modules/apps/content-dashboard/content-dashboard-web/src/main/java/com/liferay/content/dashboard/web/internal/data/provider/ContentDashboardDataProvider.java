@@ -30,6 +30,7 @@ import com.liferay.portal.search.aggregation.bucket.Bucket;
 import com.liferay.portal.search.aggregation.bucket.FilterAggregation;
 import com.liferay.portal.search.aggregation.bucket.FilterAggregationResult;
 import com.liferay.portal.search.aggregation.bucket.IncludeExcludeClause;
+import com.liferay.portal.search.aggregation.bucket.Order;
 import com.liferay.portal.search.aggregation.bucket.TermsAggregation;
 import com.liferay.portal.search.aggregation.bucket.TermsAggregationResult;
 import com.liferay.portal.search.query.BooleanQuery;
@@ -315,6 +316,8 @@ public class ContentDashboardDataProvider {
 
 		TermsAggregation termsAggregation = _aggregations.terms(
 			termsAggregationName, _getAssetVocabularyField(assetVocabulary));
+
+		termsAggregation.addOrders(Order.key(true));
 
 		termsAggregation.setIncludeExcludeClause(
 			new IncludeExcludeClauseImpl(
