@@ -444,7 +444,7 @@ public class ContentDashboardAdminPortletTest {
 							JSONUtil.put(
 								"key", "none"
 							).put(
-								"name", "No Stage Category"
+								"name", "No Stage Specified"
 							).put(
 								"value", 1L
 							).put(
@@ -561,7 +561,7 @@ public class ContentDashboardAdminPortletTest {
 							JSONUtil.put(
 								"key", "none"
 							).put(
-								"name", "No Stage Category"
+								"name", "No Stage Specified"
 							).put(
 								"value", 1L
 							).put(
@@ -584,7 +584,7 @@ public class ContentDashboardAdminPortletTest {
 							JSONUtil.put(
 								"key", "none"
 							).put(
-								"name", "No Stage Category"
+								"name", "No Stage Specified"
 							).put(
 								"value", 1L
 							).put(
@@ -619,7 +619,7 @@ public class ContentDashboardAdminPortletTest {
 					).put(
 						"key", "none"
 					).put(
-						"name", "No Audience Category"
+						"name", "No Audience Specified"
 					).put(
 						"value", 1L
 					).put(
@@ -935,7 +935,7 @@ public class ContentDashboardAdminPortletTest {
 					).put(
 						"key", "none"
 					).put(
-						"name", "No Audience Category"
+						"name", "No Audience Specified"
 					).put(
 						"value", 1L
 					).put(
