@@ -30,6 +30,7 @@ import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.journal.test.util.JournalTestUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONUtil;
@@ -364,6 +365,189 @@ public class ContentDashboardAdminPortletTest {
 		finally {
 			_assetCategoryLocalService.deleteAssetCategory(assetCategory);
 			_assetCategoryLocalService.deleteAssetCategory(childAssetCategory);
+		}
+	}
+
+	@Test
+	public void testGetPropsWithAssetCategoriesSortedByKey() throws Exception {
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				_company.getGroupId(), _user.getUserId());
+
+		AssetVocabulary assetVocabulary =
+			_assetVocabularyLocalService.addVocabulary(
+				_user.getUserId(), _company.getGroupId(), "vocabulary",
+				serviceContext);
+
+		AssetCategory assetCategory1 = _assetCategoryLocalService.addCategory(
+			_user.getUserId(), _company.getGroupId(), "category-1",
+			assetVocabulary.getVocabularyId(), serviceContext);
+
+		AssetCategory assetCategory2 = _assetCategoryLocalService.addCategory(
+			_user.getUserId(), _company.getGroupId(), "category-2",
+			assetVocabulary.getVocabularyId(), serviceContext);
+
+		try {
+			JournalTestUtil.addArticle(
+				_group.getGroupId(), 0,
+				_getServiceContext(
+					_user.getUserId(), _group.getGroupId(),
+					new long[] {
+						assetCategory1.getCategoryId(),
+						assetCategory2.getCategoryId()
+					}));
+
+			JournalTestUtil.addArticle(
+				_group.getGroupId(), 0,
+				_getServiceContext(
+					_user.getUserId(), _group.getGroupId(),
+					new long[] {assetCategory2.getCategoryId()}));
+
+			Map<String, Object> data = _getData(
+				_getMockLiferayPortletRenderRequest(
+					new String[] {assetVocabulary.getName()},
+					LocaleUtil.getSiteDefault()));
+
+			Map<String, Object> props = (Map<String, Object>)data.get("props");
+
+			JSONArray vocabulariesJSONArray = (JSONArray)props.get(
+				"vocabularies");
+
+			Assert.assertEquals(
+				JSONUtil.putAll(
+					JSONUtil.put(
+						"key", String.valueOf(assetCategory1.getCategoryId())
+					).put(
+						"name", "category-1"
+					).put(
+						"value", 1L
+					).put(
+						"vocabularyName", "vocabulary"
+					),
+					JSONUtil.put(
+						"key", String.valueOf(assetCategory2.getCategoryId())
+					).put(
+						"name", "category-2"
+					).put(
+						"value", 2L
+					).put(
+						"vocabularyName", "vocabulary"
+					)
+				).toString(),
+				vocabulariesJSONArray.toString());
+		}
+		finally {
+			_assetVocabularyLocalService.deleteAssetVocabulary(assetVocabulary);
+		}
+	}
+
+	@Test
+	public void testGetPropsWithChildAssetCategoriesSortedByKey()
+		throws Exception {
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				_company.getGroupId(), _user.getUserId());
+
+		AssetVocabulary assetVocabulary =
+			_assetVocabularyLocalService.addVocabulary(
+				_user.getUserId(), _company.getGroupId(), "vocabulary",
+				serviceContext);
+
+		AssetCategory assetCategory = _assetCategoryLocalService.addCategory(
+			_user.getUserId(), _company.getGroupId(), "category",
+			assetVocabulary.getVocabularyId(), serviceContext);
+
+		AssetVocabulary childAssetVocabulary =
+			_assetVocabularyLocalService.addVocabulary(
+				_user.getUserId(), _company.getGroupId(), "child-vocabulary",
+				serviceContext);
+
+		AssetCategory childAssetCategory1 =
+			_assetCategoryLocalService.addCategory(
+				_user.getUserId(), _company.getGroupId(), "child-category-1",
+				childAssetVocabulary.getVocabularyId(), serviceContext);
+
+		AssetCategory childAssetCategory2 =
+			_assetCategoryLocalService.addCategory(
+				_user.getUserId(), _company.getGroupId(), "child-category-2",
+				childAssetVocabulary.getVocabularyId(), serviceContext);
+
+		try {
+			JournalTestUtil.addArticle(
+				_group.getGroupId(), 0,
+				_getServiceContext(
+					_user.getUserId(), _group.getGroupId(),
+					new long[] {
+						assetCategory.getCategoryId(),
+						childAssetCategory1.getCategoryId(),
+						childAssetCategory2.getCategoryId()
+					}));
+
+			JournalTestUtil.addArticle(
+				_group.getGroupId(), 0,
+				_getServiceContext(
+					_user.getUserId(), _group.getGroupId(),
+					new long[] {
+						assetCategory.getCategoryId(),
+						childAssetCategory2.getCategoryId()
+					}));
+
+			Map<String, Object> data = _getData(
+				_getMockLiferayPortletRenderRequest(
+					new String[] {
+						assetVocabulary.getName(),
+						childAssetVocabulary.getName()
+					},
+					LocaleUtil.getSiteDefault()));
+
+			Map<String, Object> props = (Map<String, Object>)data.get("props");
+
+			JSONArray vocabulariesJSONArray = (JSONArray)props.get(
+				"vocabularies");
+
+			Assert.assertEquals(
+				JSONUtil.putAll(
+					JSONUtil.put(
+						"categories",
+						JSONUtil.putAll(
+							JSONUtil.put(
+								"key",
+								String.valueOf(
+									childAssetCategory1.getCategoryId())
+							).put(
+								"name", "child-category-1"
+							).put(
+								"value", 1L
+							).put(
+								"vocabularyName", "child-vocabulary"
+							),
+							JSONUtil.put(
+								"key",
+								String.valueOf(
+									childAssetCategory2.getCategoryId())
+							).put(
+								"name", "child-category-2"
+							).put(
+								"value", 2L
+							).put(
+								"vocabularyName", "child-vocabulary"
+							))
+					).put(
+						"key", String.valueOf(assetCategory.getCategoryId())
+					).put(
+						"name", "category"
+					).put(
+						"value", 2L
+					).put(
+						"vocabularyName", "vocabulary"
+					)
+				).toString(),
+				vocabulariesJSONArray.toString());
+		}
+		finally {
+			_assetVocabularyLocalService.deleteVocabulary(assetVocabulary);
+			_assetVocabularyLocalService.deleteVocabulary(childAssetVocabulary);
 		}
 	}
 
@@ -2200,6 +2384,18 @@ public class ContentDashboardAdminPortletTest {
 			mockLiferayPortletRenderRequest.getAttribute(
 				"CONTENT_DASHBOARD_ADMIN_DISPLAY_CONTEXT"),
 			"getSearchContainer", new Class<?>[0]);
+	}
+
+	private ServiceContext _getServiceContext(
+			long userId, long groupId, long[] assetCategoryIds)
+		throws PortalException {
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(groupId, userId);
+
+		serviceContext.setAssetCategoryIds(assetCategoryIds);
+
+		return serviceContext;
 	}
 
 	private ThemeDisplay _getThemeDisplay(Locale locale) throws Exception {
