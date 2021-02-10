@@ -208,6 +208,11 @@ public class ContentDashboardDataProvider {
 		List<AssetCategoryMetric> childAssetCategoryMetrics =
 			childAssetVocabularyMetric.getAssetCategoryMetrics();
 
+		if (childAssetCategoryMetrics.isEmpty()) {
+			return _toAssetVocabularyMetric(
+				assetCategoryTitlesMap, assetVocabulary, buckets);
+		}
+
 		Stream<AssetCategoryMetric> stream = childAssetCategoryMetrics.stream();
 
 		List<AssetCategoryMetric> assetCategoryMetrics =
