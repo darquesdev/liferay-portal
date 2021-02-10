@@ -168,7 +168,10 @@ public class ContentDashboardDataProvider {
 		TermsAggregation termsAggregation = _getTermsAggregation(
 			assetVocabulary, assetCategoryTitlesMap.keySet(), "categories");
 
-		termsAggregation.addChildAggregation(childTermsAggregation);
+		termsAggregation.addChildAggregation(
+			_getTermsAggregation(
+				childAssetVocabulary, childAssetCategoryTitlesMap.keySet(), 0,
+				"childCategories"));
 
 		SearchResponse searchResponse = _searcher.search(
 			_searchRequestBuilder.addAggregation(
@@ -308,6 +311,18 @@ public class ContentDashboardDataProvider {
 				_resourceBundle, "no-x-specified",
 				assetVocabulary.getTitle(_locale)),
 			filterAggregationResult.getDocCount());
+	}
+
+	private TermsAggregation _getTermsAggregation(
+		AssetVocabulary assetVocabulary, Set<String> assetCategoryIds,
+		int minDocCount, String termsAggregationName) {
+
+		TermsAggregation termsAggregation = _getTermsAggregation(
+			assetVocabulary, assetCategoryIds, termsAggregationName);
+
+		termsAggregation.setMinDocCount(minDocCount);
+
+		return termsAggregation;
 	}
 
 	private TermsAggregation _getTermsAggregation(
