@@ -192,20 +192,33 @@ public class ContentDashboardDataProvider {
 
 		Collection<Bucket> buckets = termsAggregationResult.getBuckets();
 
-		if (buckets.isEmpty()) {
-			termsAggregationResult =
-				(TermsAggregationResult)searchResponse.getAggregationResult(
-					"childCategories");
+		TermsAggregationResult childTermsAggregationResult =
+			(TermsAggregationResult)searchResponse.getAggregationResult(
+				"childCategories");
 
-			return _toAssetVocabularyMetric(
+		AssetVocabularyMetric childAssetVocabularyMetric =
+			_toAssetVocabularyMetric(
 				childAssetCategoryTitlesMap, childAssetVocabulary,
-				termsAggregationResult.getBuckets());
+				childTermsAggregationResult.getBuckets());
+
+		if (buckets.isEmpty()) {
+			return childAssetVocabularyMetric;
 		}
+
+		List<AssetCategoryMetric> childAssetCategoryMetrics =
+			childAssetVocabularyMetric.getAssetCategoryMetrics();
+
+		Stream<AssetCategoryMetric> stream = childAssetCategoryMetrics.stream();
 
 		List<AssetCategoryMetric> assetCategoryMetrics =
 			_toAssetCategoryMetrics(
-				assetCategoryTitlesMap, buckets, childAssetCategoryTitlesMap,
-				childAssetVocabulary,
+				assetCategoryTitlesMap, buckets,
+				stream.map(
+					AssetCategoryMetric::getKey
+				).collect(
+					Collectors.toSet()
+				),
+				childAssetCategoryTitlesMap, childAssetVocabulary,
 				_getChildNoneAssetCategoryMetricCounts(
 					(FilterAggregationResult)
 						searchResponse.getAggregationResult(
@@ -343,6 +356,7 @@ public class ContentDashboardDataProvider {
 
 	private List<AssetCategoryMetric> _toAssetCategoryMetrics(
 		Map<String, String> assetCategoryTitlesMap, Collection<Bucket> buckets,
+		Set<String> childAssetCategoryMetricKeys,
 		Map<String, String> childAssetCategoryTitlesMap,
 		AssetVocabulary childAssetVocabulary,
 		Map<String, Long> childNoneAssetCategoryMetricCounts,
@@ -360,6 +374,7 @@ public class ContentDashboardDataProvider {
 					_toAssetVocabularyMetric(
 						childAssetCategoryTitlesMap, childAssetVocabulary,
 						termsAggregationResult.getBuckets(),
+						childAssetCategoryMetricKeys,
 						childNoneAssetCategoryMetricCounts.get(
 							bucket.getKey())),
 					bucket.getKey(),
@@ -393,11 +408,14 @@ public class ContentDashboardDataProvider {
 	private AssetVocabularyMetric _toAssetVocabularyMetric(
 		Map<String, String> assetCategoryTitlesMap,
 		AssetVocabulary assetVocabulary, Collection<Bucket> buckets,
+		Set<String> childAssetCategoryMetricKeys,
 		Long noneAssetCategoryMetricCount) {
 
 		Stream<Bucket> stream = buckets.stream();
 
-		List<AssetCategoryMetric> assetCategoryMetrics = stream.map(
+		List<AssetCategoryMetric> assetCategoryMetrics = stream.filter(
+			bucket -> childAssetCategoryMetricKeys.contains(bucket.getKey())
+		).map(
 			bucket -> new AssetCategoryMetric(
 				bucket.getKey(), assetCategoryTitlesMap.get(bucket.getKey()),
 				bucket.getDocCount())
