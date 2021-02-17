@@ -64,12 +64,12 @@ import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portlet.test.MockLiferayPortletContext;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -84,9 +84,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import javax.portlet.Portlet;
-import javax.portlet.PortletContext;
 import javax.portlet.PortletPreferences;
-import javax.portlet.PortletRequestDispatcher;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -2574,27 +2572,7 @@ public class ContentDashboardAdminPortletTest {
 		mockLiferayPortletRenderRequest.setAttribute(
 			MVCRenderConstants.
 				PORTLET_CONTEXT_OVERRIDE_REQUEST_ATTIBUTE_NAME_PREFIX + path,
-			ProxyUtil.newProxyInstance(
-				PortletContext.class.getClassLoader(),
-				new Class<?>[] {PortletContext.class},
-				(PortletContextProxy, portletContextMethod,
-				 portletContextArgs) -> {
-
-					if (Objects.equals(
-							portletContextMethod.getName(),
-							"getRequestDispatcher") &&
-						Objects.equals(portletContextArgs[0], path)) {
-
-						return ProxyUtil.newProxyInstance(
-							PortletRequestDispatcher.class.getClassLoader(),
-							new Class<?>[] {PortletRequestDispatcher.class},
-							(portletRequestDispatcherProxy,
-							 portletRequestDispatcherMethod,
-							 portletRequestDispatcherArgs) -> null);
-					}
-
-					throw new UnsupportedOperationException();
-				}));
+			new MockLiferayPortletContext(path));
 
 		mockLiferayPortletRenderRequest.setAttribute(
 			WebKeys.THEME_DISPLAY, _getThemeDisplay(locale));
