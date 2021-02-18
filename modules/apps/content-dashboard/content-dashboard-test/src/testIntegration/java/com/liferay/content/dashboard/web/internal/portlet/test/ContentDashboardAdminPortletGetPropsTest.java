@@ -51,7 +51,6 @@ import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portlet.test.MockLiferayPortletContext;
 
-import java.util.Locale;
 import java.util.Map;
 
 import javax.portlet.Portlet;
@@ -137,8 +136,7 @@ public class ContentDashboardAdminPortletGetPropsTest {
 
 			Map<String, Object> data = _getData(
 				_getMockLiferayPortletRenderRequest(
-					new String[] {assetVocabulary.getName()},
-					LocaleUtil.getSiteDefault()));
+					new String[] {assetVocabulary.getName()}));
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
 
@@ -227,8 +225,7 @@ public class ContentDashboardAdminPortletGetPropsTest {
 					new String[] {
 						assetVocabulary.getName(),
 						childAssetVocabulary.getName()
-					},
-					LocaleUtil.getSiteDefault()));
+					}));
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
 
@@ -323,8 +320,7 @@ public class ContentDashboardAdminPortletGetPropsTest {
 					new String[] {
 						assetVocabulary.getName(),
 						childAssetVocabulary.getName()
-					},
-					LocaleUtil.getSiteDefault()));
+					}));
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
 
@@ -409,8 +405,7 @@ public class ContentDashboardAdminPortletGetPropsTest {
 					new String[] {
 						assetVocabulary.getName(),
 						childAssetVocabulary.getName()
-					},
-					LocaleUtil.getSiteDefault()));
+					}));
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
 
@@ -467,8 +462,7 @@ public class ContentDashboardAdminPortletGetPropsTest {
 					new String[] {
 						assetVocabulary.getName(),
 						childAssetVocabulary.getName()
-					},
-					LocaleUtil.getSiteDefault()));
+					}));
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
 
@@ -539,8 +533,7 @@ public class ContentDashboardAdminPortletGetPropsTest {
 					new String[] {
 						assetVocabulary.getName(),
 						childAssetVocabulary.getName()
-					},
-					LocaleUtil.getSiteDefault()));
+					}));
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
 
@@ -620,7 +613,7 @@ public class ContentDashboardAdminPortletGetPropsTest {
 	}
 
 	private MockLiferayPortletRenderRequest _getMockLiferayPortletRenderRequest(
-			String[] assetVocabularyNames, Locale locale)
+			String[] assetVocabularyNames)
 		throws Exception {
 
 		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
@@ -645,7 +638,7 @@ public class ContentDashboardAdminPortletGetPropsTest {
 			new MockLiferayPortletContext(path));
 
 		mockLiferayPortletRenderRequest.setAttribute(
-			WebKeys.THEME_DISPLAY, _getThemeDisplay(locale));
+			WebKeys.THEME_DISPLAY, _getThemeDisplay());
 
 		PortletPreferences portletPreferences =
 			mockLiferayPortletRenderRequest.getPreferences();
@@ -656,11 +649,11 @@ public class ContentDashboardAdminPortletGetPropsTest {
 		return mockLiferayPortletRenderRequest;
 	}
 
-	private ThemeDisplay _getThemeDisplay(Locale locale) throws Exception {
+	private ThemeDisplay _getThemeDisplay() throws Exception {
 		ThemeDisplay themeDisplay = new ThemeDisplay();
 
 		themeDisplay.setCompany(_company);
-		themeDisplay.setLocale(locale);
+		themeDisplay.setLocale(LocaleUtil.getSiteDefault());
 		themeDisplay.setPermissionChecker(
 			PermissionThreadLocal.getPermissionChecker());
 		themeDisplay.setUser(_company.getDefaultUser());
