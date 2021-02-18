@@ -319,8 +319,6 @@ public class ContentDashboardAdminPortletTest {
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
 
-			Assert.assertNotNull(props);
-
 			JSONArray vocabulariesJSONArray = (JSONArray)props.get(
 				"vocabularies");
 
@@ -586,8 +584,6 @@ public class ContentDashboardAdminPortletTest {
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
 
-			Assert.assertNotNull(props);
-
 			JSONArray vocabulariesJSONArray = (JSONArray)props.get(
 				"vocabularies");
 
@@ -694,8 +690,6 @@ public class ContentDashboardAdminPortletTest {
 				_getMockLiferayPortletRenderRequest());
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
-
-			Assert.assertNotNull(props);
 
 			JSONArray vocabulariesJSONArray = (JSONArray)props.get(
 				"vocabularies");
@@ -987,8 +981,6 @@ public class ContentDashboardAdminPortletTest {
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
 
-			Assert.assertNotNull(props);
-
 			JSONArray vocabulariesJSONArray = (JSONArray)props.get(
 				"vocabularies");
 
@@ -1041,8 +1033,6 @@ public class ContentDashboardAdminPortletTest {
 				_getMockLiferayPortletRenderRequest());
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
-
-			Assert.assertNotNull(props);
 
 			JSONArray vocabulariesJSONArray = (JSONArray)props.get(
 				"vocabularies");
@@ -1148,8 +1138,6 @@ public class ContentDashboardAdminPortletTest {
 
 		Map<String, Object> props = (Map<String, Object>)data.get("props");
 
-		Assert.assertNotNull(props);
-
 		JSONArray vocabulariesJSONArray = (JSONArray)props.get("vocabularies");
 
 		Assert.assertEquals(
@@ -1184,8 +1172,6 @@ public class ContentDashboardAdminPortletTest {
 				_getMockLiferayPortletRenderRequest());
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
-
-			Assert.assertNotNull(props);
 
 			JSONArray vocabulariesJSONArray = (JSONArray)props.get(
 				"vocabularies");
@@ -1255,8 +1241,6 @@ public class ContentDashboardAdminPortletTest {
 				_getMockLiferayPortletRenderRequest());
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
-
-			Assert.assertNotNull(props);
 
 			JSONArray vocabulariesJSONArray = (JSONArray)props.get(
 				"vocabularies");
