@@ -31,7 +31,6 @@ import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.journal.test.util.JournalTestUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
-import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.constants.LanguageConstants;
@@ -319,9 +318,6 @@ public class ContentDashboardAdminPortletTest {
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
 
-			JSONArray vocabulariesJSONArray = (JSONArray)props.get(
-				"vocabularies");
-
 			Assert.assertEquals(
 				JSONUtil.put(
 					JSONUtil.put(
@@ -351,7 +347,7 @@ public class ContentDashboardAdminPortletTest {
 						assetVocabulary.getTitle(LocaleUtil.US)
 					)
 				).toString(),
-				vocabulariesJSONArray.toString());
+				String.valueOf(props.get("vocabularies")));
 		}
 		finally {
 			_assetCategoryLocalService.deleteAssetCategory(assetCategory);
@@ -399,9 +395,6 @@ public class ContentDashboardAdminPortletTest {
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
 
-			JSONArray vocabulariesJSONArray = (JSONArray)props.get(
-				"vocabularies");
-
 			Assert.assertEquals(
 				JSONUtil.putAll(
 					JSONUtil.put(
@@ -423,7 +416,7 @@ public class ContentDashboardAdminPortletTest {
 						"vocabularyName", "vocabulary"
 					)
 				).toString(),
-				vocabulariesJSONArray.toString());
+				String.valueOf(props.get("vocabularies")));
 		}
 		finally {
 			_assetVocabularyLocalService.deleteAssetVocabulary(assetVocabulary);
@@ -490,9 +483,6 @@ public class ContentDashboardAdminPortletTest {
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
 
-			JSONArray vocabulariesJSONArray = (JSONArray)props.get(
-				"vocabularies");
-
 			Assert.assertEquals(
 				JSONUtil.putAll(
 					JSONUtil.put(
@@ -530,7 +520,7 @@ public class ContentDashboardAdminPortletTest {
 						"vocabularyName", "vocabulary"
 					)
 				).toString(),
-				vocabulariesJSONArray.toString());
+				String.valueOf(props.get("vocabularies")));
 		}
 		finally {
 			_assetVocabularyLocalService.deleteVocabulary(assetVocabulary);
@@ -584,9 +574,6 @@ public class ContentDashboardAdminPortletTest {
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
 
-			JSONArray vocabulariesJSONArray = (JSONArray)props.get(
-				"vocabularies");
-
 			Assert.assertEquals(
 				JSONUtil.putAll(
 					JSONUtil.put(
@@ -626,7 +613,7 @@ public class ContentDashboardAdminPortletTest {
 						assetVocabulary.getTitle(LocaleUtil.US)
 					)
 				).toString(),
-				vocabulariesJSONArray.toString());
+				String.valueOf(props.get("vocabularies")));
 		}
 		finally {
 			_assetCategoryLocalService.deleteAssetCategory(assetCategory);
@@ -690,9 +677,6 @@ public class ContentDashboardAdminPortletTest {
 				_getMockLiferayPortletRenderRequest());
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
-
-			JSONArray vocabulariesJSONArray = (JSONArray)props.get(
-				"vocabularies");
 
 			Assert.assertEquals(
 				JSONUtil.putAll(
@@ -792,7 +776,7 @@ public class ContentDashboardAdminPortletTest {
 						assetVocabulary.getTitle(LocaleUtil.US)
 					)
 				).toString(),
-				vocabulariesJSONArray.toString());
+				String.valueOf(props.get("vocabularies")));
 		}
 		finally {
 			_assetCategoryLocalService.deleteAssetCategory(assetCategory1);
@@ -861,9 +845,6 @@ public class ContentDashboardAdminPortletTest {
 					LocaleUtil.getSiteDefault()));
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
-
-			JSONArray vocabulariesJSONArray = (JSONArray)props.get(
-				"vocabularies");
 
 			Assert.assertEquals(
 				JSONUtil.putAll(
@@ -936,7 +917,7 @@ public class ContentDashboardAdminPortletTest {
 						"vocabularyName", "vocabulary"
 					)
 				).toString(),
-				vocabulariesJSONArray.toString());
+				String.valueOf(props.get("vocabularies")));
 		}
 		finally {
 			_assetVocabularyLocalService.deleteVocabulary(assetVocabulary);
@@ -981,12 +962,9 @@ public class ContentDashboardAdminPortletTest {
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
 
-			JSONArray vocabulariesJSONArray = (JSONArray)props.get(
-				"vocabularies");
-
 			Assert.assertEquals(
 				String.valueOf(JSONFactoryUtil.createJSONArray()),
-				vocabulariesJSONArray.toString());
+				String.valueOf(props.get("vocabularies")));
 		}
 		finally {
 			_assetCategoryLocalService.deleteAssetCategory(assetCategory);
@@ -1034,9 +1012,6 @@ public class ContentDashboardAdminPortletTest {
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
 
-			JSONArray vocabulariesJSONArray = (JSONArray)props.get(
-				"vocabularies");
-
 			Assert.assertEquals(
 				JSONUtil.put(
 					JSONUtil.put(
@@ -1051,7 +1026,7 @@ public class ContentDashboardAdminPortletTest {
 						childAssetVocabulary.getTitle(LocaleUtil.US)
 					)
 				).toString(),
-				vocabulariesJSONArray.toString());
+				String.valueOf(props.get("vocabularies")));
 		}
 		finally {
 			_assetCategoryLocalService.deleteAssetCategory(assetCategory);
@@ -1103,9 +1078,6 @@ public class ContentDashboardAdminPortletTest {
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
 
-			JSONArray vocabulariesJSONArray = (JSONArray)props.get(
-				"vocabularies");
-
 			Assert.assertEquals(
 				JSONUtil.put(
 					JSONUtil.put(
@@ -1118,7 +1090,7 @@ public class ContentDashboardAdminPortletTest {
 						"vocabularyName", "vocabulary"
 					)
 				).toString(),
-				vocabulariesJSONArray.toString());
+				String.valueOf(props.get("vocabularies")));
 		}
 		finally {
 			_assetVocabularyLocalService.deleteAssetVocabulary(assetVocabulary);
@@ -1138,11 +1110,9 @@ public class ContentDashboardAdminPortletTest {
 
 		Map<String, Object> props = (Map<String, Object>)data.get("props");
 
-		JSONArray vocabulariesJSONArray = (JSONArray)props.get("vocabularies");
-
 		Assert.assertEquals(
 			String.valueOf(JSONFactoryUtil.createJSONArray()),
-			vocabulariesJSONArray.toString());
+			String.valueOf(props.get("vocabularies")));
 	}
 
 	@Test
@@ -1173,9 +1143,6 @@ public class ContentDashboardAdminPortletTest {
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
 
-			JSONArray vocabulariesJSONArray = (JSONArray)props.get(
-				"vocabularies");
-
 			Assert.assertEquals(
 				JSONUtil.put(
 					JSONUtil.put(
@@ -1189,7 +1156,7 @@ public class ContentDashboardAdminPortletTest {
 						assetVocabulary.getTitle(LocaleUtil.US)
 					)
 				).toString(),
-				vocabulariesJSONArray.toString());
+				String.valueOf(props.get("vocabularies")));
 		}
 		finally {
 			_assetCategoryLocalService.deleteAssetCategory(assetCategory);
@@ -1241,9 +1208,6 @@ public class ContentDashboardAdminPortletTest {
 				_getMockLiferayPortletRenderRequest());
 
 			Map<String, Object> props = (Map<String, Object>)data.get("props");
-
-			JSONArray vocabulariesJSONArray = (JSONArray)props.get(
-				"vocabularies");
 
 			Assert.assertEquals(
 				JSONUtil.putAll(
@@ -1301,7 +1265,7 @@ public class ContentDashboardAdminPortletTest {
 						assetVocabulary.getTitle(LocaleUtil.US)
 					)
 				).toString(),
-				vocabulariesJSONArray.toString());
+				String.valueOf(props.get("vocabularies")));
 		}
 		finally {
 			_assetCategoryLocalService.deleteAssetCategory(assetCategory);
