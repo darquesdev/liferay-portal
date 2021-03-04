@@ -33,8 +33,7 @@ public interface AnalyticsReportsPageSpeedConfiguration {
 	public String apiKey();
 
 	@Meta.AD(
-		deflt = "desktop", optionValues = {"desktop", "mobile"},
-		required = false
+		deflt = "mobile", optionValues = {"desktop", "mobile"}, required = false
 	)
 	public String strategy();
 
